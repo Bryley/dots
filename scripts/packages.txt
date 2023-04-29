@@ -1,0 +1,111 @@
+networkmanager          # Manages networking
+net-tools               # Useful cmd tools for networking
+nm-connection-editor    # A basic GTK GUI for network settings # OPTIONAL
+
+pipewire                # Audio framework
+pipewire-pulse          # Pulseaudio replacement built into pipewire
+alsa-utils              # Utilities for controlling volume
+
+zsh                     # Z Shell, a modern alternative to bash
+exa                     # Better alternative to ls command
+pkgfile                 # Contains the command not found searching tool for better errors
+fzf                     # Fuzzy finder command used by different software
+
+polkit                  # System wide authentication, useful for password managers
+lxqt-policykit          # Authentication agent for polkit
+
+
+
+
+package_dependencies=(
+    'wireplumber'           # Audio session manager, dependency for pipewire-pulse
+)
+
+# Package list
+packages=(
+    # GUI
+    'xorg'                  # Contains usuful packages for xorg display server
+    'bspwm'                 # Tiling Window Manager
+    'sxhkd'                 # Keyboard shortcuts for window manager
+    'feh'                   # Wallpaper Manager
+    'polybar'               # Customisable bar application
+    'xsel'                  # Clipboard tool to enable '+' register in neovim
+    'alacritty'             # Terminal emulator
+    'rofi'                  # A better application search menu
+    'xorg-xinit'            # Starts xorg with 'startx' command # TODO This will be changed to a display manager like lightdm
+    'udisks2'               # Automatic mounting of USB sticks
+    'redshift'              # Filters blue light based on time of day
+    'dunst'                 # Notification daemon
+    'nemo'                  # Best file manager
+    'nemo-fileroller'       # Archive manager for nemo
+    'nemo-preview'          # Previews in nemo
+
+    # Audio
+    'pipewire'              # Audio framework
+    'pipewire-pulse'        # Pulseaudio replacement built into pipewire
+    'alsa-utils'            # Utilities for controlling volume
+
+    # Essential programs
+    'openssh'               # SSH client for git related stuff
+    'wget'                  # A basic commandline tool for sending requests on the internet
+    'unzip'                 # Unzips files (This and wget required for LSP)
+
+    'tmux'                  # Terminal multiplexer
+    'zsh'                   # Z shell, modern alternate to bash
+    'imagemagick'           # An image manipulation software that can be used to blur images
+
+    'networkmanager'        # An easy to use network manager tool (use `nmtui` command)
+    'net-tools'             # Useful cmd tools for networking
+    'iw'                    # Requirement for tmux config to get network
+    'nm-connection-editor'  # A basic GTK GUI for network settings
+
+    'ncdu'                  # NCurses Disk Usage. A terminal UI for analysing disk usage
+    'exa'                   # Better alternative to ls command
+    'pkgfile'               # Contains the command not found searching tool for better errors
+    'fd'                    # Better alternative to the 'find' command.
+    'fzf'                   # Fuzzy finder for the command line.
+    'polkit'                # System wide authentication, useful for 1password
+    'lxqt-policykit'        # Authentication agent for polkit
+
+    # Neovim related #
+    'neovim'                # The latest version of neovim text editor
+    'ripgrep'               # A better grep alternative used by neovim plugin telescope
+    # LSPs
+    'pyright'               # Python language server by microsoft
+    'typescript-language-server' # Typescript and Javascript LSP
+    'lua-language-server'   # Sumoneko lua language server
+    'rust-analyzer'         # Language server for rust
+    'svelte-language-server' # Svelte Language Server
+
+
+    # Fonts
+    'inter-font'            # Font used for GUI
+    'ttf-font-awesome'      # Easy icons stored in a font.
+)
+# List of AUR packages
+aur_packages=(
+    # GUI
+    # 'picom-git'             # A compositor for xorg
+    'xtitle'                # Command that gives info about open window used by bspwm rules
+    'picom-pijulius-git'    # A compositor for xorg with great animations
+    'i3lock-color'          # Lockscreen for X server
+    'arc-gtk-theme'         # Good dark GTK theme
+    'lxappearance-gtk3'     # Program for changing gtk theme
+    'nvimpager'             # Paging within neovim like less command
+
+    # Essential Programs
+    'nvm'                   # Node version manager (Node is used by neovim)
+    'find-the-command'      # Shows list of packages for unknown command
+    'udiskie'               # Utility for automounting USBs
+
+    'dockerfile-language-server-bin' # Docker language server
+    'ltex-ls-bin'           # Latex/Markdown/Org language server
+    'yaml-language-server'  # YAML lang server
+    'vscode-langservers-extracted' # JSON LSP
+
+    # Fonts
+    'ttf-hack-nerd'         # Nerd font for terminal
+    'ttf-roboto-mono-nerd'  # Roboto Nerd font for UI
+    'ttf-material-icons-git' # Googles Material Icons
+)
+
