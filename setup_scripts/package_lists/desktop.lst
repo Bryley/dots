@@ -1,0 +1,13 @@
+hyprland                # Hyprland window manager
+xdg-desktop-portal-hyprland # Links with DBus so allows for better application communication
+kitty                   # Terminal Emulator
+waybar-hyprland         # Status bar for OS
+swww                    # Animated wallpapers at runtime
+rofi-lbonn-wayland      # Application launcher need: (yay -S --mflags "--nocheck" rofi-lbonn-wayland)
+
+imagemagick             # Image manipulation tool
+grim                    # Screenshot tool
+slurp                   # Handy tool for selecting region (eg screenshots)
+
+wl-clipboard            # Clipboard for wayland
+udiskie                 # Better handling for automounting

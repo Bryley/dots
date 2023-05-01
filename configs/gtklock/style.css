@@ -1,0 +1,24 @@
+window {
+    background-image: url("../../wallpapers/wallpaper.blur");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: #222222;
+    font-family: Inter;
+}
+
+/* TODO light and dark mode */
+#window-box {
+    padding: 2em;
+    border-radius: 20px;
+    background-color: #222222;
+    color: #dddddd;
+}
+
+#clock-label {
+    font-weight: bold;
+}
+
+#error-label {
+    color: #ff0033;
+}

@@ -1,0 +1,21 @@
+// vim: ft=jsonc
+{
+    "layer": "top",
+    "position": "bottom",
+    "modules-left": ["clock", "clock#date"],
+    "modules-center": ["wlr/workspaces"],
+    "clock": {
+        "interval": 5,
+        "format": "{:%OI:%M %p}"
+    },
+    "clock#date": {
+        "interval": 60,
+        "format": "{:%a %e %b %Y}",
+        "format-alt": "{:%Y-%m-%d}",
+        // TODO Calendar is not working
+        "tooltip-format": "<tt><small>{calendar}</small></tt>",
+        "calendar": {
+            "mode": "month"
+        }
+    }
+}

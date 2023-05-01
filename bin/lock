@@ -1,0 +1,12 @@
+#!/bin/bash
+
+DOTDIR=$(_get_dot_dir)
+
+ARGS="--style $DOTDIR/configs/gtklock/style.css --time-format \"%-I:%M %p\""
+
+if [ "$1" == "debug" ]; then
+    GTK_DEBUG=interactive eval "gtklock $ARGS -li"
+    exit 0
+fi
+eval "gtklock $ARGS"
+

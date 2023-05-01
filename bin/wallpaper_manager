@@ -1,0 +1,13 @@
+#!/bin/bash
+
+CMD=$1
+
+if [ "$CMD" == "start" ]; then
+    # Starts the daemon
+    swww query
+    if [ $? -eq 1 ] ; then
+        swww init
+        sleep 2.5
+    fi
+    swww img $DOT_DIR/wallpapers/wallpaper.jpeg
+fi

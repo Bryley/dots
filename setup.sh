@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DOT_DIR=$(dirname $(readlink -f ${BASH_SOURCE[0]}))
+export DOT_DIR=$(dirname $(readlink -f ${BASH_SOURCE[0]}))
 
 source $DOT_DIR/scripts/rich.sh
 
@@ -12,4 +12,10 @@ echo -e " ${C_PURP}╰───────────────────�
 echo -e ""
 
 # echo -e "We firstly need to install all the nessessary Arch packages to get the dotfiles up and running"
-bash $DOT_DIR/scripts/install.sh
+bash $DOT_DIR/setup_scripts/install.sh
+
+echo $?
+
+bash $DOT_DIR/setup_scripts/symlinks.sh
+
+echo $?

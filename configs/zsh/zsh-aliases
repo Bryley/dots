@@ -1,0 +1,24 @@
+# File contains aliases crated by me
+
+# Handy alias function for changing directory to fuzzy file
+function f() {
+    cd $(fd --hidden --type directory --exclude node_modules --exclude .git | fzf)
+}
+function ff() {
+    cd $(dirname $(fd --hidden --exclude node_modules --exclude .git | fzf))
+}
+alias vim="nvim"
+alias vimdiff="nvim -d"
+alias ls="exa --icons --color always"
+alias t="tmux -2"
+alias clipboard="xsel --clipboard"      # stdin to clipboard ('pwd | clipboard')
+alias less="less -R"                    # Use color if available
+
+# Opens the git project url in the browser
+function gitopen() {
+    xdg-open $(git remote get-url origin | sed 's;:;/;' | sed 's;^git@;https://;' | sed 's;.git$;;')
+}
+
+# Python aliases
+alias python="python3.9"                # Make python 3.9 default version.
+alias activate="source ./.venv/bin/activate"
