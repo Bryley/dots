@@ -1,4 +1,4 @@
-hyprland                # Hyprland window manager
+hyprland-git            # Hyprland window manager (TODO need hyprland-nvidia-git for nvidia)
 xdg-desktop-portal-hyprland # Links with DBus so allows for better application communication
 kitty                   # Terminal Emulator
 waybar-hyprland         # Status bar for OS

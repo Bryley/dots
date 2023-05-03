@@ -4,6 +4,9 @@
     "position": "bottom",
     "modules-left": ["clock", "clock#date"],
     "modules-center": ["wlr/workspaces"],
+    "wlr/workspaces": {
+        "all-outputs": true,
+    },
     "clock": {
         "interval": 5,
         "format": "{:%OI:%M %p}"

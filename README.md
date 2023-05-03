@@ -11,6 +11,8 @@ TODO move the bin folder in this directory to zsh config when it moves
 
 TODO:
  - [ ] Auto setup
+ - [ ] Automatically make pacman have colors
+ - [ ] Split monitors
  - [ ] rofi
  - [ ] finish waybar
  - [ ] Fix up kitty themes to make it more similar to neovim theme
