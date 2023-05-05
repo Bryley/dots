@@ -1,0 +1,14 @@
+@import url("./theme-colors.css");
+
+* {
+    font-family: Inter;
+}
+
+window#waybar {
+    background: @c0;
+    color: @cf;
+}
+
+#workspaces button {
+    color: @cf;
+}
