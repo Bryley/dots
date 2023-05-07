@@ -2,6 +2,8 @@
 @define-color cn2 rgb(72,77,78);
 @define-color cn1 rgb(64,69,70);
 @define-color c0 rgb(55,61,62);
+@define-color c0a rgba(55,61,62,0.6);
 @define-color c1 rgb(46,53,54);
 @define-color c2 rgb(37,44,45);
 @define-color cf rgb(255,255,255);
+@define-color cp #3498DB;

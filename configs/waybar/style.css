@@ -2,13 +2,28 @@
 
 * {
     font-family: Inter;
+    font-weight: 600;
 }
 
 window#waybar {
-    background: @c0;
+    background: @c0a;
     color: @cf;
+}
+
+widget {
+    background: @c2;
+    padding-left: 100px;
+    border-radius: 10px;
+    border: solid 2px @cp
+}
+widget > * {
+    padding: 0 20px;
 }
 
 #workspaces button {
     color: @cf;
+}
+
+#workspaces button.active {
+    color: @cp;
 }

@@ -2,23 +2,52 @@
 {
     "layer": "top",
     "position": "bottom",
-    "modules-left": ["clock", "clock#date"],
-    "modules-center": ["wlr/workspaces"],
-    "wlr/workspaces": {
-        "all-outputs": true,
-    },
+    "modules-left": [
+        "clock",
+        "clock#date"
+    ],
+    "modules-center": [
+        "wlr/workspaces"
+    ],
+    "modules-right": [
+        "network",
+        "wireplumber",
+        "battery",
+    ],
+    "spacing": 15,
     "clock": {
         "interval": 5,
-        "format": "{:%OI:%M %p}"
+        "format": "    {:%OI:%M %p}"
     },
     "clock#date": {
         "interval": 60,
-        "format": "{:%a %e %b %Y}",
-        "format-alt": "{:%Y-%m-%d}",
+        "format": "    {:%a %e %b %Y}",
+        "format-alt": "    {:%Y-%m-%d}",
         // TODO Calendar is not working
         "tooltip-format": "<tt><small>{calendar}</small></tt>",
         "calendar": {
             "mode": "month"
         }
-    }
+    },
+    "wlr/workspaces": {
+        "all-outputs": true,
+        "on-click": "activate",
+        "active-only": false,
+        "sort-by-number": true,
+    },
+    "network": {
+        "interval": 5,
+        "format-icons": {
+            "wifi": " ",
+            "ethernet": "󰈀 ",
+            "disconnected": "󱚵 ",
+        },
+        "format-wifi": "{icon}   {essid}",
+        "format-ethernet": "{icon}   Ethernet",
+        "format-disconnected": "{icon}   Disconnected"
+    },
+    "wireplumber": {
+        "format": "󰕾   {volume}%",
+        "format-muted": "󰸈 ",
+    },
 }
