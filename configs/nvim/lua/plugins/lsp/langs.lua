@@ -98,9 +98,10 @@ lsp.volar.setup({
 	capabilities = capabilities,
 	on_attach = on_attach,
 })
-lsp.gopls.setup {
-    capabilities = capabilities,
-}
+lsp.hls.setup({
+	capabilities = capabilities,
+	on_attach = on_attach,
+})
 lsp.yamlls.setup {
     capabilities = capabilities,
     settings = {

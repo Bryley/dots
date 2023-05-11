@@ -11,7 +11,7 @@
     ],
     "modules-right": [
         "network",
-        "wireplumber",
+        // "wireplumber",
         "battery",
     ],
     "spacing": 15,

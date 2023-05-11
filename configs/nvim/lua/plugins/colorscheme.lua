@@ -1,6 +1,6 @@
--- local colorscheme = "onedark"
+local colorscheme = "onedark"
 -- local colorscheme = "onedarker"
-local colorscheme = "catppuccin-macchiato"
+-- local colorscheme = "catppuccin-macchiato"
 
 local function config()
 	vim.cmd([[colorscheme ]] .. colorscheme)
@@ -22,7 +22,12 @@ return {
 		cond = function()
 			return "onedark" == colorscheme
 		end,
-		config = config,
+		config = function ()
+            require("onedark").setup({
+                style='darker'
+            })
+		    config()
+		end,
 	},
     {
         "lunarvim/onedarker.nvim",

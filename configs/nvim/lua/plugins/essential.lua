@@ -137,7 +137,13 @@ return {
         config = true
     },
     {
-        dir = "~/Documents/coding/neovim-plugins/neoai",
+        'samodostal/image.nvim',
+        dependencies = {
+            'nvim-lua/plenary.nvim'
+        },
+    },
+    {
+        dir = "~/Documents/personal/neovim-plugins/neoai",
         dev = true,
         cmd = { "NeoAI" },
         lazy = false,

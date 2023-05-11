@@ -11,13 +11,21 @@ alias vim="nvim"
 alias vimdiff="nvim -d"
 alias ls="exa --icons --color always"
 alias t="tmux -2"
-alias clipboard="xsel --clipboard"      # stdin to clipboard ('pwd | clipboard')
+alias clipboard="wl-copy"      # stdin to clipboard ('pwd | clipboard')
 alias less="less -R"                    # Use color if available
 
 # Opens the git project url in the browser
 function gitopen() {
     xdg-open $(git remote get-url origin | sed 's;:;/;' | sed 's;^git@;https://;' | sed 's;.git$;;')
 }
+
+function remind() {
+  local time="$1"
+  local message="$2"
+
+  echo "notify-send \"$message\"" | at $time
+}
+
 
 # Python aliases
 alias python="python3.9"                # Make python 3.9 default version.
