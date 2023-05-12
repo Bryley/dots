@@ -143,7 +143,7 @@ return {
                     { name = "buffer",  keyword_length = 3 },
                 }),
                 experimental = {
-                    ghost_text = true,
+                    ghost_text = {},
                 },
             })
         end,
