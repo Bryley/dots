@@ -113,12 +113,6 @@ return {
         config = true,
     },
     {
-        "b0o/schemastore.nvim",
-        dependencies = {
-            "neovim/nvim-lspconfig",
-        },
-    },
-    {
         -- Illuminates same word under cursor
         "RRethy/vim-illuminate",
         config = function()
