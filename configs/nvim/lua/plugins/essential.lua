@@ -68,6 +68,7 @@ return {
                 file_ignore_patterns = {
                     ".venv",
                     "node_modules",
+                    "vendor",
                 },
             },
         },

@@ -9,7 +9,7 @@ return {
 				"DapBreakpointCondition",
 				{ text = " ", texthl = "DiagnosticFloatingInfo", linehl = "", numhl = "" }
 			)
-			vim.fn.sign_define("DapStopped", { text = " ", texthl = "", linehl = "TermCursor", numhl = "" })
+			vim.fn.sign_define("DapStopped", { text = "󰁙 ", texthl = "", linehl = "TermCursor", numhl = "" })
 
 			local dap = require("dap")
 			-- TODO make sure the virtual env is setup before trying
@@ -43,4 +43,11 @@ return {
 			require("dapui").setup()
 		end,
 	},
+        {
+        "leoluz/nvim-dap-go",
+        config = function ()
+            require("dap-go").setup()
+        end
+
+    }
 }

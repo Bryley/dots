@@ -1,10 +1,16 @@
 
 export EDITOR="nvim"
-export TERMINAL="kitty"
-export TERM=$TERMINAL
 export CLICOLOR=1                   # Adds colored output
 export LSCOLORS=ExFxCxDxBxegedabagacad # ls command colored output
 export FZF_DEFAULT_OPTS='--height 40% --reverse'
+
+if [ -z "$TMUX" ]; then
+    export TERM=xterm-kitty
+else
+    export TERM=tmux-256color
+fi
+
+export TERMINAL="kitty"
 
 # For Jupyterlab extensions to work
 export JUPYTERLAB_DIR=$HOME/.local/share/jupyter/lab
@@ -31,12 +37,16 @@ export PATH=$GOPATH/bin:$PATH
 export PATH=$HOME/.local/bin:$PATH
 
 # pnpm
-export PNPM_HOME="/home/bryley/.local/share/pnpm"
+export PNPM_HOME="$HOME/.local/share/pnpm"
 export PATH="$PNPM_HOME:$PATH"
 # pnpm end
 
+# Rust Cargo bin
+export PATH=$HOME/.cargo/bin:$PATH
+
 export DOT_DIR=$(dirname $(dirname $(readlink -f $ZDOTDIR)))
 export PATH=$DOT_DIR/bin:$PATH
+
 
 
 # This is for Node version manager
