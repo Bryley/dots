@@ -35,6 +35,7 @@ return {
 				r = { "<cmd>Telescope registers<cr>", "Registers" },
 				k = { "<cmd>Telescope keymaps<cr>", "Keymaps" },
 				C = { "<cmd>Telescope commands<cr>", "Commands" },
+				j = { "<cmd>Telescope jumplist<cr>", "Jumplist" },
 			},
 			l = {
 				name = "LSP",

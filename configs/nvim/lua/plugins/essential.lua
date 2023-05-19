@@ -55,6 +55,7 @@ return {
             "<leader>fr",
             "<leader>fk",
             "<leader>fC",
+            "<leader>fj",
         },
         lazy = false,
         opts = {
