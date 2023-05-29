@@ -43,11 +43,10 @@ return {
 			require("dapui").setup()
 		end,
 	},
-        {
+    {
         "leoluz/nvim-dap-go",
         config = function ()
             require("dap-go").setup()
         end
-
-    }
+    },
 }

@@ -4,9 +4,9 @@ local navic = require("nvim-navic")
 
 local capabilities = cmp.default_capabilities()
 local on_attach = function(client, bufnr)
-	if client.server_capabilities.documentSymbolProvider then
-		navic.attach(client, bufnr)
-	end
+    if client.server_capabilities.documentSymbolProvider then
+        navic.attach(client, bufnr)
+    end
 end
 
 -- If you need any more language setups look at:
@@ -33,72 +33,76 @@ lsp.lua_ls.setup({
                     "setup",
                     "lazy_setup",
                     "lazy_teardown",
-                }
-            }
-        }
+                },
+            },
+        },
     },
 })
-lsp.tsserver.setup({
-	capabilities = capabilities,
-	on_attach = on_attach,
-})
+-- lsp.tsserver.setup({
+-- 	capabilities = capabilities,
+-- 	on_attach = on_attach,
+-- })
 lsp.pyright.setup({
-	capabilities = capabilities,
-	on_attach = on_attach,
-	settings = {
-		python = {
-			analysis = {
-				autoSearchPaths = true,
-				diagnosticMode = "workspace",
-				useLibraryCodeForTypes = true,
-			},
-		},
-	},
+    capabilities = capabilities,
+    on_attach = on_attach,
+    settings = {
+        python = {
+            analysis = {
+                autoSearchPaths = true,
+                diagnosticMode = "workspace",
+                useLibraryCodeForTypes = true,
+            },
+        },
+    },
+})
+lsp.vtsls.setup({
+    capabilities = capabilities,
+    on_attach = on_attach,
 })
 lsp.svelte.setup({
-	capabilities = capabilities,
-	on_attach = on_attach,
+    capabilities = capabilities,
+    on_attach = on_attach,
 })
 lsp.rust_analyzer.setup({
-	capabilities = capabilities,
-	on_attach = on_attach,
+    capabilities = capabilities,
+    on_attach = on_attach,
 })
 lsp.dockerls.setup({
-	capabilities = capabilities,
-	on_attach = on_attach,
+    capabilities = capabilities,
+    on_attach = on_attach,
 })
 lsp.jsonls.setup({
-	capabilities = capabilities,
-	on_attach = on_attach,
-	settings = {
-		json = {
-			schemas = require("schemastore").json.schemas(),
-			validate = { enable = true },
-		},
-	},
+    capabilities = capabilities,
+    on_attach = on_attach,
+    settings = {
+        json = {
+            schemas = require("schemastore").json.schemas(),
+            validate = { enable = true },
+        },
+    },
 })
 lsp.yamlls.setup({
-	capabilities = capabilities,
-	on_attach = on_attach,
-	settings = {
-		yaml = {
-			schemas = require("schemastore").yaml.schemas(),
-		},
-	},
+    capabilities = capabilities,
+    on_attach = on_attach,
+    settings = {
+        yaml = {
+            schemas = require("schemastore").yaml.schemas(),
+        },
+    },
 })
 lsp.ltex.setup({
-	capabilities = capabilities,
-	on_attach = on_attach,
+    capabilities = capabilities,
+    on_attach = on_attach,
 })
 lsp.gopls.setup({
-	capabilities = capabilities,
-	on_attach = on_attach,
+    capabilities = capabilities,
+    on_attach = on_attach,
 })
 lsp.volar.setup({
-	capabilities = capabilities,
-	on_attach = on_attach,
+    capabilities = capabilities,
+    on_attach = on_attach,
 })
 lsp.hls.setup({
-	capabilities = capabilities,
-	on_attach = on_attach,
+    capabilities = capabilities,
+    on_attach = on_attach,
 })

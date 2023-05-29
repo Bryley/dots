@@ -128,15 +128,31 @@ return {
         config = true,
     },
     {
-        'akinsho/git-conflict.nvim',
+        "akinsho/git-conflict.nvim",
         version = "*",
-        config = true
+        config = true,
     },
     {
-        'samodostal/image.nvim',
-        dependencies = {
-            'nvim-lua/plenary.nvim'
+        "cameron-wags/rainbow_csv.nvim",
+        config = true,
+        ft = {
+            "csv",
+            "tsv",
+            "csv_semicolon",
+            "csv_whitespace",
+            "csv_pipe",
+            "rfc_csv",
+            "rfc_semicolon",
         },
+        cmd = {
+            "RainbowDelim",
+            "RainbowDelimSimple",
+            "RainbowDelimQuoted",
+            "RainbowMultiDelim",
+        },
+    },
+    {
+        "MattesGroeger/vim-bookmarks",
     },
     {
         dir = "~/Documents/personal/neovim-plugins/neoai",

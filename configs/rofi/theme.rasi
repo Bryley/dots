@@ -1,0 +1,11 @@
+* {
+	background: #123456;
+}
+
+element {
+    background: #123456;
+}
+
+element-icon {
+    size: 1.5em;
+}

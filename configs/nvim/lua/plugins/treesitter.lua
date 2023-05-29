@@ -39,6 +39,15 @@ return {
                     -- },
                     include_surrounding_whitespace = true,
                 },
+                swap = {
+                    enable = true,
+                    swap_next = {
+                        ["cxl"] = "@parameter.inner",
+                    },
+                    swap_previous = {
+                        ["cxh"] = "@parameter.inner",
+                    },
+                },
             },
         })
     end,
