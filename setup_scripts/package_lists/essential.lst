@@ -1,3 +1,4 @@
+gum                     # Better shell interaction
 networkmanager          # Manages networking
 net-tools               # Useful cmd tools for networking
 nm-connection-editor    # A basic GTK GUI for network settings # OPTIONAL

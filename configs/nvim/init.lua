@@ -1,14 +1,5 @@
 require("options")
 
--- TODO LIST:
--- [X] Smooth scrolling
--- [X] LSP and Null ls
--- [X] Telescope
--- [X] Colorscheme select telescope
--- [X] Git signs
--- [X] Visual mode block keep
--- [X] control backspace
-
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
 	vim.fn.system({
@@ -56,3 +47,4 @@ require("lazy").setup("plugins", {
 })
 require("keybinds")
 require("autocmds")
+require("quickfix")

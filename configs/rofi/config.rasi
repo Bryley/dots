@@ -5,4 +5,8 @@ configuration {
     font: "Inter Medium 15";
 }
 
-@theme "~/.config/rofi/theme.rasi"
+// @theme "~/.config/rofi/theme.rasi"
+
+inputbar {
+    children: [entry];
+}

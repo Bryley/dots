@@ -180,4 +180,9 @@ return {
             vim.notify = require("notify")
         end,
     },
+    {
+        -- Better quickfix window, with previews and fuzzy finding
+        'kevinhwang91/nvim-bqf',
+        ft="qf"
+    },
 }
