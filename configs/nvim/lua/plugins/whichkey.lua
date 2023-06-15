@@ -43,6 +43,7 @@ return {
 				f = { "<cmd>lua vim.lsp.buf.format()<cr>", "Format" },
 				r = { "<cmd>lua vim.lsp.buf.rename()<cr>", "Rename" },
 				n = { "<cmd>lua require('nvim-navbuddy').open()<cr>", "Navbuddy" },
+				d = { "<cmd>lua vim.diagnostic.setqflist()<cr>", "Diagnostics" },
 			},
 			t = {
 				name = "Table Mode",
