@@ -98,6 +98,14 @@ lsp.gopls.setup({
     capabilities = capabilities,
     on_attach = on_attach,
 })
+lsp.bufls.setup({
+    capabilities = capabilities,
+    on_attach = on_attach,
+})
+lsp.nil_ls.setup({
+    capabilities = capabilities,
+    on_attach = on_attach,
+})
 lsp.volar.setup({
     capabilities = capabilities,
     on_attach = on_attach,
