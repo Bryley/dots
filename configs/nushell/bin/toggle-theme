@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Make the switch look nicer (optional but feels great)
+niri msg action do-screen-transition >/dev/null 2>&1 || true
+
+if [[ "$(uname -s)" == "Darwin" ]]; then
+    cur="$(osascript -e 'tell application "System Events" to get dark mode' 2>/dev/null || echo "false")"
+    if [[ "$cur" == "true" ]]; then
+        tmux source-file "$HOME/.config/tmux/tmux-light.conf" || true
+        osascript -e 'tell application "System Events" to set dark mode to false'
+    else
+        tmux source-file "$HOME/.config/tmux/tmux.conf" || true
+        osascript -e 'tell application "System Events" to set dark mode to true'
+    fi
+    exit 0
+fi
+
+cur="$(dconf read /org/gnome/desktop/interface/color-scheme 2>/dev/null || echo "'prefer-dark'")"
+if [[ "$cur" == "'prefer-dark'" ]]; then
+    tmux source-file "$HOME/.config/tmux/tmux-light.conf" || true
+    dconf write /org/gnome/desktop/interface/color-scheme "'prefer-light'"
+else
+    tmux source-file "$HOME/.config/tmux/tmux.conf" || true
+    dconf write /org/gnome/desktop/interface/color-scheme "'prefer-dark'"
+fi

@@ -1,0 +1,12 @@
+FROM ubuntu:latest
+
+ENV container=docker
+
+RUN apt-get update -y && apt-get install -y sudo systemd systemd-sysv dbus
+RUN useradd -m -s /bin/bash tester
+RUN echo 'tester ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/tester
+
+WORKDIR /workspace
+
+STOPSIGNAL SIGRTMIN+3
+CMD ["/sbin/init"]

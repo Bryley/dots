@@ -1,0 +1,44 @@
+#!/usr/bin/env nu
+
+def main [] {
+    if ((ps --long | where command =~ "monitor-daemon" | length) > 1) {
+        return "monitor-daemon is already running"
+    }
+
+    ^niri msg --json event-stream | from json --objects | each --flatten {|event|
+        if ("WorkspacesChanged" in $event) {
+            update_monitors
+        }
+        null
+    } | ignore
+}
+
+def update_monitors [] {
+    let outputs = (^niri msg -j outputs | from json | transpose name info | flatten info)
+    let internal = ($outputs | where name =~ '^eDP' | get 0?)
+    let externals = ($outputs | where name !~ '^eDP' | sort-by name)
+    let primary = ($externals | get 0?)
+    let names = ($outputs | get name)
+
+    print $"Detected monitor changes: internal: ($internal), externals: ($externals)"
+
+    if $primary == null {
+        if $internal != null {
+            ^niri msg output $internal.name position set 0 0
+            ^niri msg action focus-monitor $internal.name
+        }
+        swww img --outputs ($names | str join ',') ~/wallpaper
+        return
+    }
+
+    ^niri msg output $primary.name position set 0 0
+
+    if $internal != null {
+        let laptop_x = ((($primary.logical.width - $internal.logical.width) / 2) | math round)
+        let laptop_y = ($primary.logical.height | math round)
+        ^niri msg output $internal.name position set $laptop_x $laptop_y
+    }
+
+    ^niri msg action focus-monitor $primary.name
+    swww img --outputs ($names | str join ',') ~/wallpaper
+}

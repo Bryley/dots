@@ -1,0 +1,17 @@
+[user]
+    email = bryleyhayter@gmail.com
+    name = Bryley Hayter
+
+[pull]
+    rebase = true
+    ff = only
+
+[merge]
+    tool = nvimdiff
+    conflictstyle = diff3
+
+[mergetool]
+    keepBackup = false
+
+[init]
+    defaultBranch = main

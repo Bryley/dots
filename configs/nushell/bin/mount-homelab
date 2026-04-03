@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+MOUNTPOINT="$HOME/homelab"
+REMOTE="bryley@homelab:/srv/storage"
+
+mkdir -p "$MOUNTPOINT"
+
+if mountpoint -q "$MOUNTPOINT"; then
+  exit 0
+fi
+
+exec sshfs "$REMOTE" "$MOUNTPOINT" \
+  -o reconnect \
+  -o ServerAliveInterval=15 \
+  -o ServerAliveCountMax=3 \
+  -o idmap=user
