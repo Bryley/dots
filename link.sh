@@ -32,7 +32,7 @@ link() {
         log_warn "Link '$target' already exists, replacing it..."
         rm "$target"
     elif [[ -e "$target" ]]; then
-        log_error "'$target' already exists, move it somewhere else and run the command again"
+        log_error "'$target' already exists, move it somewhere else and run the './link.sh' command again"
         return
     fi
 
@@ -47,7 +47,6 @@ link "nushell" "$HOME/.config/nushell"
 link "opencode" "$HOME/.config/opencode"
 link "presenterm" "$HOME/.config/presenterm"
 link "quickshell" "$HOME/.config/quickshell"
-link "systemd" "$HOME/.config/systemd"
 link "television" "$HOME/.config/television"
 link "tmux" "$HOME/.config/tmux"
 link "wofi" "$HOME/.config/wofi"

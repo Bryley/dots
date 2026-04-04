@@ -5,9 +5,11 @@ both local, and remote.
 
 ## Installing
 
-A basic install script is located at `./install.sh`. Simply run that on the
-computer you want to set up. It should work for both Ubuntu (VPS) and Fedora
-(Local).
+1. Clone the repo with `git clone https://github.com/Bryley/dots.git`
+2. Run `sudo ./install.sh` script inside the directory.
+3. It will print out a public key, put that on your GitHub account.
+4. Update the remote of the dots repo.
+5. Clone additional notes and setup anything else you might need.
 
 ## VPS setup
 

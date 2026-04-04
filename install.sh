@@ -45,7 +45,7 @@ log_error() {
 }
 
 if [[ "$EUID" -ne 0 ]]; then
-    log_error "Please run with sudo or as root."
+    log_error "Please run with sudo as the user you want to install under."
     exit 1
 fi
 
@@ -129,49 +129,6 @@ EOF
     fi
 }
 
-setup_opencode_service_ubuntu() {
-    if [[ "${ID:-}" != "ubuntu" ]]; then
-        return
-    fi
-
-    if ! command -v loginctl &> /dev/null || ! command -v systemctl &> /dev/null; then
-        log_error "systemd tools not available (loginctl/systemctl missing)."
-        exit 1
-    fi
-
-    if [[ ! -d /run/systemd/system ]]; then
-        log_error "systemd is not running. Cannot enable opencode service."
-        exit 1
-    fi
-
-    local uid runtime_dir bus_addr
-    uid="$(id -u "$TARGET_USER")"
-    runtime_dir="/run/user/$uid"
-    bus_addr="unix:path=$runtime_dir/bus"
-
-    log_info "Configuring opencode user service for $TARGET_USER"
-
-    loginctl enable-linger "$TARGET_USER"
-    systemctl start "user@${uid}.service" || true
-
-    if [[ ! -d "$runtime_dir" ]]; then
-        log_error "Runtime dir not ready: $runtime_dir"
-        exit 1
-    fi
-
-    if ! sudo -u "$TARGET_USER" XDG_RUNTIME_DIR="$runtime_dir" DBUS_SESSION_BUS_ADDRESS="$bus_addr" systemctl --user daemon-reload; then
-        log_error "Failed to reload user systemd daemon."
-        exit 1
-    fi
-
-    if ! sudo -u "$TARGET_USER" XDG_RUNTIME_DIR="$runtime_dir" DBUS_SESSION_BUS_ADDRESS="$bus_addr" systemctl --user enable --now opencode.service; then
-        log_error "Failed to enable/start opencode user service."
-        exit 1
-    fi
-
-    log_info "Enabled opencode.service for $TARGET_USER"
-}
-
 setup_ssh_key() {
     local key_path pub_path
     key_path="/home/$TARGET_USER/.ssh/id_ed25519"
@@ -232,7 +189,6 @@ sudo -u "$TARGET_USER" bash "$SCRIPT_DIR/link.sh"
 # Install global mise packages from config
 sudo -u "$TARGET_USER" mise install
 
-setup_opencode_service_ubuntu
 setup_ssh_key
 
 log_info "Done installing, here is a check list of things you might want to do next:"
