@@ -1,0 +1,29 @@
+[metadata]
+name = "git-repos"
+requirements = ["fd", "git"]
+description = "Fast local git repository picker"
+
+[source]
+command = '''root="$PWD"; fd -g .git -HL -t d -d 10 --prune "$root" -E "Library" -E "Application Support" -E ".nix-defexpr" -E ".cache" -E ".local" -E ".bun" -E ".npm" -E ".rustup" -E "vendor" -E "node_modules" -E "go/pkg" -E ".local/share/nvim" --exec dirname "{}" | while IFS= read -r repo; do rel="${repo#$root/}"; if [ "$repo" = "$root" ]; then rel="."; fi; short=$(printf "%s\n" "$rel" | awk -F/ '{ if (NF > 4) { print ".../" $(NF-3) "/" $(NF-2) "/" $(NF-1) "/" $NF } else { print $0 } }'); printf "%s\t%s\n" "$short" "$repo"; done'''
+display = "{split:\t:0}"
+output = "{split:\t:1}"
+frecency = true
+
+[preview]
+command = "cd {split:\t:1} ; git log -n 40 --oneline --decorate --color"
+
+[keybindings]
+enter = "actions:cd"
+ctrl-e = "actions:edit"
+
+[actions.cd]
+description = "Open a new shell in the selected repository"
+command = "cd {split:\t:1} ; $SHELL"
+shell = "bash"
+mode = "execute"
+
+[actions.edit]
+description = "Open the repository in editor"
+command = "${EDITOR:-vim} {split:\t:1}"
+shell = "bash"
+mode = "execute"

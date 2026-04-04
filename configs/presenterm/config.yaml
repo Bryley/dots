@@ -1,0 +1,12 @@
+defaults:
+  theme: terminal-dark
+  # theme: dark
+
+export:
+  dimensions:
+    columns: 160
+    rows: 90
+
+snippet:
+  exec:
+    enable: true

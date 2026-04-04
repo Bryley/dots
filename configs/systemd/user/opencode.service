@@ -8,6 +8,7 @@ Type=simple
 WorkingDirectory=%h
 Environment=HOME=%h
 Environment=PATH=%h/.local/share/mise/shims:%h/.local/bin:/usr/local/bin:/usr/bin:/bin
+Environment=GIT_SSH_COMMAND=ssh -i %h/.ssh/id_ed25519 -o IdentitiesOnly=yes -o BatchMode=yes -o StrictHostKeyChecking=accept-new
 ExecStart=%h/.local/share/mise/shims/opencode serve --hostname 0.0.0.0 --port 4444
 Restart=on-failure
 RestartSec=2

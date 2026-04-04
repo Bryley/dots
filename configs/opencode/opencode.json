@@ -1,0 +1,58 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "provider": {
+    "ollama": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "Ollama",
+      "options": {
+        "baseURL": "http://localhost:11434/v1"
+      },
+      "models": {
+        "gpt-oss:20b": {
+          "name": "gpt-oss:20b"
+        }
+      }
+    }
+  },
+  "agent": {
+    "build": {
+      "prompt": "When the user asks to create a git commit or update jj, always read the current changes first (git status, git diff, and recent git or jj log) and then propose a concise message in my preferred style. My preferred style is a short lowercase type prefix and a plain action summary, e.g. `config: add lock file ignores to telescope`. Keep it 6-10 words, use verbs like add/update/fix/remove/rename, and avoid extra punctuation. Include a body with simple dotpoint lines describing each change. For git commits, use a multi-line message with a blank line between subject and body. For jj, include the body in `jj desc` using `-m` with a multi-line message. If I asked for the command, output the exact `git commit -m \"...\"` or `jj desc -m \"...\"` command that matches the message and body."
+    }
+  },
+  "permission": {
+    "read": {
+      "*": "allow",
+      "**/*.env": "ask",
+      "**/*secret*": "ask",
+      "**/*secret*/**": "ask",
+      "**/history.txt": "ask",
+      "**/*.p8": "ask"
+    },
+    "bash": {
+      "*": "allow",
+      "sudo *": "ask",
+      "rm *": "ask",
+      "mv *": "ask",
+      "chmod *": "ask",
+      "chown *": "ask",
+      "kill *": "ask",
+      "killall *": "ask",
+      "git push *": "ask",
+      "git commit *": "ask",
+      "git reset *": "ask",
+      "git checkout *": "ask",
+      "git rebase *": "ask",
+      "nix *": "ask",
+      "brew *": "ask",
+      "apt *": "ask",
+      "dnf *": "ask",
+      "pacman *": "ask",
+      "paru *": "ask",
+      "docker *": "ask",
+      "kubectl *": "ask"
+    },
+    "edit": "ask",
+    "apply_patch": "ask",
+    "write": "ask"
+  }
+}

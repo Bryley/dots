@@ -1,0 +1,16 @@
+# shell = "zsh"
+
+[shell_integration]
+fallback_channel = "files"
+
+[shell_integration.channel_triggers]
+"env" = ["export", "unset"]
+"dirs" = ["cd", "ls", "rmdir", "z"]
+"files" = ["cat", "less", "head", "tail", "nvim", "vim", "cp", "mv", "rm", "touch"]
+"git-branch" = ["git checkout", "git branch", "git merge", "git rebase", "git pull", "git push"]
+"git-diff" = ["git add", "git restore"]
+"git-log" = ["git log", "git show"]
+
+[shell_integration.keybindings]
+smart_autocomplete = "ctrl-t"
+command_history = "ctrl-r"

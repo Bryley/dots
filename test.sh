@@ -110,8 +110,9 @@ if [[ "$DISTRO" == "ubuntu" ]]; then
     sleep 2
     check "mise apt dots" "test -f /etc/apt/sources.list.d/mise.list"
     check "nushell apt dots" "test -f /etc/apt/sources.list.d/fury-nushell.list"
-    check "opencode service link" "test -L /home/tester/.config/systemd/user/opencode.service"
+    check "systemd link" "test -L /home/tester/.config/systemd"
     check "opencode service command" "grep -q 'ExecStart=.*opencode serve --hostname 0.0.0.0 --port 4444' /home/tester/.config/systemd/user/opencode.service"
+    check "opencode service ssh key env" "grep -q 'Environment=GIT_SSH_COMMAND=ssh -i %h/.ssh/id_ed25519 -o IdentitiesOnly=yes -o BatchMode=yes -o StrictHostKeyChecking=accept-new' /home/tester/.config/systemd/user/opencode.service"
     check "opencode process on 4444" "pgrep -u tester -f 'opencode serve --hostname 0.0.0.0 --port 4444' > /dev/null"
     check "port 4444 is reachable" "timeout 2 bash -lc '</dev/tcp/127.0.0.1/4444'"
 else

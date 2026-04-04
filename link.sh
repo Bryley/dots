@@ -40,11 +40,17 @@ link() {
     log_info "Setup link '$source' -> '$target'"
 }
 
-link "mise" "$HOME/.config/mise"
 link "kitty" "$HOME/.config/kitty"
+link "mise" "$HOME/.config/mise"
 link "niri" "$HOME/.config/niri"
 link "nushell" "$HOME/.config/nushell"
-link "tmux" "$HOME/.config/tmux"
+link "opencode" "$HOME/.config/opencode"
+link "presenterm" "$HOME/.config/presenterm"
+link "quickshell" "$HOME/.config/quickshell"
 link "systemd" "$HOME/.config/systemd"
+link "television" "$HOME/.config/television"
+link "tmux" "$HOME/.config/tmux"
+link "wofi" "$HOME/.config/wofi"
 
 link "git/.gitconfig" "$HOME/.gitconfig"
+link "wallpaper.png" "$HOME/wallpaper"

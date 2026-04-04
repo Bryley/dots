@@ -4,6 +4,11 @@ set -euo pipefail
 # Simple system bootstrap for SSH-friendly CLI usage.
 # Mise-managed tools (opencode, runtimes, LSP/MCP) live in configs/mise/...
 
+# TODO:
+# - [ ] add more symlinks
+# - [ ] actually install it onto the VPS
+# - [ ] setup openchamber properly
+
 packages=(
     git
     curl
@@ -82,13 +87,46 @@ install_ubuntu_debian() {
 }
 
 install_fedora() {
-    local packages_fedora=("${packages[@]}")
+    local packages_fedora=()
+    local pkg
 
-    packages_fedora=(${packages_fedora[@]/gnupg/gnupg2})
-    packages_fedora=(${packages_fedora[@]/libatomic1/libatomic})
-    packages_fedora=(${packages_fedora[@]/libstdc++6/libstdc++})
+    for pkg in "${packages[@]}"; do
+        case "$pkg" in
+            gnupg)
+                packages_fedora+=("gnupg2")
+                ;;
+            libatomic1)
+                packages_fedora+=("libatomic")
+                ;;
+            libstdc++6)
+                packages_fedora+=("libstdc++")
+                ;;
+            nushell)
+                ;;
+            *)
+                packages_fedora+=("$pkg")
+                ;;
+        esac
+    done
+
     dnf copr enable -y jdxcode/mise
     dnf install -y "${packages_fedora[@]}"
+
+    if dnf list --available nushell > /dev/null 2>&1; then
+        dnf install -y nushell
+    else
+        log_warn "nushell not found in current Fedora repos, adding fury-nushell repo"
+        cat > /etc/yum.repos.d/fury-nushell.repo <<'EOF'
+[gemfury-nushell]
+name=Gemfury Nushell Repo
+baseurl=https://yum.fury.io/nushell/
+enabled=1
+gpgcheck=0
+gpgkey=https://yum.fury.io/nushell/gpg.key
+EOF
+        dnf makecache -y
+        dnf install -y nushell
+    fi
 }
 
 setup_opencode_service_ubuntu() {
@@ -201,6 +239,6 @@ log_info "Done installing, here is a check list of things you might want to do n
 log_info "  - [ ] Install and setup Dokploy (if on VPS)"
 log_info "  - [ ] Install and setup Tailscale"
 log_info "  - [ ] Switch dots remote to SSH"
-printf "%s\n" "      git -C $SCRIPT_DIR remote set-url origin git@github.com:<your-user>/dots.git"
+printf "%s\n" "      git -C $SCRIPT_DIR remote set-url origin git@github.com:bryley/dots.git"
 log_info "  - [ ] Clone private notes vault"
-printf "%s\n" "      git clone git@github.com:<your-user>/notes.git /home/$TARGET_USER/notes"
+printf "%s\n" "      git clone git@github.com:bryley/notes.git /home/$TARGET_USER/notes"

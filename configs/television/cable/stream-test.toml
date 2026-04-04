@@ -1,0 +1,15 @@
+[metadata]
+name = "stream-test"
+description = "Emit incremental lines to verify source streaming"
+requirements = ["nu"]
+
+[source]
+shell = "nu"
+command = "for batch in 0..9 { let base = ($batch * 10000); for x in 1..10000 { let i = ($base + $x); print $\"line ($i)\" }; sleep 1sec }"
+display = "{}"
+output = "{}"
+no_sort = true
+frecency = false
+
+[preview]
+command = "printf 'selected: %s\n' {}"
