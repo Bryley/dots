@@ -40,6 +40,8 @@ link() {
     log_info "Setup link '$source' -> '$target'"
 }
 
+link "carapace" "$HOME/.config/carapace"
+link "hypr" "$HOME/.config/hypr"
 link "kitty" "$HOME/.config/kitty"
 link "mise" "$HOME/.config/mise"
 link "niri" "$HOME/.config/niri"

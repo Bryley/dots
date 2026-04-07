@@ -3,11 +3,10 @@ set -euo pipefail
 
 # Simple system bootstrap for SSH-friendly CLI usage.
 # Mise-managed tools (opencode, runtimes, LSP/MCP) live in configs/mise/...
-
+#
+#
 # TODO:
-# - [ ] add more symlinks
-# - [ ] actually install it onto the VPS
-# - [ ] setup openchamber properly
+# - [ ] Enable Exa `websearch` tool for Opencode using `OPENCODE_ENABLE_EXA=1` env var
 
 packages=(
     git

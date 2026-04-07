@@ -1,0 +1,6 @@
+# yaml-language-server: $schema=https://carapace.sh/schemas/command.json
+name: mise
+description: mise tool version manager
+parsing: disabled
+completion:
+  positionalany: ["$carapace.bridge.Bash([mise])"]
