@@ -1,0 +1,21 @@
+{
+  "lastChangelogVersion": "0.66.1",
+  "defaultProvider": "openai-codex",
+  "defaultModel": "gpt-5.3-codex",
+  "theme": "dark",
+  "packages": [
+    "npm:pi-web-access",
+    "npm:pi-vim",
+    "npm:pi-markdown-preview"
+  ],
+  "showHardwareCursor": false,
+  "editorPaddingX": 1,
+  "enabledModels": [
+    "openai-codex/gpt-5.3-codex",
+    "openai-codex/gpt-5.4",
+    "anthropic/claude-sonnet-4-6",
+    "anthropic/claude-opus-4-6",
+    "ollama/gemma4:e4b"
+  ],
+  "defaultThinkingLevel": "medium"
+}

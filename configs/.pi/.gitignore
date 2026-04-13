@@ -1,0 +1,15 @@
+# macOS
+.DS_Store
+
+# Pi runtime/cache artifacts
+cache/
+agent/sessions/
+agent/*.log
+agent/**/*.log
+
+# Sensitive local credentials
+agent/auth.json
+
+# Shared config intentionally tracked:
+# - agent/models.json
+# - agent/settings.json

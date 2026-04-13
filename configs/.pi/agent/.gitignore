@@ -1,0 +1,12 @@
+# Session transcripts / conversation history
+sessions/
+
+# Sensitive local credentials
+auth.json
+
+# Shared config intentionally tracked:
+# - models.json
+# - settings.json
+
+# Logs
+*.log

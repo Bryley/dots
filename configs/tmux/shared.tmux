@@ -4,9 +4,13 @@ set -g prefix C-a
 unbind C-b
 bind C-a send-prefix
 
-# Setup best color support
+# Setup terminal capabilities
 set-option -gs default-terminal "tmux-256color"
-set -as terminal-features ",xterm-256color:RGB,xterm-kitty:RGB"
+set -as terminal-features ",xterm-256color:RGB,xterm-kitty:RGB,xterm-kitty:extkeys"
+
+# Enable CSI-u/extended keys so Ctrl/Alt/Shift key combos reach apps in tmux
+set -s extended-keys on
+set -g extended-keys-format csi-u
 
 # Quicker Esc time (handy for neovim)
 set -sg escape-time 10

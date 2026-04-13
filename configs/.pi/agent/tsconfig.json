@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@mariozechner/pi-coding-agent": [
+        "/Users/bryley/.local/share/mise/installs/npm-mariozechner-pi-coding-agent/0.66.1/lib/node_modules/@mariozechner/pi-coding-agent/dist/index.d.ts"
+      ],
+      "@mariozechner/pi-coding-agent/*": [
+        "/Users/bryley/.local/share/mise/installs/npm-mariozechner-pi-coding-agent/0.66.1/lib/node_modules/@mariozechner/pi-coding-agent/dist/*"
+      ]
+    }
+  },
+  "include": ["extensions/**/*.ts", "extensions/**/*.d.ts"]
+}

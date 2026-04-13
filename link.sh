@@ -54,4 +54,5 @@ link "tmux" "$HOME/.config/tmux"
 link "wofi" "$HOME/.config/wofi"
 
 link "git/.gitconfig" "$HOME/.gitconfig"
+link ".pi" "$HOME/.pi"
 link "wallpaper.png" "$HOME/wallpaper"
