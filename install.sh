@@ -20,6 +20,8 @@ packages=(
     libatomic1
     libstdc++6
     sudo
+    ffmpeg
+    yt-dlp
     mise
     nushell
 )
