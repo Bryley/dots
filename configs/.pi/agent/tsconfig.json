@@ -9,10 +9,10 @@
     "baseUrl": ".",
     "paths": {
       "@mariozechner/pi-coding-agent": [
-        "/Users/bryley/.local/share/mise/installs/npm-mariozechner-pi-coding-agent/0.66.1/lib/node_modules/@mariozechner/pi-coding-agent/dist/index.d.ts"
+        "/Users/bryley/.local/share/mise/installs/npm-mariozechner-pi-coding-agent/latest/lib/node_modules/@mariozechner/pi-coding-agent/dist/index.d.ts"
       ],
       "@mariozechner/pi-coding-agent/*": [
-        "/Users/bryley/.local/share/mise/installs/npm-mariozechner-pi-coding-agent/0.66.1/lib/node_modules/@mariozechner/pi-coding-agent/dist/*"
+        "/Users/bryley/.local/share/mise/installs/npm-mariozechner-pi-coding-agent/latest/lib/node_modules/@mariozechner/pi-coding-agent/dist/*"
       ]
     }
   },
