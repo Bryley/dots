@@ -1,5 +1,7 @@
 import { VERSION, type ExtensionAPI, type SourceInfo, type Theme } from "@mariozechner/pi-coding-agent";
-import { basename, dirname } from "node:path";
+import { existsSync, readdirSync } from "node:fs";
+import { basename, dirname, join } from "node:path";
+import { homedir } from "node:os";
 
 const PI_LOGO = ["██████", "██  ██", "████  ██", "██    ██"] as const;
 
@@ -66,7 +68,30 @@ function dedupeAndSort(items: ResourceItem[]): ResourceItem[] {
   return [...byKey.values()].sort((a, b) => a.name.localeCompare(b.name));
 }
 
-function collectResources(pi: ExtensionAPI): ResourceSnapshot {
+function listCustomExtensions(cwd: string): ResourceItem[] {
+  const dirs = [join(homedir(), ".pi", "agent", "extensions"), join(cwd, ".pi", "extensions")];
+  const names: ResourceItem[] = [];
+
+  for (const dir of dirs) {
+    if (!existsSync(dir)) continue;
+
+    for (const entry of readdirSync(dir, { withFileTypes: true })) {
+      if (entry.isFile() && /\.(ts|js)$/i.test(entry.name)) {
+        names.push({ name: entry.name.replace(/\.(ts|js)$/i, ""), installed: false });
+      } else if (entry.isDirectory()) {
+        const idxTs = join(dir, entry.name, "index.ts");
+        const idxJs = join(dir, entry.name, "index.js");
+        if (existsSync(idxTs) || existsSync(idxJs)) {
+          names.push({ name: entry.name, installed: false });
+        }
+      }
+    }
+  }
+
+  return names;
+}
+
+function collectResources(pi: ExtensionAPI, cwd: string): ResourceSnapshot {
   const commandSources = pi
     .getCommands()
     .map((cmd) => ({ source: cmd.source, sourceInfo: cmd.sourceInfo }));
@@ -83,8 +108,10 @@ function collectResources(pi: ExtensionAPI): ResourceSnapshot {
     .map((x) => extractResourceItem(x.sourceInfo, "skill"))
     .filter((x): x is ResourceItem => Boolean(x));
 
+  const localExtensions = listCustomExtensions(cwd);
+
   return {
-    extensions: dedupeAndSort(extensionItems),
+    extensions: dedupeAndSort([...extensionItems, ...localExtensions]),
     skills: dedupeAndSort(skillItems),
   };
 }
@@ -138,7 +165,7 @@ export default function (pi: ExtensionAPI) {
   pi.on("session_start", async (_event, ctx) => {
     if (!ctx.hasUI) return;
 
-    const resources = collectResources(pi);
+    const resources = collectResources(pi, ctx.cwd);
 
     ctx.ui.setHeader((_tui, theme) => ({
       render(_width: number): string[] {

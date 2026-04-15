@@ -1,0 +1,17 @@
+{
+  "settings": {
+    "toolPrefix": "server",
+    "idleTimeout": 10
+  },
+  "mcpServers": {
+    "penpot": {
+      "url": "http://localhost:4401/mcp",
+      "lifecycle": "lazy",
+      "idleTimeout": 10
+    },
+    "pencil": {
+      "command": "/Applications/Pencil.app/Contents/Resources/app.asar.unpacked/out/mcp-server-darwin-arm64",
+      "args": ["--app", "desktop"]
+    }
+  }
+}

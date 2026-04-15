@@ -4,6 +4,8 @@ sessions/
 # Sensitive local credentials
 auth.json
 
+mcp-cache.json
+
 # Shared config intentionally tracked:
 # - models.json
 # - settings.json

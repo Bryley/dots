@@ -1,11 +1,13 @@
 {
-  "lastChangelogVersion": "0.67.1",
+  "lastChangelogVersion": "0.67.2",
   "defaultProvider": "openai-codex",
   "defaultModel": "gpt-5.3-codex",
-  "theme": "dark",
+  "theme": "light",
   "packages": [
     "npm:pi-web-access",
-    "npm:pi-vim"
+    "npm:pi-vim",
+    "npm:pi-token-usage",
+    "npm:pi-mcp-adapter"
   ],
   "showHardwareCursor": true,
   "quietStartup": true,
@@ -17,7 +19,8 @@
     "anthropic/claude-opus-4-6",
     "ollama/gemma4:e4b",
     "ollama/gemma4:31b",
-    "ollama/gpt-oss:20b"
+    "ollama/gpt-oss:20b",
+    "ollama/gemma4:26b"
   ],
   "defaultThinkingLevel": "medium",
   "enableInstallTelemetry": false
