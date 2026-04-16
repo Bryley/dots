@@ -181,10 +181,18 @@ $env.config = {
     color_config: $dark_theme # if you want a more interesting theme, you can replace the empty record with `$dark_theme`, `$light_theme` or another custom record
     edit_mode: vi
     hooks: {
-        # Dir-env hook
         pre_prompt: [{ ||
+            # Force a darker blue for directories because the default/light theme
+            # made dir names too low-contrast and hard to read in Ghostty.
+            let ls_colors = ($env.LS_COLORS? | default "")
+            let ls_colors = ($ls_colors
+                | split row ":"
+                | where {|it| ($it | is-not-empty) and not ($it | str starts-with "di=") })
+            $env.LS_COLORS = ($ls_colors | append "di=0;34" | str join ":")
+
+            # Direnv hook
             if (which direnv | is-empty) {
-            return
+                return
             }
 
             direnv export json | from json | default {} | load-env
