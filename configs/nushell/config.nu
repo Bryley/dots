@@ -285,8 +285,8 @@ $env.DIRENV_LOG_FORMAT = ""
 #     NIX_LD=$nixld _nvim $args
 # }
 
-const secret_file = if ('~/nixos-flake/configs/nushell/secret.nu' | path exists) {
-    "~/nixos-flake/configs/nushell/secret.nu"
+const secret_file = if ('~/dots/configs/nushell/secret.nu' | path exists) {
+    "~/dots/configs/nushell/secret.nu"
 } else {
     null
 }

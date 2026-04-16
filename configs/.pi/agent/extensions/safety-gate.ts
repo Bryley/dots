@@ -6,7 +6,7 @@ import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
 import { isToolCallEventType } from "@mariozechner/pi-coding-agent";
 import { basename, resolve } from "node:path";
 
-const BLOCKED_FILE_NAMES: RegExp[] = [/\.*.env.*/, /.*secret\..*/];
+const BLOCKED_FILE_NAMES: RegExp[] = [/^\.*.env$/, /^.*secret\..*$/];
 
 const DANGEROUS_BASH_PATTERNS: RegExp[] = [
   /\brm\s+-rf\b/,
