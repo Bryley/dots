@@ -2,12 +2,11 @@
   "lastChangelogVersion": "0.67.3",
   "defaultProvider": "openai-codex",
   "defaultModel": "gpt-5.3-codex",
-  "theme": "dark",
+  "theme": "light",
   "packages": [
     "npm:pi-web-access",
-    "npm:pi-vim",
     "npm:pi-token-usage",
-    "npm:pi-mcp-adapter"
+    "git:github.com/Bryley/pi-vim"
   ],
   "showHardwareCursor": true,
   "quietStartup": true,

@@ -2,3 +2,7 @@ theme = light:Aizen Light,dark:GitHub Dark Dimmed
 background-opacity = 0.95
 background-blur = true
 font-size = 16
+font-feature = -calt
+font-feature = -liga
+font-feature = -dlig
+macos-titlebar-style = hidden

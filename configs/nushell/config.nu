@@ -206,14 +206,17 @@ source $mise_source
 
 # Television shell integration
 # Reference: https://alexpasmantier.github.io/television/user-guide/shell-integration#nushell
+let tv_autoload_dir = ($nu.default-config-dir | path join "vendor" "autoload")
+let tv_script = ($tv_autoload_dir | path join "tv.nu")
+
+if not ($tv_autoload_dir | path exists) {
+    mkdir $tv_autoload_dir
+}
+
+# Regenerate integration when `tv` is available.
+# Files in `$nu.default-config-dir/vendor/autoload` are auto-loaded by Nushell
+# on startup, so no explicit `source` is needed here.
 if (which tv | is-not-empty) {
-    let tv_autoload_dir = ($nu.data-dir | path join "vendor/autoload")
-    let tv_script = ($tv_autoload_dir | path join "tv.nu")
-
-    if not ($tv_autoload_dir | path exists) {
-        mkdir $tv_autoload_dir
-    }
-
     ^tv init nu | save --force $tv_script
 }
 
@@ -233,6 +236,51 @@ export def --env f [] {
     )
 
     cd $path
+}
+
+# Jump to a git repository selected via television.
+# Uses non-fullscreen mode (~45% terminal height) for a lighter picker UI.
+export def --env tv-repo [] {
+    let rows = ((term size).rows | into int)
+    let height = (($rows * 45) / 100 | into int)
+    let height = if $height < 10 { 10 } else { $height }
+
+    let repo = (^tv --height $height git-repos | str trim)
+    if ($repo | is-not-empty) {
+        cd $repo
+    }
+}
+
+alias tgr = tv-repo
+
+# Navigation picker entrypoint.
+# Starts in git-repos mode (`nav-repos`) at up to 30 lines height.
+# Switch modes with channel shortcuts: F1 repos, F2 dirs, F3 files.
+# Selection behavior:
+# - dir/repo: cd into it
+# - file: cd to parent, then open in $EDITOR
+export def --env nav [] {
+    let rows = ((term size).rows | into int)
+    let height = if $rows < 30 { $rows } else { 30 }
+
+    let choice = (^tv --height $height nav-repos | str trim)
+
+    if ($choice | is-empty) or not ($choice | path exists) {
+        return
+    }
+
+    let kind = ($choice | path type)
+    if $kind == "dir" {
+        cd $choice
+        return
+    }
+
+    let parent = ($choice | path dirname)
+    let file_name = ($choice | path basename)
+    cd $parent
+
+    let editor = ($env.EDITOR? | default "nvim")
+    ^$editor $file_name
 }
 
 # Parses and loads a .env file into the environment

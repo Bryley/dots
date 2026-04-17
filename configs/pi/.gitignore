@@ -6,6 +6,7 @@ cache/
 agent/sessions/
 agent/*.log
 agent/**/*.log
+agent/git/
 
 # Sensitive local credentials
 agent/auth.json

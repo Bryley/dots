@@ -1,7 +1,12 @@
-# shell = "zsh"
+shell = "nu"
+default_channel = "git-repos"
 
-[shell_integration]
-fallback_channel = "files"
+[keybindings]
+# Preview scrolling (Neovim-ish)
+ctrl-u = "scroll_preview_half_page_up"
+ctrl-d = "scroll_preview_half_page_down"
+ctrl-y = "scroll_preview_up"
+ctrl-e = "scroll_preview_down"
 
 [shell_integration.channel_triggers]
 "env" = ["export", "unset"]
