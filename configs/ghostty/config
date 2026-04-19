@@ -1,7 +1,7 @@
 theme = light:Aizen Light,dark:GitHub Dark Dimmed
-background-opacity = 0.95
+background-opacity = 0.93
 background-blur = true
-font-size = 16
+font-size = 12
 font-feature = -calt
 font-feature = -liga
 font-feature = -dlig
