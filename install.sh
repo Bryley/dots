@@ -2,26 +2,22 @@
 set -euo pipefail
 
 # Simple system bootstrap for SSH-friendly CLI usage.
-# Mise-managed tools (opencode, runtimes, LSP/MCP) live in configs/mise/...
-#
-#
-# TODO:
-# - [ ] Enable Exa `websearch` tool for Opencode using `OPENCODE_ENABLE_EXA=1` env var
+# Mise-managed tools (pi, runtimes, LSP/MCP) live in configs/mise/...
 
 packages=(
     git
     curl
+    wget
     tmux
     neovim
-    jq
-    wget
+    # jq # TODO add apart of mise
     ca-certificates
     gnupg
     libatomic1
     libstdc++6
     sudo
     ffmpeg
-    yt-dlp
+    # yt-dlp # TODO add as apart of mise instead
     mise
     nushell
 )
@@ -65,7 +61,6 @@ fi
 source /etc/os-release
 
 install_ubuntu_debian() {
-
     apt-get update -y
     apt-get install -y curl gnupg ca-certificates
 
@@ -193,7 +188,7 @@ sudo -u "$TARGET_USER" mise install
 setup_ssh_key
 
 log_info "Done installing, here is a check list of things you might want to do next:"
-log_info "  - [ ] Install and setup Dokploy (if on VPS)"
+log_info "  - [ ] Install and setup Cloudflared"
 log_info "  - [ ] Install and setup Tailscale"
 log_info "  - [ ] Switch dots remote to SSH"
 printf "%s\n" "      git -C $SCRIPT_DIR remote set-url origin git@github.com:bryley/dots.git"
