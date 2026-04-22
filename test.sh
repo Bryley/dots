@@ -9,26 +9,11 @@ if ! command -v docker &> /dev/null; then
     exit 1
 fi
 
-color_green="\033[0;32m"
-color_yellow="\033[0;33m"
-color_red="\033[0;31m"
-color_reset="\033[0m"
-
-log_info() {
-    printf "%b%s%b\n" "$color_green" "$1" "$color_reset"
-}
-
-log_warn() {
-    printf "%b%s%b\n" "$color_yellow" "$1" "$color_reset"
-}
-
-log_error() {
-    printf "%b%s%b\n" "$color_red" "$1" "$color_reset"
-}
-
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 INSTALL_SCRIPT="$SCRIPT_DIR/install.sh"
 TESTS_DIR="$SCRIPT_DIR/tests"
+# shellcheck source=./scripts/common.sh
+source "$SCRIPT_DIR/scripts/common.sh"
 
 if [[ ! -f "$INSTALL_SCRIPT" ]]; then
     log_error "install.sh not found at $INSTALL_SCRIPT"
@@ -72,7 +57,11 @@ log_info "Copying repo into container"
 docker cp "$SCRIPT_DIR/." "$NAME:/workspace"
 docker exec "$NAME" bash -lc "chown -R tester:tester /workspace"
 
-docker exec -u tester "$NAME" sudo /workspace/install.sh
+if [[ "$DISTRO" == "ubuntu" ]]; then
+    docker exec -u tester "$NAME" sudo IS_VPS=yes /workspace/install.sh
+else
+    docker exec -u tester "$NAME" sudo IS_VPS=no /workspace/install.sh
+fi
 
 fail=0
 
@@ -95,10 +84,6 @@ check "curl installed" "command -v curl"
 check "tmux installed" "command -v tmux"
 check "nvim installed" "command -v nvim"
 check "ffmpeg installed" "command -v ffmpeg"
-check "yt-dlp installed" "command -v yt-dlp"
-check "jq installed" "command -v jq"
-check "opencode installed" "sudo -u tester test -x /home/tester/.local/share/mise/shims/opencode"
-check "opencode on tester path" "sudo -u tester bash -ic 'command -v opencode >/dev/null'"
 check "tester default shell is nushell" "test \"\$(getent passwd tester | cut -d: -f7)\" = \"\$(command -v nu)\""
 
 check "mise link" "test -L /home/tester/.config/mise"
@@ -106,12 +91,18 @@ check "nushell link" "test -L /home/tester/.config/nushell"
 check "tmux link" "test -L /home/tester/.config/tmux"
 check "gitconfig link" "test -L /home/tester/.gitconfig"
 check "no root mise link" "test ! -e /root/.config/mise"
-check "ssh public key exists" "test -f /home/tester/.ssh/id_ed25519.pub"
 
 if [[ "$DISTRO" == "ubuntu" ]]; then
     sleep 2
     check "mise apt dots" "test -f /etc/apt/sources.list.d/mise.list"
     check "nushell apt dots" "test -f /etc/apt/sources.list.d/fury-nushell.list"
+
+    check "vps: tester ssh public key exists" "test -f /home/tester/.ssh/id_ed25519.pub"
+    check "vps: deploy user exists" "id deployer"
+    check "vps: deploy ssh public key exists" "test -f /home/deployer/.ssh/id_ed25519.pub"
+    check "vps: deploy has same public key as tester" "cmp -s /home/tester/.ssh/id_ed25519.pub /home/deployer/.ssh/id_ed25519.pub"
+    check "vps: tester sudo access" "sudo -u tester sudo -n true"
+    check "vps: deployer sudo access" "sudo -u deployer sudo -n true"
 else
     check "mise copr enabled" "dnf copr list | grep -q jdxcode/mise"
 fi

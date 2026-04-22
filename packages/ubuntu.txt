@@ -1,0 +1,16 @@
+# System-level dependencies only.
+# Smaller tooling should be managed via: mise use --global ...
+
+git
+curl
+wget
+tmux
+neovim
+ca-certificates
+gnupg
+libatomic1
+libstdc++6
+sudo
+ffmpeg
+mise
+nushell
