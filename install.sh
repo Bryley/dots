@@ -45,6 +45,8 @@ set_nushell_default false
 sudo -u "$TARGET_USER" bash "$ROOT_DIR/link.sh"
 sudo -u "$TARGET_USER" mise install
 
+setup_ssh_key_for_target_user
+
 run_vps=""
 if [[ -n "${IS_VPS:-}" ]]; then
     case "${IS_VPS,,}" in

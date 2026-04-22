@@ -86,3 +86,28 @@ set_nushell_default() {
     chsh -s "$nu_path" "$TARGET_USER"
     log_info "Default shell set to nushell for $TARGET_USER."
 }
+
+setup_ssh_key_for_target_user() {
+    local key_path pub_path
+    key_path="/home/$TARGET_USER/.ssh/id_ed25519"
+    pub_path="${key_path}.pub"
+
+    sudo -u "$TARGET_USER" bash -lc 'mkdir -p ~/.ssh && chmod 700 ~/.ssh'
+
+    if [[ ! -f "$key_path" ]]; then
+        log_info "Generating SSH key for $TARGET_USER"
+        sudo -u "$TARGET_USER" ssh-keygen -t ed25519 -a 64 -f "$key_path" -N "" -C "$TARGET_USER@$(hostname)"
+    else
+        log_info "SSH key already exists for $TARGET_USER."
+    fi
+
+    if [[ ! -f "$pub_path" ]]; then
+        log_error "Expected SSH public key not found at $pub_path"
+        exit 1
+    fi
+
+    printf "\n%s\n" "============================================================"
+    printf "%s\n" "COPY THIS PUBLIC KEY TO GITHUB (Settings > SSH and GPG keys):"
+    printf "%s\n" "$(cat "$pub_path")"
+    printf "%s\n\n" "============================================================"
+}

@@ -25,31 +25,6 @@ ensure_user_sudo_access() {
     chmod 440 "/etc/sudoers.d/90-dots-${user}"
 }
 
-ensure_target_ssh_key() {
-    local key_path pub_path
-    key_path="/home/$TARGET_USER/.ssh/id_ed25519"
-    pub_path="${key_path}.pub"
-
-    sudo -u "$TARGET_USER" bash -lc 'mkdir -p ~/.ssh && chmod 700 ~/.ssh'
-
-    if [[ ! -f "$key_path" ]]; then
-        log_info "Generating SSH key for $TARGET_USER"
-        sudo -u "$TARGET_USER" ssh-keygen -t ed25519 -a 64 -f "$key_path" -N "" -C "$TARGET_USER@$(hostname)"
-    else
-        log_info "SSH key already exists for $TARGET_USER."
-    fi
-
-    if [[ ! -f "$pub_path" ]]; then
-        log_error "Expected SSH public key not found at $pub_path"
-        exit 1
-    fi
-
-    printf "\n%s\n" "============================================================"
-    printf "%s\n" "COPY THIS PUBLIC KEY TO GITHUB (Settings > SSH and GPG keys):"
-    printf "%s\n" "$(cat "$pub_path")"
-    printf "%s\n\n" "============================================================"
-}
-
 ensure_deploy_user() {
     if id "$DEPLOY_USER" > /dev/null 2>&1; then
         log_info "Deploy user '$DEPLOY_USER' already exists."
@@ -78,10 +53,55 @@ copy_target_key_to_deploy_user() {
     log_info "Copied SSH keypair from '$TARGET_USER' to '$DEPLOY_USER'."
 }
 
-ensure_target_ssh_key
+is_laptop_machine() {
+    if compgen -G "/sys/class/power_supply/BAT*" > /dev/null; then
+        return 0
+    fi
+
+    if command -v hostnamectl > /dev/null 2>&1; then
+        case "$(hostnamectl chassis 2>/dev/null || true)" in
+            laptop|notebook|portable|tablet)
+                return 0
+                ;;
+        esac
+    fi
+
+    return 1
+}
+
+configure_laptop_server_power_mode() {
+    log_info "Laptop detected. Configuring lid/sleep behavior for server usage..."
+
+    install -d -m 755 /etc/systemd/logind.conf.d
+    cat > /etc/systemd/logind.conf.d/99-dots-server.conf <<'EOF'
+[Login]
+HandleLidSwitch=ignore
+HandleLidSwitchExternalPower=ignore
+HandleLidSwitchDocked=ignore
+IdleAction=ignore
+EOF
+
+    if command -v systemctl > /dev/null 2>&1; then
+        systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target > /dev/null 2>&1 || true
+        systemctl restart systemd-logind > /dev/null 2>&1 || log_warn "Could not restart systemd-logind automatically."
+    else
+        log_warn "systemctl not found. Please restart systemd-logind manually."
+    fi
+
+    log_info "Laptop power settings updated for always-on server mode."
+}
+
+if [[ ! -f "/home/$TARGET_USER/.ssh/id_ed25519" ]]; then
+    setup_ssh_key_for_target_user
+fi
+
 ensure_deploy_user
 copy_target_key_to_deploy_user
 ensure_user_sudo_access "$TARGET_USER"
 ensure_user_sudo_access "$DEPLOY_USER"
+
+if is_laptop_machine; then
+    configure_laptop_server_power_mode
+fi
 
 log_info "Done VPS setup."

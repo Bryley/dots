@@ -91,13 +91,13 @@ check "nushell link" "test -L /home/tester/.config/nushell"
 check "tmux link" "test -L /home/tester/.config/tmux"
 check "gitconfig link" "test -L /home/tester/.gitconfig"
 check "no root mise link" "test ! -e /root/.config/mise"
+check "tester ssh public key exists" "test -f /home/tester/.ssh/id_ed25519.pub"
 
 if [[ "$DISTRO" == "ubuntu" ]]; then
     sleep 2
     check "mise apt dots" "test -f /etc/apt/sources.list.d/mise.list"
     check "nushell apt dots" "test -f /etc/apt/sources.list.d/fury-nushell.list"
 
-    check "vps: tester ssh public key exists" "test -f /home/tester/.ssh/id_ed25519.pub"
     check "vps: deploy user exists" "id deployer"
     check "vps: deploy ssh public key exists" "test -f /home/deployer/.ssh/id_ed25519.pub"
     check "vps: deploy has same public key as tester" "cmp -s /home/tester/.ssh/id_ed25519.pub /home/deployer/.ssh/id_ed25519.pub"
