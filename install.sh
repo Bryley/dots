@@ -43,9 +43,14 @@ log_info "Running shared setup..."
 setup_mise_bashrc
 set_nushell_default false
 sudo -u "$TARGET_USER" bash "$ROOT_DIR/link.sh"
+
+if [[ -f "$ROOT_DIR/mise.toml" ]]; then
+    sudo -u "$TARGET_USER" mise trust "$ROOT_DIR/mise.toml"
+fi
 sudo -u "$TARGET_USER" mise install
 
 setup_ssh_key_for_target_user
+ensure_user_in_group "$TARGET_USER" docker
 
 run_vps=""
 if [[ -n "${IS_VPS:-}" ]]; then

@@ -12,5 +12,6 @@ libatomic1
 libstdc++6
 sudo
 ffmpeg
+docker.io
 mise
 nushell

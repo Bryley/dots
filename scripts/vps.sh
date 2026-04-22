@@ -126,6 +126,8 @@ copy_target_key_to_deploy_user
 sync_authorized_keys_to_deployer
 ensure_user_sudo_access "$TARGET_USER"
 ensure_user_sudo_access "$DEPLOY_USER"
+ensure_user_in_group "$TARGET_USER" docker
+ensure_user_in_group "$DEPLOY_USER" docker
 
 if is_laptop_machine; then
     configure_laptop_server_power_mode

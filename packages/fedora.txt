@@ -12,5 +12,6 @@ libatomic
 libstdc++
 sudo
 ffmpeg
+moby-engine
 mise
 nushell

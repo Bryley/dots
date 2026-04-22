@@ -111,3 +111,15 @@ setup_ssh_key_for_target_user() {
     printf "%s\n" "$(cat "$pub_path")"
     printf "%s\n\n" "============================================================"
 }
+
+ensure_user_in_group() {
+    local user="$1"
+    local group="$2"
+
+    if getent group "$group" > /dev/null 2>&1; then
+        usermod -aG "$group" "$user"
+        log_info "Added '$user' to '$group' group."
+    else
+        log_warn "Group '$group' not found, skipping group setup for '$user'."
+    fi
+}

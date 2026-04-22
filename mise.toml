@@ -1,0 +1,7 @@
+
+[tasks.setup]
+run = """
+kamal server bootstrap
+kamal proxy boot
+kamal accessory boot all
+"""

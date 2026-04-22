@@ -1,0 +1,35 @@
+# Name of your application. Used to uniquely configure containers.
+service: homelab
+
+# # Name of the container image.
+# image: bryley/homelab
+
+# Deploy to these servers.
+servers:
+  web:
+    - homelab: main
+
+ssh:
+  user: deployer
+
+registry:
+  server: localhost:5555
+
+builder:
+  arch: amd64
+
+accessories:
+  nginx:
+    service: nginx
+    image: nginx:1.27.0-alpine
+    tags:
+      - main
+    proxy:
+      host: nginxtest.bryleybytes.com
+      app_port: 80
+      healthcheck:
+        path: /
+    files:
+      - config/deploy.yml:/usr/share/nginx/html/index.html:ro
+    directories:
+      - nginx-data:/var/cache/nginx

@@ -84,6 +84,7 @@ check "curl installed" "command -v curl"
 check "tmux installed" "command -v tmux"
 check "nvim installed" "command -v nvim"
 check "ffmpeg installed" "command -v ffmpeg"
+check "docker installed" "command -v docker"
 check "tester default shell is nushell" "test \"\$(getent passwd tester | cut -d: -f7)\" = \"\$(command -v nu)\""
 
 check "mise link" "test -L /home/tester/.config/mise"
@@ -101,6 +102,8 @@ if [[ "$DISTRO" == "ubuntu" ]]; then
     check "vps: deploy user exists" "id deployer"
     check "vps: deploy ssh public key exists" "test -f /home/deployer/.ssh/id_ed25519.pub"
     check "vps: deploy has same public key as tester" "cmp -s /home/tester/.ssh/id_ed25519.pub /home/deployer/.ssh/id_ed25519.pub"
+    check "vps: tester is in docker group" "id tester | grep -q '(docker)'"
+    check "vps: deployer is in docker group" "id deployer | grep -q '(docker)'"
     check "vps: tester sudo access" "sudo -u tester sudo -n true"
     check "vps: deployer sudo access" "sudo -u deployer sudo -n true"
 else
