@@ -64,5 +64,4 @@ link "git/.gitconfig" "$HOME/.gitconfig"
 link "pi" "$HOME/.pi"
 link "wallpaper.png" "$HOME/wallpaper"
 
-link_path "/srv/copyparty/notes" "$HOME/notes"
-link_path "/srv/copyparty/sessions" "$HOME/sessions"
+link_path "/srv/copyparty" "$HOME/copyparty"

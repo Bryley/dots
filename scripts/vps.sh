@@ -8,6 +8,7 @@ source "$ROOT_DIR/scripts/common.sh"
 require_sudo_user
 
 DEPLOY_USER="${DEPLOY_USER:-deployer}"
+COPYPARTY_GROUP="${COPYPARTY_GROUP:-copyparty}"
 
 ensure_user_sudo_access() {
     local user="$1"
@@ -120,15 +121,25 @@ EOF
 setup_copyparty_shared_dirs() {
     local base="/srv/copyparty"
 
-    install -d -m 2775 -o "$DEPLOY_USER" -g "$DEPLOY_USER" "$base" "$base/notes" "$base/sessions"
-
-    # keep group-write on new files/dirs so TARGET_USER and DEPLOY_USER can both edit
-    if command -v setfacl > /dev/null 2>&1; then
-        setfacl -m g::rwx "$base" "$base/notes" "$base/sessions"
-        setfacl -d -m g::rwx "$base" "$base/notes" "$base/sessions"
+    if ! getent group "$COPYPARTY_GROUP" > /dev/null 2>&1; then
+        groupadd "$COPYPARTY_GROUP"
     fi
 
-    log_info "Prepared shared dirs: $base/{notes,sessions}"
+    ensure_user_in_group "$TARGET_USER" "$COPYPARTY_GROUP"
+    ensure_user_in_group "$DEPLOY_USER" "$COPYPARTY_GROUP"
+
+    install -d -m 2775 -o "$DEPLOY_USER" -g "$COPYPARTY_GROUP" "$base"
+
+    # group rwx now + for future files/dirs (when acl tools are available)
+    if command -v setfacl > /dev/null 2>&1; then
+        setfacl -R -m "g:${COPYPARTY_GROUP}:rwx" "$base"
+        setfacl -R -d -m "g:${COPYPARTY_GROUP}:rwx" "$base"
+    else
+        chgrp -R "$COPYPARTY_GROUP" "$base"
+        chmod -R g+rwX "$base"
+    fi
+
+    log_info "Prepared shared dir: $base (group: $COPYPARTY_GROUP)"
 }
 
 if [[ ! -f "/home/$TARGET_USER/.ssh/id_ed25519" ]]; then
@@ -142,7 +153,6 @@ ensure_user_sudo_access "$TARGET_USER"
 ensure_user_sudo_access "$DEPLOY_USER"
 ensure_user_in_group "$TARGET_USER" docker
 ensure_user_in_group "$DEPLOY_USER" docker
-ensure_user_in_group "$TARGET_USER" "$DEPLOY_USER"
 
 setup_copyparty_shared_dirs
 
