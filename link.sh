@@ -22,8 +22,8 @@ log_error() {
 
 mkdir -p "$HOME/.config"
 
-link() {
-    local source="$CONFIGS_DIR/$1"
+link_path() {
+    local source="$1"
     local target="$2"
 
     mkdir -p "$(dirname "$target")"
@@ -38,6 +38,12 @@ link() {
 
     ln -s "$source" "$target"
     log_info "Setup link '$source' -> '$target'"
+}
+
+link() {
+    local source="$CONFIGS_DIR/$1"
+    local target="$2"
+    link_path "$source" "$target"
 }
 
 link "carapace" "$HOME/.config/carapace"
@@ -57,3 +63,6 @@ link "ghostty" "$HOME/.config/ghostty"
 link "git/.gitconfig" "$HOME/.gitconfig"
 link "pi" "$HOME/.pi"
 link "wallpaper.png" "$HOME/wallpaper"
+
+link_path "/srv/copyparty/notes" "$HOME/notes"
+link_path "/srv/copyparty/sessions" "$HOME/sessions"

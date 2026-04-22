@@ -104,8 +104,15 @@ if [[ "$DISTRO" == "ubuntu" ]]; then
     check "vps: deploy has same public key as tester" "cmp -s /home/tester/.ssh/id_ed25519.pub /home/deployer/.ssh/id_ed25519.pub"
     check "vps: tester is in docker group" "id tester | grep -q '(docker)'"
     check "vps: deployer is in docker group" "id deployer | grep -q '(docker)'"
+    check "vps: tester is in deployer group" "id tester | grep -q '(deployer)'"
     check "vps: tester sudo access" "sudo -u tester sudo -n true"
     check "vps: deployer sudo access" "sudo -u deployer sudo -n true"
+
+    check "vps: copyparty shared dir exists" "test -d /srv/copyparty && test -d /srv/copyparty/notes && test -d /srv/copyparty/sessions"
+    check "vps: copyparty shared dir owner/group" "test \"$(stat -c '%U:%G' /srv/copyparty)\" = 'deployer:deployer'"
+    check "vps: copyparty shared dir mode" "test \"$(stat -c '%a' /srv/copyparty)\" = '2775'"
+    check "vps: tester can write to copyparty notes" "sudo -u tester bash -lc 'echo ok > /srv/copyparty/notes/.perm-test && test -f /srv/copyparty/notes/.perm-test'"
+    check "vps: setgid keeps deployer group" "test \"$(stat -c '%G' /srv/copyparty/notes/.perm-test)\" = 'deployer'"
 else
     check "mise copr enabled" "dnf copr list | grep -q jdxcode/mise"
 fi

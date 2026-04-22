@@ -117,6 +117,20 @@ EOF
     log_info "Laptop power settings updated for always-on server mode."
 }
 
+setup_copyparty_shared_dirs() {
+    local base="/srv/copyparty"
+
+    install -d -m 2775 -o "$DEPLOY_USER" -g "$DEPLOY_USER" "$base" "$base/notes" "$base/sessions"
+
+    # keep group-write on new files/dirs so TARGET_USER and DEPLOY_USER can both edit
+    if command -v setfacl > /dev/null 2>&1; then
+        setfacl -m g::rwx "$base" "$base/notes" "$base/sessions"
+        setfacl -d -m g::rwx "$base" "$base/notes" "$base/sessions"
+    fi
+
+    log_info "Prepared shared dirs: $base/{notes,sessions}"
+}
+
 if [[ ! -f "/home/$TARGET_USER/.ssh/id_ed25519" ]]; then
     setup_ssh_key_for_target_user
 fi
@@ -128,6 +142,9 @@ ensure_user_sudo_access "$TARGET_USER"
 ensure_user_sudo_access "$DEPLOY_USER"
 ensure_user_in_group "$TARGET_USER" docker
 ensure_user_in_group "$DEPLOY_USER" docker
+ensure_user_in_group "$TARGET_USER" "$DEPLOY_USER"
+
+setup_copyparty_shared_dirs
 
 if is_laptop_machine; then
     configure_laptop_server_power_mode
