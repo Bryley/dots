@@ -1,7 +1,4 @@
 
-# TODO:
-# - [ ] Test `copyparty` Docker and host it
-
 [tasks.install]
 description = "Install this machine (auto-detect distro, prompts for VPS mode)"
 alias = "i"
@@ -19,7 +16,7 @@ run = """
 set -euo pipefail
 kamal server bootstrap
 kamal proxy boot
-kamal accessory boot all
+kamal accessory reboot all || kamal accessory boot all
 """
 
 [tasks.bootstrap-remote-ssh]

@@ -58,9 +58,14 @@ docker cp "$SCRIPT_DIR/." "$NAME:/workspace"
 docker exec "$NAME" bash -lc "chown -R tester:tester /workspace"
 
 if [[ "$DISTRO" == "ubuntu" ]]; then
-    docker exec -u tester "$NAME" sudo IS_VPS=yes /workspace/install.sh
+    docker exec -u tester "$NAME" sudo INSTALL_TYPE=vps /workspace/install.sh
 else
-    docker exec -u tester "$NAME" sudo IS_VPS=no /workspace/install.sh
+    docker exec -u tester "$NAME" sudo INSTALL_TYPE=desktop WEBDAV_BASE_URL=http://127.0.0.1:18080 /workspace/install.sh
+
+    # Start a local WebDAV endpoint for desktop mount services to connect to.
+    docker exec "$NAME" bash -lc "mkdir -p /tmp/copyparty-webdav/notes /tmp/copyparty-webdav/sessions && echo notes-ok > /tmp/copyparty-webdav/notes/.desktop-test && echo sessions-ok > /tmp/copyparty-webdav/sessions/.desktop-test"
+    docker exec "$NAME" bash -lc "nohup rclone serve webdav /tmp/copyparty-webdav --addr 127.0.0.1:18080 --config /dev/null >/tmp/rclone-webdav.log 2>&1 &"
+    docker exec "$NAME" bash -lc "systemctl restart rclone-copyparty-notes.service rclone-copyparty-sessions.service"
 fi
 
 fail=0
@@ -91,7 +96,6 @@ check "mise link" "test -L /home/tester/.config/mise"
 check "nushell link" "test -L /home/tester/.config/nushell"
 check "tmux link" "test -L /home/tester/.config/tmux"
 check "gitconfig link" "test -L /home/tester/.gitconfig"
-check "copyparty link" "test -L /home/tester/copyparty"
 check "no root mise link" "test ! -e /root/.config/mise"
 check "tester ssh public key exists" "test -f /home/tester/.ssh/id_ed25519.pub"
 
@@ -111,12 +115,26 @@ if [[ "$DISTRO" == "ubuntu" ]]; then
     check "vps: deployer sudo access" "sudo -u deployer sudo -n true"
 
     check "vps: copyparty shared dir exists" "test -d /srv/copyparty"
-    check "vps: copyparty shared dir owner/group" "test \"$(stat -c '%U:%G' /srv/copyparty)\" = 'deployer:copyparty'"
-    check "vps: copyparty shared dir mode" "test \"$(stat -c '%a' /srv/copyparty)\" = '2775'"
+    check "vps: copyparty shared dir owner/group" "test \"\$(stat -c '%U:%G' /srv/copyparty)\" = 'deployer:copyparty'"
+    check "vps: copyparty shared dir mode" "test \"\$(stat -c '%a' /srv/copyparty)\" = '2775'"
+    check "vps: notes dir exists" "test -d /srv/copyparty/notes"
+    check "vps: sessions dir exists" "test -d /srv/copyparty/sessions"
+    check "vps: tester notes symlink exists" "test -L /home/tester/notes"
+    check "vps: tester sessions symlink exists" "test -L /home/tester/sessions"
+    check "vps: tester notes symlink target" "test \"\$(readlink /home/tester/notes)\" = '/srv/copyparty/notes'"
+    check "vps: tester sessions symlink target" "test \"\$(readlink /home/tester/sessions)\" = '/srv/copyparty/sessions'"
     check "vps: tester can create folder+file in /srv/copyparty" "sudo -u tester bash -lc 'mkdir -p /srv/copyparty/tester-dir && echo ok > /srv/copyparty/tester-dir/.perm-test && test -f /srv/copyparty/tester-dir/.perm-test'"
     check "vps: deployer can modify tester-created file" "sudo -u deployer bash -lc 'echo ok2 >> /srv/copyparty/tester-dir/.perm-test && grep -q ok2 /srv/copyparty/tester-dir/.perm-test'"
 else
     check "mise copr enabled" "dnf copr list | grep -q jdxcode/mise"
+    check "desktop: notes service enabled" "systemctl is-enabled rclone-copyparty-notes.service | grep -q enabled"
+    check "desktop: sessions service enabled" "systemctl is-enabled rclone-copyparty-sessions.service | grep -q enabled"
+    check "desktop: notes service active" "for i in {1..20}; do systemctl is-active rclone-copyparty-notes.service | grep -q active && exit 0; sleep 1; done; exit 1"
+    check "desktop: sessions service active" "for i in {1..20}; do systemctl is-active rclone-copyparty-sessions.service | grep -q active && exit 0; sleep 1; done; exit 1"
+    check "desktop: notes mount present" "mount | grep -q ' /home/tester/notes '"
+    check "desktop: sessions mount present" "mount | grep -q ' /home/tester/sessions '"
+    check "desktop: notes content visible" "sudo -u tester test -f /home/tester/notes/.desktop-test"
+    check "desktop: sessions content visible" "sudo -u tester test -f /home/tester/sessions/.desktop-test"
 fi
 
 read -r -p "Keep container running? (y/N): " KEEP

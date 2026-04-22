@@ -129,6 +129,7 @@ setup_copyparty_shared_dirs() {
     ensure_user_in_group "$DEPLOY_USER" "$COPYPARTY_GROUP"
 
     install -d -m 2775 -o "$DEPLOY_USER" -g "$COPYPARTY_GROUP" "$base"
+    install -d -m 2775 -o "$DEPLOY_USER" -g "$COPYPARTY_GROUP" "$base/notes" "$base/sessions"
 
     # group rwx now + for future files/dirs (when acl tools are available)
     if command -v setfacl > /dev/null 2>&1; then
@@ -140,6 +141,26 @@ setup_copyparty_shared_dirs() {
     fi
 
     log_info "Prepared shared dir: $base (group: $COPYPARTY_GROUP)"
+}
+
+ensure_copyparty_home_links_for_user() {
+    local user="$1"
+    local home_dir="/home/$user"
+    local name source target
+
+    for name in notes sessions; do
+        source="/srv/copyparty/$name"
+        target="$home_dir/$name"
+
+        [[ -d "$source" ]] || continue
+
+        if [[ -e "$target" || -L "$target" ]]; then
+            continue
+        fi
+
+        ln -s "$source" "$target"
+        chown -h "$user:$user" "$target"
+    done
 }
 
 if [[ ! -f "/home/$TARGET_USER/.ssh/id_ed25519" ]]; then
@@ -155,6 +176,7 @@ ensure_user_in_group "$TARGET_USER" docker
 ensure_user_in_group "$DEPLOY_USER" docker
 
 setup_copyparty_shared_dirs
+ensure_copyparty_home_links_for_user "$TARGET_USER"
 
 if is_laptop_machine; then
     configure_laptop_server_power_mode

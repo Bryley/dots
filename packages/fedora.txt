@@ -12,6 +12,14 @@ libatomic
 libstdc++
 sudo
 ffmpeg
+tar
+gzip
+bzip2
+xz
+zip
+unzip
 moby-engine
+rclone
+fuse3
 mise
 nushell

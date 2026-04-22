@@ -1,5 +1,5 @@
 # Name of your application. Used to uniquely configure containers.
-service: homelab
+service: personal
 
 # # Name of the container image.
 # image: bryley/homelab
@@ -19,17 +19,47 @@ builder:
   arch: amd64
 
 accessories:
-  nginx:
-    service: nginx
-    image: nginx:1.27.0-alpine
+  copyparty:
+    service: copyparty
+    image: copyparty/ac:1.20.13
     tags:
       - main
     proxy:
-      host: nginxtest.bryleybytes.com
-      app_port: 80
+      host: copyparty.bryleybytes.com
+      app_port: 3923
       healthcheck:
-        path: /
+        path: /notes/
     files:
-      - config/deploy.yml:/usr/share/nginx/html/index.html:ro
+      - config/copyparty.conf:/cfg/copyparty.conf:ro
     directories:
-      - nginx-data:/var/cache/nginx
+      - /srv/copyparty/notes:/srv/notes:rw
+      - /srv/copyparty/sessions:/srv/sessions:rw
+    options:
+      entrypoint: python3
+    cmd: -m copyparty -c /cfg/copyparty.conf
+
+
+# docker run --rm -it \
+#   --name copyparty \
+#   -p 3923:3923 \
+#   -v "$PWD/copyparty-share:/srv/share" \
+#   -v "$PWD/copyparty-config:/cfg" \
+#   --entrypoint python3 \
+#   copyparty/ac \
+#   -m copyparty -c /cfg/copyparty.conf
+
+
+  # nginx:
+  #   service: nginx
+  #   image: nginx:1.27.0-alpine
+  #   tags:
+  #     - main
+  #   proxy:
+  #     host: nginxtest.bryleybytes.com
+  #     app_port: 80
+  #     healthcheck:
+  #       path: /
+  #   files:
+  #     - config/deploy.yml:/usr/share/nginx/html/index.html:ro
+  #   directories:
+  #     - nginx-data:/var/cache/nginx

@@ -52,42 +52,56 @@ sudo -u "$TARGET_USER" mise install
 setup_ssh_key_for_target_user
 ensure_user_in_group "$TARGET_USER" docker
 
-run_vps=""
-if [[ -n "${IS_VPS:-}" ]]; then
-    case "${IS_VPS,,}" in
-        y|yes|1|true)
-            run_vps="yes"
+resolve_install_type() {
+    local value="${INSTALL_TYPE:-}"
+
+    if [[ -z "$value" ]]; then
+        if [[ -t 0 ]]; then
+            read -r -p "Install type? [v]ps / [d]esktop (Enter to skip): " value
+        else
+            echo "none"
+            return 0
+        fi
+    fi
+
+    case "${value,,}" in
+        v|vps)
+            echo "vps"
             ;;
-        n|no|0|false)
-            run_vps="no"
+        d|desktop)
+            echo "desktop"
+            ;;
+        "")
+            echo "none"
             ;;
         *)
-            log_error "Invalid IS_VPS value: $IS_VPS (use yes/no)"
+            log_error "Invalid INSTALL_TYPE: $value (use vps|v or desktop|d)"
             exit 1
             ;;
     esac
-else
-    read -r -p "Should this machine run VPS setup? [y/N]: " reply
-    case "${reply,,}" in
-        y|yes)
-            run_vps="yes"
-            ;;
-        *)
-            run_vps="no"
-            ;;
-    esac
-fi
+}
 
-if [[ "$run_vps" == "yes" ]]; then
-    log_info "Running VPS setup..."
-    bash "$ROOT_DIR/scripts/vps.sh"
-fi
+install_type="$(resolve_install_type)"
+
+case "$install_type" in
+    vps)
+        log_info "Running VPS setup..."
+        bash "$ROOT_DIR/scripts/vps.sh"
+        ;;
+    desktop)
+        log_info "Running desktop setup..."
+        bash "$ROOT_DIR/scripts/desktop.sh"
+        ;;
+    none)
+        log_warn "Skipping VPS/Desktop setup."
+        ;;
+esac
 
 log_info "Done, here are the next steps:"
 log_info "  - Switch dots remote to SSH"
 printf "%s\n" "      git -C $ROOT_DIR remote set-url origin git@github.com:bryley/dots.git"
 log_info "  - Set $TARGET_USER's passwords if not already set using 'sudo passwd $TARGET_USER'"
-if [[ "$run_vps" == "yes" ]]; then
+if [[ "$install_type" == "vps" ]]; then
     DEPLOY_USER="${DEPLOY_USER:-deployer}"
     log_info "  - Set $DEPLOY_USER's passwords using 'sudo passwd $DEPLOY_USER'"
     log_info "  - From your host, run: scripts/bootstrap-remote-ssh.sh $TARGET_USER@<server-ip-or-hostname>"

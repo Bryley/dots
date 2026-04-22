@@ -10,7 +10,8 @@ both local, and remote.
 3. The script will:
    - detect distro and run the matching script in `scripts/distros/` for packages only
    - run shared user setup (dotfiles, mise, shell)
-   - ask whether to run VPS setup (`scripts/vps.sh`)
+   - ask which extra setup to run: VPS (`scripts/vps.sh`) or desktop (`scripts/desktop.sh`)
+   - you can skip prompts by setting `INSTALL_TYPE=vps` (or `v`) / `INSTALL_TYPE=desktop` (or `d`)
 4. Optional (from your host machine): run `scripts/bootstrap-remote-ssh.sh user@host`
    - adds your local public key to remote `authorized_keys`
    - hardens OpenSSH (disable password auth + root SSH login)
