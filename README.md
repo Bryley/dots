@@ -6,7 +6,7 @@ both local, and remote.
 ## Installing
 
 1. Clone the repo with `git clone https://github.com/Bryley/dots.git`
-2. Run `sudo ./install.sh`
+2. `cd dots` into the directory and then run `sudo ./install.sh`
 3. The script will:
    - detect distro and run the matching script in `scripts/distros/` for packages only
    - run shared user setup (dotfiles, mise, shell)

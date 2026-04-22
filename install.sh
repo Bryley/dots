@@ -79,14 +79,14 @@ if [[ "$run_vps" == "yes" ]]; then
 fi
 
 log_info "Done, here are the next steps:"
-log_info "  - Set $TARGET_USER's passwords if not set using 'passwd $TARGET_USER'"
-if [[ "$run_vps" == "yes" ]]; then
-    DEPLOY_USER="${DEPLOY_USER:-deployer}"
-    log_info "  - Set $DEPLOY_USER's passwords using 'passwd $DEPLOY_USER'"
-    log_info "  - From your host, run: scripts/bootstrap-remote-ssh.sh $TARGET_USER@<server-ip-or-hostname>"
-fi
-log_info "  - Download and install Cloudflared"
-log_info "  - Download and install Tailscale"
 log_info "  - Switch dots remote to SSH"
 printf "%s\n" "      git -C $ROOT_DIR remote set-url origin git@github.com:bryley/dots.git"
+log_info "  - Set $TARGET_USER's passwords if not already set using 'sudo passwd $TARGET_USER'"
+if [[ "$run_vps" == "yes" ]]; then
+    DEPLOY_USER="${DEPLOY_USER:-deployer}"
+    log_info "  - Set $DEPLOY_USER's passwords using 'sudo passwd $DEPLOY_USER'"
+    log_info "  - From your host, run: scripts/bootstrap-remote-ssh.sh $TARGET_USER@<server-ip-or-hostname>"
+fi
+log_info "  - Download and install Tailscale"
+log_info "  - Download and install Cloudflared"
 

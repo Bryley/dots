@@ -1,9 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# TODO:
-# - [ ] Disable SSH password auth
-
 ROOT_DIR="${ROOT_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
 # shellcheck source=./common.sh
 source "$ROOT_DIR/scripts/common.sh"
@@ -53,6 +50,35 @@ copy_target_key_to_deploy_user() {
     log_info "Copied SSH keypair from '$TARGET_USER' to '$DEPLOY_USER'."
 }
 
+sync_authorized_keys_to_deployer() {
+    local target_auth deploy_auth
+    target_auth="/home/$TARGET_USER/.ssh/authorized_keys"
+    deploy_auth="/home/$DEPLOY_USER/.ssh/authorized_keys"
+
+    install -d -m 700 -o "$TARGET_USER" -g "$TARGET_USER" "/home/$TARGET_USER/.ssh"
+    install -d -m 700 -o "$DEPLOY_USER" -g "$DEPLOY_USER" "/home/$DEPLOY_USER/.ssh"
+
+    touch "$target_auth" "$deploy_auth"
+    chown "$TARGET_USER:$TARGET_USER" "$target_auth"
+    chown "$DEPLOY_USER:$DEPLOY_USER" "$deploy_auth"
+    chmod 600 "$target_auth" "$deploy_auth"
+
+    # Ensure target user's own public key exists in its authorized_keys.
+    if ! grep -Fxq "$(cat /home/$TARGET_USER/.ssh/id_ed25519.pub)" "$target_auth"; then
+        cat "/home/$TARGET_USER/.ssh/id_ed25519.pub" >> "$target_auth"
+    fi
+
+    # Copy every key from target user to deployer so both users can be used to log in.
+    while IFS= read -r line; do
+        [[ -z "$line" ]] && continue
+        if ! grep -Fxq "$line" "$deploy_auth"; then
+            echo "$line" >> "$deploy_auth"
+        fi
+    done < "$target_auth"
+
+    log_info "Synced authorized_keys from '$TARGET_USER' to '$DEPLOY_USER'."
+}
+
 is_laptop_machine() {
     if compgen -G "/sys/class/power_supply/BAT*" > /dev/null; then
         return 0
@@ -97,6 +123,7 @@ fi
 
 ensure_deploy_user
 copy_target_key_to_deploy_user
+sync_authorized_keys_to_deployer
 ensure_user_sudo_access "$TARGET_USER"
 ensure_user_sudo_access "$DEPLOY_USER"
 
