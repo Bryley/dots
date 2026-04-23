@@ -1,0 +1,4 @@
+# Pi reads .gitignore, .ignore, and .fdignore for skill discovery.
+# .ignore is read after .gitignore, so negations here override gitignore rules.
+# This lets us keep pk/ hidden from git while still loading it as a skill in Pi.
+!pk

@@ -1,0 +1,4 @@
+# Hide work-specific skills from git (this is a personal config repo).
+# Pi also reads .gitignore for skill discovery, so any skill ignored here
+# won't be loaded. To re-include a skill for Pi only, negate it in .ignore.
+pk
