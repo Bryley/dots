@@ -34,3 +34,8 @@ run = "printf 'ubuntu\nn\n' | ./test.sh"
 [tasks.test-fedora]
 description = "Run Docker-based install test against Fedora"
 run = "printf 'fedora\nn\n' | ./test.sh"
+
+[tasks.playwright-chromium]
+description = "Install/update Playwright Chromium browser for screenshot tooling"
+alias = "pwc"
+run = "mise exec npm:playwright@1.59.1 -- playwright install chromium"
