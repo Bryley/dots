@@ -5,8 +5,12 @@ unbind C-b
 bind C-a send-prefix
 
 # Setup terminal capabilities
-set-option -gs default-terminal "tmux-256color"
-set -as terminal-features ",xterm-256color:RGB,xterm-kitty:RGB,xterm-kitty:extkeys"
+# Use custom terminfo with undercurl support inside tmux.
+set-option -gs default-terminal "tmux-256color-uc"
+set -as terminal-features ",xterm-256color:RGB,xterm-kitty:RGB,xterm-kitty:extkeys,xterm-ghostty:RGB,xterm-ghostty:extkeys,xterm-ghostty:usstyle,*:usstyle"
+# Clear stale overrides from previous reloads, then keep only RGB override.
+set -gu terminal-overrides
+set -as terminal-overrides ",*:RGB"
 
 # Enable CSI-u/extended keys so Ctrl/Alt/Shift key combos reach apps in tmux
 set -s extended-keys on
