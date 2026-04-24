@@ -2,11 +2,12 @@
   "lastChangelogVersion": "0.69.0",
   "defaultProvider": "openai-codex",
   "defaultModel": "gpt-5.3-codex",
-  "theme": "light",
+  "theme": "dark",
   "packages": [
     "npm:pi-web-access",
     "npm:pi-token-usage",
-    "git:github.com/Bryley/pi-vim"
+    "git:github.com/Bryley/pi-vim",
+    "npm:pi-move-session"
   ],
   "showHardwareCursor": true,
   "quietStartup": true,
@@ -21,6 +22,6 @@
     "ollama/gpt-oss:20b",
     "ollama/gemma4:26b"
   ],
-  "defaultThinkingLevel": "medium",
+  "defaultThinkingLevel": "high",
   "enableInstallTelemetry": false
 }
