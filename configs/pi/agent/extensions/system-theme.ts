@@ -29,13 +29,20 @@ if command -v gdbus >/dev/null 2>&1; then
   esac
 fi
 
-# 2) GNOME
+# 2) GNOME (or systems with gsettings installed)
 if command -v gsettings >/dev/null 2>&1; then
   cs=$(gsettings get org.gnome.desktop.interface color-scheme 2>/dev/null || true)
-  case "$cs" in *prefer-dark*) echo dark; exit 0 ;; esac
+  case "$cs" in
+    *prefer-dark*) echo dark; exit 0 ;;
+    *prefer-light*) echo light; exit 0 ;;
+  esac
+
   gtk=$(gsettings get org.gnome.desktop.interface gtk-theme 2>/dev/null || true)
-  case "$gtk" in *-dark*|*Dark*) echo dark; exit 0 ;; esac
-  echo light; exit 0
+  case "$gtk" in
+    *-dark*|*Dark*) echo dark; exit 0 ;;
+    "") ;;
+    *) echo light; exit 0 ;;
+  esac
 fi
 
 # 3) KDE
@@ -50,7 +57,9 @@ if command -v kreadconfig5 >/dev/null 2>&1; then
   exit 0
 fi
 
-echo light
+# Last resort defaults for Linux tiling setups where desktop APIs are unavailable.
+# Prefer dark to match modern terminal-focused workflows.
+echo dark
 '`);
 
   return stdout.trim() === "dark" ? "dark" : "light";

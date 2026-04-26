@@ -61,6 +61,14 @@ link "tmux" "$HOME/.config/tmux"
 link "wofi" "$HOME/.config/wofi"
 link "ghostty" "$HOME/.config/ghostty"
 
+# Install custom tmux terminfo entry (undercurl support) when possible.
+if command -v tic >/dev/null 2>&1; then
+    tic -x -o "$HOME/.terminfo" "$CONFIGS_DIR/tmux/tmux-256color-uc.terminfo"
+    log_info "Installed terminfo entry 'tmux-256color-uc' into $HOME/.terminfo"
+else
+    log_warn "'tic' not found; skipping tmux terminfo install (install ncurses-bin / ncurses-term)"
+fi
+
 link "git/.gitconfig" "$HOME/.gitconfig"
 link "pi" "$HOME/.pi"
 link "wallpaper.png" "$HOME/wallpaper"

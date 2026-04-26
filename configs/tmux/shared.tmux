@@ -5,7 +5,10 @@ unbind C-b
 bind C-a send-prefix
 
 # Setup terminal capabilities
-# Use custom terminfo with undercurl support inside tmux.
+# Ensure custom terminfo with undercurl support exists, then always use it.
+if-shell "infocmp -x tmux-256color-uc >/dev/null 2>&1 || (command -v tic >/dev/null 2>&1 && [ -f \"$HOME/.config/tmux/tmux-256color-uc.terminfo\" ] && tic -x -o \"$HOME/.terminfo\" \"$HOME/.config/tmux/tmux-256color-uc.terminfo\")" ''
+set-environment -g TERMINFO "$HOME/.terminfo"
+set-environment -g TERMINFO_DIRS "$HOME/.terminfo:/usr/local/share/terminfo:/usr/share/terminfo:/etc/terminfo:/lib/terminfo"
 set-option -gs default-terminal "tmux-256color-uc"
 set -as terminal-features ",xterm-256color:RGB,xterm-kitty:RGB,xterm-kitty:extkeys,xterm-ghostty:RGB,xterm-ghostty:extkeys,xterm-ghostty:usstyle,*:usstyle"
 # Clear stale overrides from previous reloads, then keep only RGB override.

@@ -44,6 +44,11 @@ setup_mise_bashrc
 set_nushell_default false
 sudo -u "$TARGET_USER" bash "$ROOT_DIR/link.sh"
 
+# Install tmux custom terminfo system-wide so non-user contexts can resolve TERM=tmux-256color-uc.
+if command -v tic >/dev/null 2>&1; then
+    tic -x -o /usr/local/share/terminfo "$ROOT_DIR/configs/tmux/tmux-256color-uc.terminfo" || log_warn "Failed to install system-wide tmux terminfo entry"
+fi
+
 if [[ -f "$ROOT_DIR/mise.toml" ]]; then
     sudo -u "$TARGET_USER" mise trust "$ROOT_DIR/mise.toml"
 fi

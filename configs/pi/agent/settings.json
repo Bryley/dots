@@ -22,6 +22,6 @@
     "ollama/gpt-oss:20b",
     "ollama/gemma4:26b"
   ],
-  "defaultThinkingLevel": "medium",
+  "defaultThinkingLevel": "high",
   "enableInstallTelemetry": false
 }
