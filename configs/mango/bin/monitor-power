@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+mode="${1:-}"
+case "$mode" in
+  on|off) ;;
+  *)
+    echo "usage: $0 {on|off}" >&2
+    exit 2
+    ;;
+esac
+
+# Discover all physically connected outputs dynamically (no hardcoded names).
+for status in /sys/class/drm/card*-*/status; do
+  [ -f "$status" ] || continue
+  [ "$(cat "$status" 2>/dev/null)" = "connected" ] || continue
+
+  connector="$(basename "$(dirname "$status")")"   # e.g. card1-eDP-1
+  output="${connector#*-}"                               # e.g. eDP-1
+
+  if [ "$mode" = "off" ]; then
+    mmsg -s -d "disable_monitor,$output" >/dev/null 2>&1 || true
+  else
+    mmsg -s -d "enable_monitor,$output" >/dev/null 2>&1 || true
+  fi
+done

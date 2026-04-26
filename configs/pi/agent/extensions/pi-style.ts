@@ -1,4 +1,5 @@
 import { VERSION, type ExtensionAPI, type SourceInfo, type Theme } from "@mariozechner/pi-coding-agent";
+import { truncateToWidth } from "@mariozechner/pi-tui";
 import { existsSync, readdirSync } from "node:fs";
 import { basename, dirname, join } from "node:path";
 import { homedir } from "node:os";
@@ -168,8 +169,8 @@ export default function (pi: ExtensionAPI) {
     const resources = collectResources(pi, ctx.cwd);
 
     ctx.ui.setHeader((_tui, theme) => ({
-      render(_width: number): string[] {
-        return ["", ...getHeaderLines(theme, resources), ""];
+      render(width: number): string[] {
+        return ["", ...getHeaderLines(theme, resources).map((line) => truncateToWidth(line, width)), ""];
       },
       invalidate() {},
     }));

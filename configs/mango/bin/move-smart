@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+dir="${1:-}"
+case "$dir" in
+  left|right|up|down) ;;
+  *)
+    echo "usage: $0 {left|right|up|down}" >&2
+    exit 2
+    ;;
+esac
+
+# If focused window is floating, move it; otherwise move tiled position.
+if mmsg -g -f | awk '$3 == 1 { found=1 } END { exit(found?0:1) }'; then
+  mmsg -s -d "smartmovewin,$dir"
+else
+  mmsg -s -d "exchange_client,$dir"
+fi

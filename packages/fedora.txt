@@ -23,3 +23,20 @@ rclone
 fuse3
 mise
 nushell
+
+# Build dependencies for mise-installed Ruby/Kamal (keep language toolchains in mise)
+gcc
+gcc-c++
+make
+patch
+autoconf
+bison
+perl-core
+openssl-devel
+readline-devel
+zlib-ng-compat-devel
+libyaml-devel
+libffi-devel
+gdbm-devel
+ncurses-devel
+bzip2-devel

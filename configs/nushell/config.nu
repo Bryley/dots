@@ -301,6 +301,17 @@ export def load-dotenv [file: path = ".env"] {
 # Activates a python virtualenv
 alias activate = overlay use ./.venv/bin/activate.nu
 
+# Launch Mango in a clean session by default (fixes stale DISPLAY/WAYLAND_DISPLAY from TTY starts).
+# - `mango`           -> clean dbus + env launch
+# - `mango <args...>` -> pass through to real binary (e.g. `mango -p`)
+def --wrapped mango [...args] {
+    if ($args | is-empty) {
+        ^env -u DISPLAY -u WAYLAND_DISPLAY dbus-run-session ^mango -d
+    } else {
+        ^mango ...$args
+    }
+}
+
 # Sets up nix develop command to automatically alias to `nix develop --command nu`
 # TODO fix this so you can use options with it
 # def nix [ ...args ] {

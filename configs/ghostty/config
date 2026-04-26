@@ -1,10 +1,12 @@
+# Linux theme file
 theme = light:Aizen Light,dark:GitHub Dark Dimmed
 background-opacity = 0.93
 background-blur = true
-font-size = 12
+font-size = 16
 font-feature = -calt
 font-feature = -liga
 font-feature = -dlig
 macos-titlebar-style = hidden
 gtk-titlebar = false
 window-decoration = none
+gtk-single-instance = false

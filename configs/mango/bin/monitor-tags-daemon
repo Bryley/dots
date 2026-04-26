@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+last=""
+
+get_outputs() {
+  mmsg -g -O | awk '/^\+ /{print $2}' | tr '\n' ' '
+}
+
+apply_tags() {
+  local outputs="$1"
+  local i=1
+  for out in $outputs; do
+    [ "$i" -le 9 ] || break
+    mmsg -o "$out" -s -t "$i" >/dev/null 2>&1 || true
+    i=$((i+1))
+  done
+}
+
+while true; do
+  current="$(get_outputs)"
+  if [ "$current" != "$last" ] && [ -n "$current" ]; then
+    apply_tags "$current"
+    last="$current"
+  fi
+  sleep 2
+done

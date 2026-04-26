@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+dir="${1:-}"
+case "$dir" in
+  left)
+    primary_cmd='focusdir,left'
+    fallback_cmd='focusstack,prev'
+    ;;
+  right)
+    primary_cmd='focusdir,right'
+    fallback_cmd='focusstack,next'
+    ;;
+  up)
+    primary_cmd='focusdir,up'
+    fallback_cmd='focusstack,prev'
+    ;;
+  down)
+    primary_cmd='focusdir,down'
+    fallback_cmd='focusstack,next'
+    ;;
+  *)
+    echo "usage: $0 {left|right|up|down}" >&2
+    exit 2
+    ;;
+esac
+
+sel_output="$(mmsg -g -o | awk '$3 == 1 { print $1; exit }')"
+if [ -z "$sel_output" ]; then
+  # Fallback: just try the directional focus
+  mmsg -s -d "$primary_cmd"
+  exit 0
+fi
+
+snapshot() {
+  {
+    mmsg -o "$sel_output" -g -c || true
+    mmsg -o "$sel_output" -g -x || true
+  } | tr '\n' '\t'
+}
+
+before="$(snapshot)"
+mmsg -s -d "$primary_cmd"
+after="$(snapshot)"
+
+if [ "$before" = "$after" ]; then
+  mmsg -s -d "$fallback_cmd"
+fi

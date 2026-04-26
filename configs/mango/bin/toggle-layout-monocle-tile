@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+sel_output="$(mmsg -g -o | awk '$3 == 1 { print $1; exit }')"
+
+if [ -n "$sel_output" ]; then
+  current="$(mmsg -o "$sel_output" -g -l | awk '{print $3; exit}')"
+  if [ "$current" = "M" ]; then
+    mmsg -o "$sel_output" -s -l T
+  else
+    mmsg -o "$sel_output" -s -l M
+  fi
+else
+  current="$(mmsg -g -l | awk '{print $3; exit}')"
+  if [ "$current" = "M" ]; then
+    mmsg -s -l T
+  else
+    mmsg -s -l M
+  fi
+fi

@@ -30,7 +30,7 @@ Here are plans and TODOs of upcomming things I want to explore/work on:
    like most about Nix, which is how it is very declarative. Along with this I
    also want to migrate a few of the applications I use, eg. Kitty to Ghostty and
    Zen browser to Helium.
-- [ ] Try out MangoWM - I currently use Niri and like it but I have been hearing
+- [X] Try out MangoWM - I currently use Niri and like it but I have been hearing
    good things about Mango window manager. Thought I would give it a try. I also
    have to use Mac for work and would love to get a setup that can closer mimics
    my AreoSpace setup over there.

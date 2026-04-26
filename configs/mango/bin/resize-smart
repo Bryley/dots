@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+dir="${1:-}"
+case "$dir" in
+  left|right|up|down) ;;
+  *)
+    echo "usage: $0 {left|right|up|down}" >&2
+    exit 2
+    ;;
+esac
+
+# Floating window:
+# Resize by 2 snap steps in one direction, then move 1 step opposite.
+# This keeps the window roughly centered while resizing.
+if mmsg -g -f | awk '$3 == 1 { found=1 } END { exit(found?0:1) }'; then
+  case "$dir" in
+    right)
+      mmsg -s -d "smartresizewin,right"
+      mmsg -s -d "smartresizewin,right"
+      mmsg -s -d "smartmovewin,left"
+      ;;
+    left)
+      mmsg -s -d "smartresizewin,left"
+      mmsg -s -d "smartresizewin,left"
+      mmsg -s -d "smartmovewin,right"
+      ;;
+    up)
+      mmsg -s -d "smartresizewin,up"
+      mmsg -s -d "smartresizewin,up"
+      mmsg -s -d "smartmovewin,down"
+      ;;
+    down)
+      mmsg -s -d "smartresizewin,down"
+      mmsg -s -d "smartresizewin,down"
+      mmsg -s -d "smartmovewin,up"
+      ;;
+  esac
+  exit 0
+fi
+
+# Tiled window: keep resizing predictable (avoid changing master count).
+case "$dir" in
+  left|down)
+    mmsg -s -d "setmfact,-0.05"
+    ;;
+  right|up)
+    mmsg -s -d "setmfact,+0.05"
+    ;;
+esac
