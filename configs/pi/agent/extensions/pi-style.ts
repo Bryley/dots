@@ -4,7 +4,12 @@ import { existsSync, readdirSync } from "node:fs";
 import { basename, dirname, join } from "node:path";
 import { homedir } from "node:os";
 
-const PI_LOGO = ["██████", "██  ██", "████  ██", "██    ██"] as const;
+const PI_LOGO = [
+  "██████",
+  "██  ██",
+  "████  ██",
+  "██    ██"
+] as const;
 
 type ResourceItem = {
   name: string;

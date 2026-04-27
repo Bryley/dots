@@ -13,6 +13,36 @@
       ],
       "@mariozechner/pi-coding-agent/*": [
         "/Users/bryley/.local/share/mise/installs/npm-mariozechner-pi-coding-agent/latest/lib/node_modules/@mariozechner/pi-coding-agent/dist/*"
+      ],
+      "@mariozechner/pi-ai": [
+        "/Users/bryley/.local/share/mise/installs/npm-mariozechner-pi-coding-agent/latest/lib/node_modules/@mariozechner/pi-coding-agent/node_modules/@mariozechner/pi-ai/dist/index.d.ts"
+      ],
+      "@mariozechner/pi-ai/*": [
+        "/Users/bryley/.local/share/mise/installs/npm-mariozechner-pi-coding-agent/latest/lib/node_modules/@mariozechner/pi-coding-agent/node_modules/@mariozechner/pi-ai/dist/*"
+      ],
+      "@mariozechner/pi-agent-core": [
+        "/Users/bryley/.local/share/mise/installs/npm-mariozechner-pi-coding-agent/latest/lib/node_modules/@mariozechner/pi-coding-agent/node_modules/@mariozechner/pi-agent-core/dist/index.d.ts"
+      ],
+      "@mariozechner/pi-agent-core/*": [
+        "/Users/bryley/.local/share/mise/installs/npm-mariozechner-pi-coding-agent/latest/lib/node_modules/@mariozechner/pi-coding-agent/node_modules/@mariozechner/pi-agent-core/dist/*"
+      ],
+      "@mariozechner/pi-tui": [
+        "/Users/bryley/.local/share/mise/installs/npm-mariozechner-pi-coding-agent/latest/lib/node_modules/@mariozechner/pi-coding-agent/node_modules/@mariozechner/pi-tui/dist/index.d.ts"
+      ],
+      "@mariozechner/pi-tui/*": [
+        "/Users/bryley/.local/share/mise/installs/npm-mariozechner-pi-coding-agent/latest/lib/node_modules/@mariozechner/pi-coding-agent/node_modules/@mariozechner/pi-tui/dist/*"
+      ],
+      "typebox": [
+        "/Users/bryley/.local/share/mise/installs/npm-mariozechner-pi-coding-agent/latest/lib/node_modules/@mariozechner/pi-coding-agent/node_modules/typebox/build/index.d.mts"
+      ],
+      "typebox/*": [
+        "/Users/bryley/.local/share/mise/installs/npm-mariozechner-pi-coding-agent/latest/lib/node_modules/@mariozechner/pi-coding-agent/node_modules/typebox/build/*"
+      ],
+      "@sinclair/typebox": [
+        "/Users/bryley/.local/share/mise/installs/npm-mariozechner-pi-coding-agent/latest/lib/node_modules/@mariozechner/pi-coding-agent/node_modules/typebox/build/index.d.mts"
+      ],
+      "@sinclair/typebox/*": [
+        "/Users/bryley/.local/share/mise/installs/npm-mariozechner-pi-coding-agent/latest/lib/node_modules/@mariozechner/pi-coding-agent/node_modules/typebox/build/*"
       ]
     }
   },

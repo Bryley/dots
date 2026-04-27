@@ -41,3 +41,4 @@ Here are plans and TODOs of upcomming things I want to explore/work on:
    blink, possibly swapping out Telescope with `tv.nvim` and `television`,
    `lazy.nvim` with the native plugin manager, update the LSP configs to make
    them cleaner and so on.
+- [ ] Add a pi plugin that displays the time it took for a response
