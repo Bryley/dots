@@ -1,6 +1,7 @@
 import { spawn } from "node:child_process";
 import { mkdirSync } from "node:fs";
-import { resolve } from "node:path";
+import { resolve as resolvePath } from "node:path";
+import { cwd as getCwd, env } from "node:process";
 
 type PiMessageContent =
   | { type: "text"; text: string }
@@ -208,7 +209,7 @@ const POWER_TO_MODEL: Record<DelegatePower, string> = {
 };
 
 export async function runPiExternally(
-  task: string,
+  prompt: string,
   options?: RunPiExternalOptions,
   onEvent?: (event: PiJsonLine) => void,
   signal?: AbortSignal,
@@ -221,15 +222,15 @@ export async function runPiExternally(
       args.push("--model", POWER_TO_MODEL[power]);
     }
 
-    args.push(task);
+    args.push(prompt);
 
-    const delegateCwd = resolve(process.cwd(), ".scratchpad/delegate-workspace");
+    const delegateCwd = resolvePath(getCwd(), ".scratchpad/delegate-workspace");
     mkdirSync(delegateCwd, { recursive: true });
 
     const child = spawn("pi", args, {
       cwd: delegateCwd,
       stdio: ["ignore", "pipe", "pipe"],
-      env: process.env,
+      env,
     });
 
     let stdout = "";

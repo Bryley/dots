@@ -10,21 +10,23 @@
  *   orchestrator so it can decide next steps.
  */
 
-// TODO NTS: Work on cleaning up this code, moving the generated code to
-// another file, also fixing the response output to just be the response. Then
-// also need to support multiple parallel tasks and better output (read, bash,
-// write count, token count, estimated cost of each agent). Extra params, max
-// turns, model, id and so on.
-
 import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
 import { Text } from "@mariozechner/pi-tui";
 import { Type } from "typebox";
-import {
-  DelegateConversationState,
-  runPiExternally,
-  type DelegatePower,
-  type StatusObject,
-} from "./external";
+import { DelegateConversationState, runPiExternally } from "./external";
+
+const SPINNER_FRAMES = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
+
+type Details = {
+  spinner: string;
+  taskParams: {
+    id: string;
+    task: string;
+    power: "light" | "versatile" | "powerful";
+  };
+  taskState: DelegateConversationState;
+  exitCode: number | undefined;
+};
 
 export default function(pi: ExtensionAPI) {
   pi.registerTool({
@@ -32,206 +34,142 @@ export default function(pi: ExtensionAPI) {
     label: "Delegate",
     description: "Delegate tasks to fresh external pi runs",
     parameters: Type.Object({
-      tasks: Type.Array(
-        Type.Object({
-          id: Type.String({
-            description:
-              "User-readable kebab-case task id (e.g. research-chairs)",
-            pattern: "^[a-z0-9]+(?:-[a-z0-9]+)*$",
-          }),
-          task: Type.String({
-            description: "Clear instruction for the delegated agent to execute.",
-          }),
-          power: Type.Union(
-            [
-              Type.Literal("light"),
-              Type.Literal("versatile"),
-              Type.Literal("powerful"),
-            ],
-            {
-              description:
-                "Required model tier. Use light for straightforward, low-risk tasks with limited reasoning; versatile for most normal tasks; powerful for complex reasoning, ambiguity, or long multi-step work.",
-            },
-          ),
-        }),
+      id: Type.String({
+        description: "User-readable kebab-case task id (e.g. research-chairs)",
+        pattern: "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+      }),
+      task: Type.String({
+        description:
+          "Clear instruction prompt for the delegated agent to execute.",
+      }),
+      power: Type.Union(
+        [
+          Type.Literal("light"),
+          Type.Literal("versatile"),
+          Type.Literal("powerful"),
+        ],
+        {
+          description:
+            "Required model tier. Use light for straightforward, low-risk tasks with limited reasoning; versatile for most normal tasks; powerful for complex reasoning, ambiguity, or long multi-step work.",
+        },
       ),
     }),
+
     async execute(_toolCallId, params, signal, onUpdate) {
-      const tasks = params.tasks ?? [];
-      if (tasks.length === 0) {
-        return {
-          content: [{ type: "text", text: "No tasks provided." }],
-          details: {},
-        };
-      }
-
-      const spinnerFrames = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
+      const state = new DelegateConversationState();
       let spinnerIndex = 0;
+      let exitCode: number | undefined = undefined;
 
-      const normalizePower = (
-        power: "light" | "versatile" | "powerful" | undefined,
-      ): DelegatePower => {
-        return power ?? "versatile";
+      const getDetails = () => {
+        return {
+          spinner: SPINNER_FRAMES[spinnerIndex],
+          taskParams: params,
+          taskState: state,
+          exitCode: exitCode,
+        } as Details;
       };
 
-      const states: Record<string, DelegateConversationState> = {};
-      const exitCodes: Record<string, number | undefined> = {};
-      const responses: Record<string, string> = {};
-
-      for (const task of tasks) {
-        states[task.id] = new DelegateConversationState();
-      }
-
-      const pushUpdates = () => {
+      const pushUpdate = () => {
         onUpdate?.({
           content: [{ type: "text", text: "Delegating..." }],
-          details: {
-            spinnerFrame: spinnerFrames[spinnerIndex],
-            tasks: tasks.map((task) => {
-              const compact = states[task.id]?.getStatus(true);
-              const full = states[task.id]?.getStatus(false);
-              return {
-                id: task.id,
-                power: normalizePower(task.power),
-                statuses: compact?.statuses ?? [],
-                allStatuses: full?.statuses ?? [],
-                hiddenCount: compact?.hiddenCount ?? 0,
-                exitCode: exitCodes[task.id],
-                hasResponse: Boolean(states[task.id]?.getResponse()?.trim()),
-              };
-            }),
-          },
+          details: getDetails(),
         });
       };
-
       const spinnerTimer = setInterval(() => {
-        spinnerIndex = (spinnerIndex + 1) % spinnerFrames.length;
-        pushUpdates();
+        spinnerIndex = (spinnerIndex + 1) % SPINNER_FRAMES.length;
+        pushUpdate();
       }, 100);
 
-      const delegatedRuns = tasks.map(async (task) => {
-        const delegated = await runPiExternally(
-          task.task,
+      try {
+        const delegate = await runPiExternally(
+          params.task,
           {
-            id: task.id,
-            power: normalizePower(task.power),
+            id: params.id,
+            power: params.power,
           },
           (event) => {
-            states[task.id]?.applyEvent(event);
-            pushUpdates();
+            state.applyEvent(event);
+            pushUpdate();
           },
           signal,
         );
-
-        exitCodes[task.id] = delegated.exitCode;
-        responses[task.id] =
-          states[task.id]?.getResponse() ||
-          delegated.stdout ||
-          delegated.stderr ||
-          "(no output)";
-      });
-
-      try {
-        await Promise.all(delegatedRuns);
+        exitCode = delegate.exitCode;
       } finally {
         clearInterval(spinnerTimer);
       }
 
-      const finalText = tasks
-        .map((task) => `# ${task.id}\n${responses[task.id] ?? "(no output)"}`)
-        .join("\n\n");
-
       return {
-        content: [{ type: "text", text: finalText }],
-        details: {
-          spinnerFrame: spinnerFrames[spinnerIndex],
-          tasks: tasks.map((task) => {
-            const compact = states[task.id]?.getStatus(true);
-            const full = states[task.id]?.getStatus(false);
-            return {
-              id: task.id,
-              power: normalizePower(task.power),
-              statuses: compact?.statuses ?? [],
-              allStatuses: full?.statuses ?? [],
-              hiddenCount: compact?.hiddenCount ?? 0,
-              exitCode: exitCodes[task.id],
-              hasResponse: Boolean((responses[task.id] ?? "").trim()),
-            };
-          }),
-        },
+        content: [{ type: "text", text: state.getResponse() || "(no output)" }],
+        details: getDetails(),
       };
-    },
-
-    renderCall(args, theme, context) {
-      const tasksLength = context.args.tasks.length;
-
-      const title = `${theme.fg(
-        "toolTitle",
-        theme.bold("delegate"),
-      )} ${tasksLength} task${tasksLength > 1 ? "s" : ""}`;
-
-      return new Text(title, 0, 0);
     },
 
     renderResult(result, options, theme, _context) {
-      const details = (result.details ?? {}) as {
-        spinnerFrame?: string;
-        tasks?: Array<{
-          id: string;
-          power?: DelegatePower;
-          statuses: StatusObject[];
-          allStatuses?: StatusObject[];
-          hiddenCount?: number;
-          exitCode?: number;
-          hasResponse?: boolean;
-        }>;
-      };
-
-      const tasks = details.tasks ?? [];
-      if (tasks.length === 0) {
-        const text = result.content.find((c) => c.type === "text");
-        return new Text(text?.type === "text" ? text.text : "", 0, 0);
-      }
-
-      const spinner = options.isPartial ? details.spinnerFrame ?? "…" : "…";
+      const details = (result.details ?? {}) as Details;
       const lines: string[] = [];
 
-      for (const task of tasks) {
-        const hasPending = task.exitCode === undefined;
-        const agentFailed = task.exitCode !== undefined && task.exitCode !== 0 && !task.hasResponse;
+      const SPINNER_MARKER = theme.fg("accent", details.spinner);
+      const SUCCESS_MARKER = theme.fg("success", "✓");
+      const ERROR_MARKER = theme.fg("error", "✗");
 
-        const marker = hasPending
-          ? theme.fg("accent", spinner)
-          : agentFailed
-            ? theme.fg("error", "✗")
-            : theme.fg("success", "✓");
+      let taskMarker = "";
+      switch (details.exitCode) {
+        case undefined:
+          taskMarker = SPINNER_MARKER;
+          break;
+        case 0:
+          taskMarker = SUCCESS_MARKER;
+          break;
+        default:
+          taskMarker = ERROR_MARKER;
+      }
 
-        const suffix = task.power ? theme.fg("dim", ` (${task.power})`) : "";
-        lines.push(`${marker} ${theme.fg("accent", task.id)}${suffix}`);
+      const taskName = theme.fg("accent", details.taskParams.id);
+      const taskSuffix = theme.fg("dim", ` [${details.taskParams.power}]`);
+      lines.push(`${taskMarker} ${taskName} ${taskSuffix}`);
 
-        const shownStatuses = options.expanded
-          ? (task.allStatuses ?? task.statuses)
-          : task.statuses;
+      const snapshot = details.taskState.getStatus(!options.expanded);
 
-        if (!options.expanded && (task.hiddenCount ?? 0) > 0) {
-          lines.push(`  ${theme.fg("dim", `+ ${task.hiddenCount} more`)}`);
-          lines.push(`  ${theme.fg("dim", "Press Ctrl+O for more")}`);
+      if (snapshot.hiddenCount > 0 && !options.expanded) {
+        lines.push(`  ${theme.fg("dim", `+ ${snapshot.hiddenCount} more`)}`);
+        lines.push(`  ${theme.fg("dim", "Press Ctrl+O for more")}`);
+      }
+
+      for (const status of snapshot.statuses) {
+        if (status.status === "done") {
+          lines.push(`  ${SUCCESS_MARKER} ${status.text}`);
+        } else if (status.status === "failed") {
+          lines.push(`  ${ERROR_MARKER} ${status.text}`);
+        } else {
+          lines.push(`  ${SPINNER_MARKER} ${theme.fg("muted", status.text)}`);
         }
+      }
 
-        for (const item of shownStatuses) {
-          if (item.status === "done") {
-            lines.push(`  ${theme.fg("success", "✓")} ${item.text}`);
-          } else if (item.status === "failed") {
-            lines.push(`  ${theme.fg("error", "✗")} ${item.text}`);
-          } else {
-            lines.push(
-              `  ${theme.fg("accent", spinner)} ${theme.fg(
-                "muted",
-                item.text,
-              )}`,
-            );
-          }
-        }
+      const inputOutputLength = options.expanded ? 2040 : 128;
+
+      lines.push("");
+      let prompt = details.taskParams.task;
+      prompt = options.expanded
+        ? prompt
+        : String(prompt).replace(/\r?\n/g, " ↩ ");
+      prompt =
+        prompt.length > inputOutputLength
+          ? `${prompt.slice(0, inputOutputLength)}...`
+          : prompt;
+      lines.push(theme.fg("dim", prompt));
+
+      let response = details.taskState.getResponse();
+
+      if (response) {
+        lines.push(theme.fg("dim", theme.bold("---")));
+        response = options.expanded
+          ? response
+          : String(response).replace(/\r?\n/g, " ↩ ");
+        response =
+          response.length > inputOutputLength
+            ? `${response.slice(0, inputOutputLength)}...`
+            : response;
+        lines.push(theme.fg("text", response));
       }
 
       return new Text(lines.join("\n"), 0, 0);
