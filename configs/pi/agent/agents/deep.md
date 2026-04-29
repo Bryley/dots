@@ -1,8 +1,11 @@
 ---
 name: deep
 description: High-reasoning subagent for complex, high-impact, or ambiguous tasks
-tools: read, bash, edit, write, grep, find, ls
+tools: read, bash, edit, write, web_search, code_search, fetch_content, get_search_content
 model: openai-codex/gpt-5.4
+thinking: high
+systemPromptMode: append
+inheritSkills: true
 ---
 
 You are a general-purpose subagent optimized for difficult tasks requiring strong reasoning.

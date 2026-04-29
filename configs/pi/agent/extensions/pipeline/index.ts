@@ -123,8 +123,8 @@ function buildKickoffPrompt(goal: string, template?: PipelineTemplate): string {
     "4) Do not execute any pipeline step until approved.",
     "5) On approval, update PIPELINE.md once: Approved: true + Status: running in the same edit.",
     "6) After approval, execute steps via the subagent tool.",
-    "7) If a top-level step has multiple unchecked substeps, run them together in ONE parallel subagent call using tasks[].",
-    "8) Do not execute sibling substeps sequentially when parallel execution is possible.",
+    "7) If a top-level step has multiple unchecked substeps, run them in one subagent parallel call using tasks[].",
+    "8) Do not execute sibling substeps sequentially when concurrent execution is possible.",
   ];
 
   if (template) {

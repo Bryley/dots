@@ -46,5 +46,5 @@
       ]
     }
   },
-  "include": ["extensions/**/*.ts", "extensions/**/*.d.ts"]
+  "include": ["extensions/**/*.ts", "extensions/**/*.d.ts", "extensions/tool-style.ts.disable"]
 }

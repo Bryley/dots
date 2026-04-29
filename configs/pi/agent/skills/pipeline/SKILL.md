@@ -1,13 +1,13 @@
 ---
 name: pipeline
-description: Plan, approve, and execute multi-step pipelines using isolated subagents with progress tracked in .scratchpad/PIPELINE.md. Use for complex tasks with dependencies, concurrent subtasks, or large intermediate outputs.
+description: Plan, approve, and execute multi-step pipelines using isolated agents with progress tracked in .scratchpad/PIPELINE.md. Use for complex tasks with dependencies, concurrent subtasks, or large intermediate outputs.
 ---
 
 # Pipeline
 
 ## Purpose and contract
 
-Own one workflow: convert a complex user request into an executable pipeline, get user approval, execute via isolated subagents, and return a clear final handoff.
+Own one workflow: convert a complex user request into an executable pipeline, get user approval, execute via isolated agents, and return a clear final handoff.
 
 Inputs:
 - User goal
@@ -32,13 +32,13 @@ Non-goals:
   - **Dynamic**: generated from the user’s goal
 - Top-level steps are ordered and depend on prior top-level steps.
 - Substeps under a top-level step are unordered sibling tasks and can run concurrently.
-- Each step/substep runs in its own isolated subagent context.
+- Each step/substep runs in its own isolated agent context.
 - Prefer writing non-trivial outputs to files and passing file paths between steps.
 - Use `.scratchpad/` for pipeline artifacts.
 
-## Known subagent tiers (default runtime profile)
+## Known agent tiers (default runtime profile)
 
-Assume these subagents are available unless execution proves otherwise:
+Assume these agent types are available unless execution proves otherwise:
 
 - `fast` — quick, low-cost tasks; default model `openai-codex/gpt-5.4-mini`
 - `standard` — balanced tasks; default model `openai-codex/gpt-5.3-codex`
@@ -49,7 +49,7 @@ Routing guidance:
 - Use `standard` for ordinary planning/implementation/review tasks.
 - Use `deep` for difficult reasoning, ambiguity resolution, and high-risk changes.
 - Do not spend turns reading agent files only to enumerate available tiers.
-- Only inspect agent files if a subagent call fails (e.g. unknown agent error) or if user asks to verify live configuration.
+- Only inspect agent files if a `subagent` call fails (e.g. unknown/disabled agent) or if user asks to verify live configuration.
 
 ---
 
@@ -110,17 +110,17 @@ Include:
 
 ### Phase 3 — Execution
 For each top-level step in order:
-1. If the step has 2+ unchecked substeps, execute sibling substeps together using one `subagent` tool call in **parallel mode** (`tasks` array).
-2. Map each substep to the agent tier declared in `[agent: ...]`.
-3. If the step has exactly one substep, run that substep in a single isolated subagent.
-4. If no substeps exist, execute the top-level step in one isolated subagent using its step-level agent tag.
-5. Subagent tasks must be small and explicit (e.g. "fetch transcript to file", "summarize file to bullets").
+1. If the step has 2+ unchecked substeps, execute sibling substeps concurrently using one `subagent` call in parallel mode (`tasks` array).
+2. Map each substep to its declared tier via the `[agent: ...]` tag (use that value as the `agent` field in each parallel task).
+3. If the step has exactly one substep, run one `subagent` single execution for that substep.
+4. If no substeps exist, run one `subagent` single execution for the top-level step using its step-level agent tag.
+5. Agent tasks must be small and explicit (e.g. "fetch transcript to file", "summarize file to bullets").
 6. Write non-trivial outputs to files; pass file paths forward.
 7. Mark each completed substep `[x]` in `.scratchpad/PIPELINE.md`.
 8. Mark top-level step `[x]` only when all its substeps are complete.
 
 ### Phase 4 — Blockage handling
-If a subagent is blocked:
+If an agent run is blocked:
 1. Capture blocker in `.scratchpad/PIPELINE.md` (briefly).
 2. Orchestrator attempts resolution by providing missing context/artifacts and retrying.
 3. If a user decision is required, pause and ask focused questions.
@@ -138,7 +138,7 @@ If a subagent is blocked:
 Before declaring completion:
 - Confirm all intended completed items are `[x]` in `.scratchpad/PIPELINE.md`
 - Confirm every step/substep has an explicit `[agent: ...]` tag
-- Confirm sibling substeps were run in parallel mode when 2+ were available
+- Confirm sibling substeps were executed concurrently (`subagent` parallel mode) when 2+ were available
 - Confirm expected artifact files exist
 - Confirm unresolved blockers are explicitly listed
 - Confirm final summary references concrete file paths

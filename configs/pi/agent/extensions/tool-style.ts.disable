@@ -1,0 +1,125 @@
+// TODO potentially add PR to manage this fustraightion of not being able to design around tool calls
+import type {
+  AgentToolResult,
+  ExtensionAPI,
+  Theme,
+  ToolDefinition,
+  ToolRenderResultOptions,
+} from "@mariozechner/pi-coding-agent";
+import {
+  createBashTool,
+  createEditTool,
+  createReadTool,
+  createWriteTool,
+} from "@mariozechner/pi-coding-agent";
+import { Container, Text } from "@mariozechner/pi-tui";
+
+type RailColor = "warning" | "success" | "error";
+
+function rail(theme: Theme, color: RailColor, text: string): string {
+  return `${theme.fg(color, "▌")} ${text}`;
+}
+
+function oneLine(text: string, max = 140): string {
+  const compact = text.replace(/\s+/g, " ").trim();
+  return compact.length <= max ? compact : `${compact.slice(0, max - 3)}...`;
+}
+
+function resultText(result: AgentToolResult<unknown>): string {
+  const first = result.content.find((p) => p.type === "text");
+  return first?.type === "text" ? (first.text.trim() || "(no output)") : "(no output)";
+}
+
+function summarizeToolCall(name: string, args: Record<string, unknown>): string {
+  switch (name) {
+    case "bash":
+      return `$ ${String(args.command ?? "").replace(/\s+/g, " ").slice(0, 120)}`;
+    case "read":
+      return `${String(args.path ?? "")}`;
+    case "write":
+      return `${String(args.path ?? "")}`;
+    case "edit":
+      return `${String(args.path ?? "")}`;
+    default:
+      return name;
+  }
+}
+
+function statusColor(options: ToolRenderResultOptions, context: { isPartial: boolean; isError: boolean }): RailColor {
+  if (options.isPartial || context.isPartial) return "warning";
+  return context.isError ? "error" : "success";
+}
+
+function registerStyledBuiltIn(
+  pi: ExtensionAPI,
+  toolName: string,
+  original: ToolDefinition<any, unknown, unknown>,
+) {
+  pi.registerTool({
+    name: toolName,
+    label: toolName,
+    description: original.description,
+    parameters: original.parameters,
+    renderShell: "self",
+
+    async execute(toolCallId, params, signal, onUpdate, ctx) {
+      return original.execute(toolCallId, params, signal, onUpdate, ctx);
+    },
+
+    renderCall(_args: unknown, _theme: Theme, _context: unknown) {
+      return new Container();
+    },
+
+    renderResult(
+      result: AgentToolResult<unknown>,
+      options: ToolRenderResultOptions,
+      theme: Theme,
+      context: unknown,
+    ) {
+      const ctx = context as { args?: unknown; isPartial: boolean; isError: boolean };
+      const color = statusColor(options, ctx);
+      const args = (ctx.args ?? {}) as Record<string, unknown>;
+      const cmd = summarizeToolCall(toolName, args);
+      const output = toolName === "write"
+        ? String(args.content ?? "")
+        : resultText(result);
+
+      let text = rail(
+        theme,
+        color,
+        `${theme.fg("toolTitle", theme.bold(toolName))} ${theme.fg("muted", cmd)}`,
+      );
+
+      const allLines = output.split("\n");
+      if (options.expanded) {
+        const lines = allLines.slice(0, 40);
+        for (const line of lines) {
+          text += `\n${rail(theme, color, theme.fg("toolOutput", line))}`;
+        }
+        if (allLines.length > 40) {
+          text += `\n${rail(theme, color, theme.fg("dim", `... ${allLines.length - 40} more lines`))}`;
+        }
+      } else {
+        const previewCount = 6;
+        const lines = allLines.slice(0, previewCount);
+        for (const line of lines) {
+          text += `\n${rail(theme, color, theme.fg("dim", oneLine(line, 220)))}`;
+        }
+        if (allLines.length > previewCount) {
+          text += `\n${rail(theme, color, theme.fg("muted", "(Ctrl+O to expand)"))}`;
+        }
+      }
+
+      return new Text(text, 0, 0);
+    },
+  });
+}
+
+export default function (pi: ExtensionAPI) {
+  const cwd = process.cwd();
+
+  registerStyledBuiltIn(pi, "read", createReadTool(cwd));
+  registerStyledBuiltIn(pi, "bash", createBashTool(cwd));
+  registerStyledBuiltIn(pi, "edit", createEditTool(cwd));
+  registerStyledBuiltIn(pi, "write", createWriteTool(cwd));
+}
