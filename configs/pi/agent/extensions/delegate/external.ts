@@ -14,11 +14,25 @@ type PiMessageContent =
   }
   | Record<string, unknown>;
 
+type PiUsage = {
+  input?: number;
+  output?: number;
+  cacheRead?: number;
+  cacheWrite?: number;
+  totalTokens?: number;
+  contextWindow?: number;
+  maxContextTokens?: number;
+  cost?: {
+    total?: number;
+  };
+};
+
 type PiMessage = {
   role: "user" | "assistant" | "toolResult";
   content: PiMessageContent[];
   timestamp?: number;
   stopReason?: string;
+  usage?: PiUsage;
 } & Record<string, unknown>;
 
 type ToolCallId = string;
@@ -40,7 +54,7 @@ type PiAssistantMessageEvent = {
   contentIndex?: number;
 } & Record<string, unknown>;
 
-export type PiJsonLine =
+export type PiEventJson =
   | {
     type: "session";
     version: number;
@@ -80,16 +94,36 @@ export type PiJsonLine =
     isError: boolean;
   };
 
+export type PiJsonLine = PiEventJson;
+
 export type StatusObject = {
   status: "pending" | "done" | "failed";
   text: string;
+};
+
+export type UsageSnapshot = {
+  turns: number;
+  input: number;
+  output: number;
+  cacheRead: number;
+  cacheWrite: number;
+  contextTokens: number;
+  maxContextTokens?: number;
+  costUsd: number;
 };
 
 export type StatusSnapshot = {
   statuses: StatusObject[];
   hiddenCount: number;
   total: number;
+  toolCallCounts: Record<string, number>;
+  usage: UsageSnapshot;
 };
+
+export const GLOBAL_TASK_TO_SESSION: Record<
+  string,
+  { sessionId: string; cwd: string }
+> = {};
 
 export class DelegateConversationState {
   private response = "";
@@ -97,8 +131,23 @@ export class DelegateConversationState {
   private interactions: StatusObject[] = [];
   private thinking = false;
   private writing = false;
+  private toolCallCounts: Record<string, number> = {};
+  private usage: UsageSnapshot = {
+    turns: 0,
+    input: 0,
+    output: 0,
+    cacheRead: 0,
+    cacheWrite: 0,
+    contextTokens: 0,
+    maxContextTokens: undefined,
+    costUsd: 0,
+  };
 
-  applyEvent(event: PiJsonLine): void {
+  applyEvent(taskId: string, event: PiEventJson): void {
+    if (event.type === "session") {
+      GLOBAL_TASK_TO_SESSION[taskId] = { sessionId: event.id, cwd: event.cwd };
+      return;
+    }
     if (event.type === "message_update") {
       if (event.assistantMessageEvent.type === "thinking_start") {
         this.thinking = true;
@@ -130,11 +179,37 @@ export class DelegateConversationState {
       return;
     }
 
+    if (event.type === "message_end") {
+      const message = event.message;
+      if (message.role === "assistant") {
+        this.usage.turns += 1;
+
+        const usage = message.usage;
+        if (usage) {
+          this.usage.input += usage.input ?? 0;
+          this.usage.output += usage.output ?? 0;
+          this.usage.cacheRead += usage.cacheRead ?? 0;
+          this.usage.cacheWrite += usage.cacheWrite ?? 0;
+          this.usage.contextTokens = usage.totalTokens ?? 0;
+          this.usage.maxContextTokens =
+            usage.maxContextTokens ??
+            usage.contextWindow ??
+            this.usage.maxContextTokens;
+          this.usage.costUsd += usage.cost?.total ?? 0;
+        }
+      }
+      return;
+    }
+
     if (event.type === "tool_execution_start") {
       this.toolCalls[event.toolCallId] = this.formatToolInteraction(
         event.toolName,
         event.args,
       );
+
+      this.toolCallCounts[event.toolName] =
+        (this.toolCallCounts[event.toolName] ?? 0) + 1;
+
       return;
     }
 
@@ -160,10 +235,17 @@ export class DelegateConversationState {
     }
 
     if (this.thinking) all.push({ status: "pending", text: "thinking..." });
-    if (this.writing) all.push({ status: "pending", text: "writing response..." });
+    if (this.writing)
+      all.push({ status: "pending", text: "writing response..." });
 
     if (!compressed) {
-      return { statuses: all, hiddenCount: 0, total: all.length };
+      return {
+        statuses: all,
+        hiddenCount: 0,
+        total: all.length,
+        toolCallCounts: this.toolCallCounts,
+        usage: this.usage,
+      };
     }
 
     const tailSize = 5;
@@ -172,6 +254,8 @@ export class DelegateConversationState {
       statuses: all.slice(-tailSize),
       hiddenCount,
       total: all.length,
+      toolCallCounts: this.toolCallCounts,
+      usage: this.usage,
     };
   }
 
@@ -185,7 +269,8 @@ export class DelegateConversationState {
   ): string {
     if (toolName === "bash") {
       const command = String(args?.command ?? "").replace(/\r?\n/g, " ↩ ");
-      const truncated = command.length > 32 ? `${command.slice(0, 32)}...` : command;
+      const truncated =
+        command.length > 32 ? `${command.slice(0, 32)}...` : command;
       return `$ ${truncated}`;
     }
     if (toolName === "read") return `read ${String(args?.path ?? "")}`;
@@ -208,10 +293,21 @@ const POWER_TO_MODEL: Record<DelegatePower, string> = {
   powerful: "openai-codex/gpt-5.3-codex:high",
 };
 
+const ALLOWED_TOOLS: string[] = [
+  "read",
+  "bash",
+  "edit",
+  "write",
+  "web_search",
+  "code_search",
+  "fetch_content",
+  "get_search_content",
+];
+
 export async function runPiExternally(
   prompt: string,
   options?: RunPiExternalOptions,
-  onEvent?: (event: PiJsonLine) => void,
+  onEvent?: (event: PiEventJson) => void,
   signal?: AbortSignal,
 ): Promise<{ stdout: string; stderr: string; exitCode: number }> {
   return await new Promise((resolve, reject) => {
@@ -221,6 +317,8 @@ export async function runPiExternally(
     if (power) {
       args.push("--model", POWER_TO_MODEL[power]);
     }
+
+    args.push("--tools", ALLOWED_TOOLS.join(","));
 
     args.push(prompt);
 
@@ -252,7 +350,7 @@ export async function runPiExternally(
 
         if (line) {
           try {
-            onEvent?.(JSON.parse(line) as PiJsonLine);
+            onEvent?.(JSON.parse(line) as PiEventJson);
           } catch {
             // ignore non-JSON lines
           }

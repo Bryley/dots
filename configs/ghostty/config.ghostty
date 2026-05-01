@@ -8,4 +8,4 @@ font-feature = -liga
 font-feature = -dlig
 macos-titlebar-style = hidden
 gtk-titlebar = false
-window-decoration = none
+window-decoration = auto

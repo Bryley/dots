@@ -2,5 +2,5 @@
 node = "25.9.0"
 ruby = "4.0.2"
 "gem:kamal" = "2.11.0"
-"npm:@mariozechner/pi-coding-agent" = "0.70.5"
+"npm:@mariozechner/pi-coding-agent" = "0.71.0"
 "npm:playwright" = "1.59.1"

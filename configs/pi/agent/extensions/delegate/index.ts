@@ -10,12 +10,37 @@
  *   orchestrator so it can decide next steps.
  */
 
+
+// TODO IDEAS:
+// - [ ] Live view of what is inside delegated tasks is broken, would love to
+//       fix but might be too much work.
+// - [ ] Encourage the orchestrator to delegate tasks more somehow (without
+//       passing the suggestion into the children processes)
+// - [ ] Maybe add system prompt more "Agent like" into the delegated tasks to
+//       make outputs more consistent.
+// - [ ] Provide way for orchestrator to respond to questions asked by the
+//       delegated tasks or pass them up to the user to answer (maybe provide
+//       special tool for children processes that send the question to the
+//       orchestrator or something).
+//  - [ ] Rename "power" to "category" or "class"
+
+import { spawnSync } from "node:child_process";
 import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
 import { Text } from "@mariozechner/pi-tui";
 import { Type } from "typebox";
-import { DelegateConversationState, runPiExternally } from "./external";
+import {
+  DelegateConversationState,
+  GLOBAL_TASK_TO_SESSION,
+  runPiExternally,
+} from "./external";
 
 const SPINNER_FRAMES = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
+
+function formatTokens(value: number): string {
+  if (value >= 1_000_000) return `${(value / 1_000_000).toFixed(1)}M`;
+  if (value >= 1_000) return `${(value / 1_000).toFixed(1)}k`;
+  return String(value);
+}
 
 type Details = {
   spinner: string;
@@ -29,6 +54,37 @@ type Details = {
 };
 
 export default function(pi: ExtensionAPI) {
+  pi.registerCommand("task", {
+    description: "Read detailed delegated task's session logs",
+    getArgumentCompletions(_argumentPrefix) {
+      return Object.keys(GLOBAL_TASK_TO_SESSION).map((taskId) => {
+        return {
+          label: taskId,
+          value: taskId,
+        };
+      });
+    },
+    async handler(args, ctx) {
+      const session = GLOBAL_TASK_TO_SESSION[args];
+
+      if (!session) {
+        ctx.ui.notify(`Couldn't find session for task '${args}'`, "error");
+        return;
+      }
+
+      const command = `cd ${JSON.stringify(session.cwd)} ; pi --session ${session.sessionId}`;
+      spawnSync(
+        "bash",
+        [
+          "-lc",
+          "if command -v wl-copy >/dev/null 2>&1; then wl-copy; else pbcopy; fi",
+        ],
+        { input: command, encoding: "utf8" },
+      );
+      ctx.ui.notify(`Copied command for '${args}' to clipboard (note needs to be completed to work best)`, "info");
+    },
+  });
+
   pi.registerTool({
     name: "delegate",
     label: "Delegate",
@@ -88,7 +144,7 @@ export default function(pi: ExtensionAPI) {
             power: params.power,
           },
           (event) => {
-            state.applyEvent(event);
+            state.applyEvent(params.id, event);
             pushUpdate();
           },
           signal,
@@ -124,15 +180,25 @@ export default function(pi: ExtensionAPI) {
           taskMarker = ERROR_MARKER;
       }
 
-      const taskName = theme.fg("accent", details.taskParams.id);
-      const taskSuffix = theme.fg("dim", ` [${details.taskParams.power}]`);
-      lines.push(`${taskMarker} ${taskName} ${taskSuffix}`);
-
       const snapshot = details.taskState.getStatus(!options.expanded);
 
+      const taskName = theme.fg("accent", details.taskParams.id);
+      const taskPower = theme.fg("dim", `[${details.taskParams.power}]`);
+      const taskUsage = theme.fg(
+        "dim",
+        `💰$${snapshot.usage.costUsd.toFixed(4)} 🧠 ${formatTokens(
+          snapshot.usage.contextTokens,
+        )}`,
+      );
+      lines.push(`${taskMarker} ${taskName} ${taskPower} ${taskUsage}`);
+
       if (snapshot.hiddenCount > 0 && !options.expanded) {
-        lines.push(`  ${theme.fg("dim", `+ ${snapshot.hiddenCount} more`)}`);
-        lines.push(`  ${theme.fg("dim", "Press Ctrl+O for more")}`);
+        lines.push(
+          theme.fg(
+            "dim",
+            `  ... (${snapshot.hiddenCount} more lines, ctrl+o to expand)`,
+          ),
+        );
       }
 
       for (const status of snapshot.statuses) {
