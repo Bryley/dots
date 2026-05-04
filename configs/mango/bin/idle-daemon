@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+lock_cmd="$script_dir/idle-lock"
+monitor_power="$script_dir/monitor-power"
+
+# Avoid duplicate swayidle instances if Mango reloads/re-runs autostart.
+lock_file="${XDG_RUNTIME_DIR:-/tmp}/mango-swayidle.lock"
+exec 9>"$lock_file"
+/run/current-system/sw/bin/flock -n 9 || exit 0
+
+exec /run/current-system/sw/bin/swayidle -w \
+  timeout 300 "$lock_cmd" \
+  timeout 600 "$monitor_power off" \
+    resume "$monitor_power on" \
+  timeout 1800 "/run/current-system/sw/bin/systemctl suspend" \
+  before-sleep "$lock_cmd" \
+  after-resume "$monitor_power on"

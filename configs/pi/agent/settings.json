@@ -1,8 +1,8 @@
 {
-  "lastChangelogVersion": "0.71.0",
+  "lastChangelogVersion": "0.72.1",
   "defaultProvider": "openai-codex",
-  "defaultModel": "gpt-5.5",
-  "theme": "light",
+  "defaultModel": "gpt-5.3-codex",
+  "theme": "dark",
   "packages": [
     "npm:pi-web-access",
     "npm:pi-token-usage",

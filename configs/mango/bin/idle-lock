@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# hyprlock stays in the foreground, which blocks swayidle when swayidle is run
+# with -w. Start it in the background and return after a short grace period so
+# later idle timers (monitor-off/suspend) can still fire.
+if /run/current-system/sw/bin/pgrep -x hyprlock >/dev/null 2>&1; then
+  exit 0
+fi
+
+log_dir="${XDG_STATE_HOME:-$HOME/.local/state}/mango"
+mkdir -p "$log_dir"
+
+/run/current-system/sw/bin/hyprlock --immediate-render >>"$log_dir/hyprlock.log" 2>&1 &
+
+# Give the lock surface a moment to render before swayidle releases any
+# before-sleep inhibitor.
+sleep 1
