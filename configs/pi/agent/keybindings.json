@@ -4,6 +4,6 @@
   "tui.input.newLine": ["shift+enter", "ctrl+j"],
   "app.session.togglePath": ["alt+p"],
   "app.session.toggleNamedFilter": ["alt+n"],
-  "app.model.cycleForward": ["alt+m"],
-  "app.model.cycleBackward": ["alt+shift+m"]
+  "app.model.cycleForward": ["ctrl+j"],
+  "app.model.cycleBackward": ["ctrl+k"]
 }

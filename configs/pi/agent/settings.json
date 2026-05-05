@@ -1,5 +1,5 @@
 {
-  "lastChangelogVersion": "0.72.1",
+  "lastChangelogVersion": "0.73.0",
   "defaultProvider": "openai-codex",
   "defaultModel": "gpt-5.3-codex",
   "theme": "dark",
@@ -13,6 +13,10 @@
   "quietStartup": true,
   "editorPaddingX": 1,
   "enabledModels": [
+    "github-copilot/gpt-5.3-codex",
+    "github-copilot/claude-sonnet-4.6",
+    "github-copilot/claude-haiku-4.5",
+    "github-copilot/gemini-3-flash-preview",
     "openai-codex/gpt-5.3-codex",
     "openai-codex/gpt-5.4",
     "openai-codex/gpt-5.5",
@@ -22,8 +26,5 @@
     "ollama/gemma4:26b"
   ],
   "defaultThinkingLevel": "medium",
-  "enableInstallTelemetry": false,
-  "subagents": {
-    "disableBuiltins": true
-  }
+  "enableInstallTelemetry": false
 }
