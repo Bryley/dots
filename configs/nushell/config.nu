@@ -223,7 +223,7 @@ if (which tv | is-not-empty) {
 # Handy aliases and small shell scripts
 
 # Find and goto dir recursively (with early exit support)
-export def --env f [] {
+export def --env f-old [] {
     let fd_cmd = 'fd --type directory --exclude node_modules --exclude target --exclude vendor --exclude site-packages --exclude golang.org --exclude registry'
 
     let path = (
@@ -240,7 +240,7 @@ export def --env f [] {
 
 # Jump to a git repository selected via television.
 # Uses non-fullscreen mode (~45% terminal height) for a lighter picker UI.
-export def --env tv-repo [] {
+export def --env f [] {
     let rows = ((term size).rows | into int)
     let height = (($rows * 45) / 100 | into int)
     let height = if $height < 10 { 10 } else { $height }

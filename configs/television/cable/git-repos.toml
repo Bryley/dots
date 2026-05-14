@@ -4,13 +4,46 @@ requirements = ["fd", "git"]
 description = "A channel to select from git repositories on your local machine"
 
 [source]
-# macOS-friendly defaults (same spirit as upstream channel)
-command = "fd -g .git -HL -t d -d 10 --prune ~ -E 'Library' -E 'Application Support' --exec dirname '{}'"
+# Search for git repository roots under the current directory only.
+# fd defaults intentionally used here:
+# - no symlink traversal
+# - no hidden-directory traversal
+# - respect .gitignore/.ignore rules
+# The bash wrapper also avoids emitting repositories nested inside another repo.
+command = '''
+is_repo() { [ -e "$1/.git" ]; }
+
+has_repo_parent() {
+  local dir parent
+  dir="${1%/}"
+
+  while [ "$dir" != "." ] && [ -n "$dir" ]; do
+    parent="${dir%/*}"
+    [ "$parent" = "$dir" ] && parent="."
+    [ -e "$parent/.git" ] && return 0
+    dir="$parent"
+  done
+
+  return 1
+}
+
+if is_repo .; then
+  printf '%s\n' .
+  exit 0
+fi
+
+fd -t d . . | while IFS= read -r dir; do
+  dir="${dir%/}"
+  if is_repo "$dir" && ! has_repo_parent "$dir"; then
+    printf '%s\n' "$dir"
+  fi
+done
+'''
 display = "{split:/:-1}"
 
 [preview]
 # Avoid wrapping {} in quotes: tv already handles argument escaping.
-command = "cd {}; git log -n 200 --pretty=medium --all --graph --color"
+command = "repo={}; printf 'PATH: %s\\n\\n' \"$(cd -- \"$repo\" && pwd)\"; cd -- \"$repo\" && git log -n 200 --pretty=medium --all --graph --color"
 
 [keybindings]
 shortcut = "f1"

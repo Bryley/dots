@@ -1,4 +1,6 @@
-shell = "nu"
+# Use bash for channel source/preview/action commands so cable files can use
+# portable POSIX-ish shell snippets even when the interactive shell is Nushell.
+shell = "bash"
 default_channel = "git-repos"
 
 [keybindings]
@@ -7,6 +9,8 @@ ctrl-u = "scroll_preview_half_page_up"
 ctrl-d = "scroll_preview_half_page_down"
 ctrl-y = "scroll_preview_up"
 ctrl-e = "scroll_preview_down"
+ctrl-k = "scroll_preview_up"
+ctrl-j = "scroll_preview_down"
 
 [shell_integration.channel_triggers]
 "env" = ["export", "unset"]
