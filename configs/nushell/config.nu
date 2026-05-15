@@ -251,8 +251,6 @@ export def --env f [] {
     }
 }
 
-alias tgr = tv-repo
-
 # Navigation picker entrypoint.
 # Starts in git-repos mode (`nav-repos`) at up to 30 lines height.
 # Switch modes with channel shortcuts: F1 repos, F2 dirs, F3 files.

@@ -4,39 +4,32 @@ requirements = ["fd", "git"]
 description = "A channel to select from git repositories on your local machine"
 
 [source]
-# Search for git repository roots under the current directory only.
-# fd defaults intentionally used here:
-# - no symlink traversal
-# - no hidden-directory traversal
-# - respect .gitignore/.ignore rules
-# The bash wrapper also avoids emitting repositories nested inside another repo.
+# Search for git repository roots under $HOME.
+# Hidden traversal is required to find .git directories, so known dependency/cache
+# sinks are excluded aggressively to keep the channel responsive.
 command = '''
-is_repo() { [ -e "$1/.git" ]; }
-
-has_repo_parent() {
-  local dir parent
-  dir="${1%/}"
-
-  while [ "$dir" != "." ] && [ -n "$dir" ]; do
-    parent="${dir%/*}"
-    [ "$parent" = "$dir" ] && parent="."
-    [ -e "$parent/.git" ] && return 0
-    dir="$parent"
-  done
-
-  return 1
-}
-
-if is_repo .; then
-  printf '%s\n' .
-  exit 0
-fi
-
-fd -t d . . | while IFS= read -r dir; do
-  dir="${dir%/}"
-  if is_repo "$dir" && ! has_repo_parent "$dir"; then
-    printf '%s\n' "$dir"
-  fi
+fd '^\.git$' "$HOME" \
+  --hidden \
+  --no-require-git \
+  --type directory \
+  --prune \
+  --exclude .bun \
+  --exclude .cache \
+  --exclude .cargo \
+  --exclude .config \
+  --exclude .local \
+  --exclude .npm \
+  --exclude .rustup \
+  --exclude Library \
+  --exclude node_modules \
+  --exclude target \
+  --exclude vendor \
+  --exclude site-packages \
+  --exclude registry \
+  --exclude golang.org \
+| while IFS= read -r git_dir; do
+  repo="${git_dir%/}"
+  printf '%s\n' "${repo%/.git}"
 done
 '''
 display = "{split:/:-1}"
