@@ -106,6 +106,34 @@ function resolveCaptureTarget(args) {
   return pathToFileURL(abs).href;
 }
 
+function detectSystemChromium() {
+  if (process.env.CHROMIUM_BIN && fs.existsSync(process.env.CHROMIUM_BIN)) {
+    return process.env.CHROMIUM_BIN;
+  }
+
+  const candidates = [
+    "chromium",
+    "chromium-browser",
+    "google-chrome",
+    "google-chrome-stable",
+    "chrome",
+  ];
+
+  for (const bin of candidates) {
+    try {
+      const resolved = execSync(`command -v ${bin}`, {
+        encoding: "utf8",
+        stdio: ["ignore", "pipe", "ignore"],
+      }).trim();
+      if (resolved && fs.existsSync(resolved)) return resolved;
+    } catch (_err) {
+      // try next
+    }
+  }
+
+  return null;
+}
+
 function loadPlaywright() {
   try {
     return require("playwright");
@@ -231,7 +259,17 @@ async function main() {
 
   const { chromium } = playwright;
 
-  const browser = await chromium.launch({ headless: true });
+  const systemChromium = detectSystemChromium();
+  const launchOptions = {
+    headless: true,
+    args: ["--no-sandbox"],
+  };
+
+  if (systemChromium) {
+    launchOptions.executablePath = systemChromium;
+  }
+
+  const browser = await chromium.launch(launchOptions);
   try {
     const page = await browser.newPage({ viewport: { width, height } });
 
