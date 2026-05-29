@@ -13,4 +13,4 @@ packages=(
     mise
 )
 
-sudo xbps-install -Sy "${packages[@]}"
+xbps-install -Sy "${packages[@]}"

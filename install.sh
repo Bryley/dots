@@ -135,8 +135,8 @@ chroot_setup() {
     git clone https://github.com/Bryley/dots.git "/home/$USERNAME/dots"
     chown -R "$USERNAME:$USERNAME" "/home/$USERNAME/dots"
 
+    /home/$USERNAME/dots/packages.sh
     # Link dotfiles
-    su -s /bin/bash "$USERNAME" -c 'cd ~/dots && ./packages.sh'
     su -s /bin/bash "$USERNAME" -c 'cd ~/dots && ./link.sh'
 
     xbps-reconfigure -fa
