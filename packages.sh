@@ -4,10 +4,10 @@ set -euo pipefail
 script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 
 mapfile -t packages < <(
-   sed 's/#.*//' "$script_dir/packages.txt" | awk 'NF'
+   sed 's/#.*//' "$script_dir/packages.txt" | awk 'NF { print $1 }'
 )
 mapfile -t services < <(
-   sed 's/#.*//' "$script_dir/services.txt" | awk 'NF'
+   sed 's/#.*//' "$script_dir/services.txt" | awk 'NF { print $1 }'
 )
 
 xbps-install -Sy void-repo-nonfree
