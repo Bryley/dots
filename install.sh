@@ -1,116 +1,154 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Will usally be `~/dots` expanded for the current user
-ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Void Linux Canberra mirror
+REPO="https://mirror.aarnet.edu.au/pub/voidlinux/current"
 
-# shellcheck source=./scripts/common.sh
-source "$ROOT_DIR/scripts/common.sh"
+##########
+# Checks #
+##########
 
-require_sudo_user
+[ "$EUID" -eq 0 ] || { echo "root access required"; exit 1; }
+[ -d /sys/firmware/efi ] || { echo "UEFI required"; exit 1; }
+command -v xbps-install > /dev/null || { echo "Needs to run inside Void Installer"; exit 1; }
+ping -c 1 1.1.1.1 > /dev/null || { echo "internet required"; exit 1; }
 
-# Export so child scripts run with `bash ...` can reuse them.
-export ROOT_DIR
-export TARGET_USER
+##############
+# User input #
+##############
 
-if [[ ! -f /etc/os-release ]]; then
-    log_error "Cannot detect OS. /etc/os-release not found."
-    exit 1
-fi
+read -rp "What should the machine name be? " MACHINE_HOSTNAME
+read -rp "What is your primary username? " USERNAME
 
-source /etc/os-release
+lsblk
+read -rp "What disk would you like to wipe/use? eg. nvme0n1: " DISK
+[ -n "$DISK" ] || { echo "DISK empty"; exit 1; }
+[ -b "/dev/$DISK" ] || { echo "/dev/$DISK not found"; exit 1; }
+read -rp "This will erase /dev/$DISK, are you sure? [yN]: " confirm
+[ "$confirm" = "y" ] || exit 1
 
-DISTRO_SCRIPT=""
-case "${ID:-}" in
-    ubuntu)
-        DISTRO_SCRIPT="$ROOT_DIR/scripts/distros/install-ubuntu.sh"
-        ;;
-    fedora)
-        DISTRO_SCRIPT="$ROOT_DIR/scripts/distros/install-fedora.sh"
-        ;;
-    *)
-        log_error "Unsupported distro: ${ID:-unknown}."
-        exit 1
-        ;;
-esac
+###############
+# Setup disks #
+###############
 
-require_file "$DISTRO_SCRIPT"
+# Remove current mounts for clean state
+umount -R /mnt 2>/dev/null || true
+swapoff -a 2>/dev/null || true
 
-log_info "Installing distro packages (${ID})..."
-bash "$DISTRO_SCRIPT"
 
-log_info "Running shared setup..."
-setup_mise_bashrc
-set_nushell_default false
-sudo -u "$TARGET_USER" bash "$ROOT_DIR/link.sh"
+sfdisk --wipe always --wipe-partitions always /dev/$DISK <<EOF
+label: gpt
 
-# Install tmux custom terminfo system-wide so non-user contexts can resolve TERM=tmux-256color-uc.
-if command -v tic >/dev/null 2>&1; then
-    tic -x -o /usr/local/share/terminfo "$ROOT_DIR/configs/tmux/tmux-256color-uc.terminfo" || log_warn "Failed to install system-wide tmux terminfo entry"
-fi
+start=1MiB, size=512MiB, type=U, name=EFI
+start=513MiB, type=L, name=ROOT
+EOF
 
-if [[ -f "$ROOT_DIR/mise.toml" ]]; then
-    sudo -u "$TARGET_USER" mise trust "$ROOT_DIR/mise.toml"
-fi
-sudo -u "$TARGET_USER" mise install
+udevadm settle
 
-setup_ssh_key_for_target_user
-ensure_user_in_group "$TARGET_USER" docker
+mkfs.vfat -F32 -n EFI /dev/disk/by-partlabel/EFI
+mkfs.ext4 -F -L ROOT /dev/disk/by-partlabel/ROOT
 
-resolve_install_type() {
-    local value="${INSTALL_TYPE:-}"
+udevadm settle
 
-    if [[ -z "$value" ]]; then
-        if [[ -t 0 ]]; then
-            read -r -p "Install type? [v]ps / [d]esktop (Enter to skip): " value
-        else
-            echo "none"
-            return 0
-        fi
-    fi
+mount /dev/disk/by-label/ROOT /mnt
+mkdir -p /mnt/boot/efi
+mount /dev/disk/by-label/EFI /mnt/boot/efi
 
-    case "${value,,}" in
-        v|vps)
-            echo "vps"
-            ;;
-        d|desktop)
-            echo "desktop"
-            ;;
-        "")
-            echo "none"
-            ;;
-        *)
-            log_error "Invalid INSTALL_TYPE: $value (use vps|v or desktop|d)"
-            exit 1
-            ;;
-    esac
+# Update xbps for live installer
+printf 'y' | xbps-install -Syu -R "$REPO" xbps
+
+################
+# Install Disk #
+################
+
+# Install nessessary system critical software into chroot
+printf 'y' | xbps-install -Sy -R "$REPO" -r /mnt \
+    base-system \
+    linux \
+    linux-firmware \
+    grub-x86_64-efi \
+    socklog-void \
+    NetworkManager \
+    dbus \
+    sudo \
+    bash \
+    nushell \
+    curl \
+    git \
+    man-pages \
+    ncurses \
+    neovim
+
+# Fstab
+ROOT_UUID="$(blkid -s UUID -o value /dev/disk/by-label/ROOT)"
+EFI_UUID="$(blkid -s UUID -o value /dev/disk/by-label/EFI)"
+
+cat > /mnt/etc/fstab <<EOF
+UUID=$ROOT_UUID / ext4 defaults,noatime 0 1
+UUID=$EFI_UUID /boot/efi vfat defaults,noatime 0 2
+EOF
+
+# Resolve DNS
+cp /etc/resolv.conf /mnt/etc/resolv.conf
+
+# This function will run as if inside the installed system
+chroot_setup() {
+    set -euo pipefail
+
+    # Use Australia repo
+    mkdir -p /etc/xbps.d
+    echo "repository=$REPO" > /etc/xbps.d/00-repository-main.conf
+
+
+    echo "$MACHINE_HOSTNAME" > /etc/hostname
+    ln -sf /usr/share/zoneinfo/Australia/Brisbane /etc/localtime
+
+    echo 'en_AU.UTF-8 UTF-8' >> /etc/default/libc-locales
+    echo 'LANG=en_AU.UTF-8' > /etc/locale.conf
+
+    xbps-reconfigure -f glibc-locales
+
+    echo 'KEYMAP="us"' >> /etc/rc.conf
+
+    # Enable services
+    ln -sf /etc/sv/dbus /etc/runit/runsvdir/default/dbus
+    ln -sf /etc/sv/NetworkManager /etc/runit/runsvdir/default/NetworkManager
+    ln -sf /etc/sv/socklog-unix /etc/runit/runsvdir/default/socklog-unix
+    ln -sf /etc/sv/nanoklogd /etc/runit/runsvdir/default/nanoklogd
+
+    grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id="Void"
+    grub-mkconfig -o /boot/grub/grub.cfg
+
+    # Enable sudo
+    echo '%wheel ALL=(ALL:ALL) ALL' > /etc/sudoers.d/wheel
+    chmod 440 /etc/sudoers.d/wheel
+
+    # Add user
+    useradd -m -G wheel,audio,video,input,storage,network,socklog -s /bin/nu "$USERNAME"
+
+    echo "Please input password for root:"
+    passwd root
+    echo "Please input password for $USERNAME:"
+    passwd "$USERNAME"
+
+    # Clone repo
+    git clone https://github.com/Bryley/dots.git "/home/$USERNAME/dots"
+    chown -R "$USERNAME:$USERNAME" "/home/$USERNAME/dots"
+
+    # Link dotfiles
+    su -s /bin/bash "$USERNAME" -c 'cd ~/dots && ./packages.sh'
+    su -s /bin/bash "$USERNAME" -c 'cd ~/dots && ./link.sh'
+
+    xbps-reconfigure -fa
 }
 
-install_type="$(resolve_install_type)"
+export MACHINE_HOSTNAME USERNAME REPO
+xchroot /mnt /bin/bash -c "$(declare -f chroot_setup); chroot_setup"
 
-case "$install_type" in
-    vps)
-        log_info "Running VPS setup..."
-        bash "$ROOT_DIR/scripts/vps.sh"
-        ;;
-    desktop)
-        log_info "Running desktop setup..."
-        bash "$ROOT_DIR/scripts/desktop.sh"
-        ;;
-    none)
-        log_warn "Skipping VPS/Desktop setup."
-        ;;
-esac
 
-log_info "Done, here are the next steps:"
-log_info "  - Switch dots remote to SSH"
-printf "%s\n" "      git -C $ROOT_DIR remote set-url origin git@github.com:bryley/dots.git"
-log_info "  - Set $TARGET_USER's passwords if not already set using 'sudo passwd $TARGET_USER'"
-if [[ "$install_type" == "vps" ]]; then
-    DEPLOY_USER="${DEPLOY_USER:-deployer}"
-    log_info "  - Set $DEPLOY_USER's passwords using 'sudo passwd $DEPLOY_USER'"
-    log_info "  - From your host, run: scripts/bootstrap-remote-ssh.sh $TARGET_USER@<server-ip-or-hostname>"
-fi
-log_info "  - Download and install Tailscale"
-log_info "  - Download and install Cloudflared"
+# Cleanup
+umount -R /mnt
+sync
 
+echo "Finished installing Void linux, now restart the system and remove the installer media"
+exit 0
