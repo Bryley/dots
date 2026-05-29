@@ -1,0 +1,53 @@
+# System Critical Dependencies
+base-system         # Void Linux's base system
+linux               # Linux kernel
+linux-firmware      # Binary firmwares for Linux
+grub-x86_64-efi     # UEFI Bootloader
+socklog-void        # Service logging daemons
+dbus                # Message bus system
+NetworkManager      # Internet Daemon
+sudo                # Run as root command
+bash                # Classic universal shell
+nushell             # Modern shell
+git                 # Version control system
+ca-certificates     # Certificates for SSL/TLS
+
+# Libraries
+man-pages           # Manual pages
+ncurses             # Library used by some other tools
+
+# CLI dependencies
+curl                # HTTP client
+ripgrep             # Better grep
+fd                  # Better find
+jq                  # JSON parsing
+yq                  # YAML parsing
+pciutils            # For lspci (checking GPU)
+net-tools           # Network based CLI tools
+
+# CLI/TUI tools
+neovim              # Text editor
+tmux                # Terminal Multiplexer
+mise                # Package level tooling/dependencies
+
+# Desktop
+mangowc             # Mango Window Manager
+elogind             # Seat service and connector to display server for wayland compositor
+mesa-dri            # Drivers for graphics
+swww                # Wallpaper Daemon
+quickshell          # Bar and other widgets
+polkit              # Auth for apps
+lxqt-policykit      # Application for polkit
+tlp                 # For laptop power management
+ghostty             # Terminal Emulator
+wofi                # Application selector GUI
+
+# Fonts
+noto-fonts-ttf
+noto-fonts-emoji
+
+# Audio
+pipewire
+alsa-pipewire
+pulseaudio-utils
+pavucontrol

@@ -1,0 +1,5 @@
+dbus                # Message bus system
+NetworkManager      # Network daemon
+socklog-unix        # Service logging daemon
+nanoklogd           # Kernel logging daemon
+elogind             # The seat management daemon

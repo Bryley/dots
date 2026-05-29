@@ -35,7 +35,6 @@ read -rp "This will erase /dev/$DISK, are you sure? [yN]: " confirm
 umount -R /mnt 2>/dev/null || true
 swapoff -a 2>/dev/null || true
 
-
 sfdisk --wipe always --wipe-partitions always /dev/$DISK <<EOF
 label: gpt
 
@@ -54,30 +53,19 @@ mount /dev/disk/by-label/ROOT /mnt
 mkdir -p /mnt/boot/efi
 mount /dev/disk/by-label/EFI /mnt/boot/efi
 
-# Update xbps for live installer
-printf 'y' | xbps-install -Syu -R "$REPO" xbps
-
 ################
 # Install Disk #
 ################
 
-# Install nessessary system critical software into chroot
+# Update xbps for live installer
+printf 'y' | xbps-install -Syu -R "$REPO" xbps
+
+# Install the minimum needed to enter the target system and run packages.sh there.
 printf 'y' | xbps-install -Sy -R "$REPO" -r /mnt \
     base-system \
-    linux \
-    linux-firmware \
-    grub-x86_64-efi \
-    socklog-void \
-    NetworkManager \
-    dbus \
-    sudo \
     bash \
-    nushell \
-    curl \
     git \
-    man-pages \
-    ncurses \
-    neovim
+    ca-certificates
 
 # Fstab
 ROOT_UUID="$(blkid -s UUID -o value /dev/disk/by-label/ROOT)"
@@ -99,6 +87,9 @@ chroot_setup() {
     mkdir -p /etc/xbps.d
     echo "repository=$REPO" > /etc/xbps.d/00-repository-main.conf
 
+    # Install packages
+    git clone https://github.com/Bryley/dots.git /tmp/dots
+    /tmp/dots/packages.sh
 
     echo "$MACHINE_HOSTNAME" > /etc/hostname
     ln -sf /usr/share/zoneinfo/Australia/Brisbane /etc/localtime
@@ -109,12 +100,6 @@ chroot_setup() {
     xbps-reconfigure -f glibc-locales
 
     echo 'KEYMAP="us"' >> /etc/rc.conf
-
-    # Enable services
-    ln -sf /etc/sv/dbus /etc/runit/runsvdir/default/dbus
-    ln -sf /etc/sv/NetworkManager /etc/runit/runsvdir/default/NetworkManager
-    ln -sf /etc/sv/socklog-unix /etc/runit/runsvdir/default/socklog-unix
-    ln -sf /etc/sv/nanoklogd /etc/runit/runsvdir/default/nanoklogd
 
     grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id="Void" --removable
     grub-mkconfig -o /boot/grub/grub.cfg
@@ -134,11 +119,10 @@ chroot_setup() {
     echo "Please input password for $USERNAME:"
     passwd "$USERNAME"
 
-    # Clone repo
-    git clone https://github.com/Bryley/dots.git "/home/$USERNAME/dots"
+    # Move repo into user's home
+    mv /tmp/dots "/home/$USERNAME/dots"
     chown -R "$USERNAME:$USERNAME" "/home/$USERNAME/dots"
 
-    /home/$USERNAME/dots/packages.sh
     # Link dotfiles
     su -s /bin/bash "$USERNAME" -c 'cd ~/dots && ./link.sh'
 

@@ -5,18 +5,23 @@ both local, and remote.
 
 ## Installing
 
-1. Clone the repo with `git clone https://github.com/Bryley/dots.git`
-2. `cd dots` into the directory and then run `sudo ./install.sh`
-3. The script will:
-   - detect distro and run the matching script in `scripts/distros/` for packages only
-   - run shared user setup (dotfiles, mise, shell)
-   - ask which extra setup to run: VPS (`scripts/vps.sh`) or desktop (`scripts/desktop.sh`)
-   - you can skip prompts by setting `INSTALL_TYPE=vps` (or `v`) / `INSTALL_TYPE=desktop` (or `d`)
-4. Optional (from your host machine): run `scripts/bootstrap-remote-ssh.sh user@host`
-   - adds your local public key to remote `authorized_keys`
-   - hardens OpenSSH (disable password auth + root SSH login)
-5. Update the remote of the dots repo.
-6. Clone additional notes and setup anything else you might need.
+Boot into Void Linux Live ISO and run these commands:
+
+ ```bash
+xbps-install -Sy curl ca-certificates
+curl -fsSL https://raw.githubusercontent.com/Bryley/dots/main/install.sh -o /tmp/install.sh
+bash /tmp/install.sh
+
+ ```
+
+That will take you through the automated installation process (no need to run
+`void-installer`).
+
+You will need to insert root and user passwords as well as the name of the
+machine and the disk to install too.
+
+After if finishes you should be able to shutdown the computer, remove the disk
+medium and then boot into the computer.
 
 ## VPS setup
 
