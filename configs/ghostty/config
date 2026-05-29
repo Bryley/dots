@@ -1,5 +1,6 @@
 # Linux theme file
-theme = light:Aizen Light,dark:GitHub Dark Dimmed
+# theme = light:Aizen Light,dark:GitHub Dark Dimmed
+theme = light:ayu_light,dark:GitHub Dark Dimmed
 background-opacity = 0.93
 background-blur = true
 font-size = 16

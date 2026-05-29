@@ -116,12 +116,15 @@ chroot_setup() {
     ln -sf /etc/sv/socklog-unix /etc/runit/runsvdir/default/socklog-unix
     ln -sf /etc/sv/nanoklogd /etc/runit/runsvdir/default/nanoklogd
 
-    grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id="Void"
+    grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id="Void" --removable
     grub-mkconfig -o /boot/grub/grub.cfg
 
     # Enable sudo
     echo '%wheel ALL=(ALL:ALL) ALL' > /etc/sudoers.d/wheel
     chmod 440 /etc/sudoers.d/wheel
+
+    # Add nushell as a valid shell
+    grep -qxF /bin/nu /etc/shells || echo /bin/nu >> /etc/shells
 
     # Add user
     useradd -m -G wheel,audio,video,input,storage,network,socklog -s /bin/nu "$USERNAME"
@@ -144,7 +147,6 @@ chroot_setup() {
 
 export MACHINE_HOSTNAME USERNAME REPO
 xchroot /mnt /bin/bash -c "$(declare -f chroot_setup); chroot_setup"
-
 
 # Cleanup
 umount -R /mnt
