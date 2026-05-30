@@ -22,13 +22,19 @@ ripgrep             # Better grep
 fd                  # Better find
 jq                  # JSON parsing
 yq                  # YAML parsing
+carapace	    # Commandline autocomplete
 pciutils            # For lspci (checking GPU)
+upower		    # Battery utilities
+brightnessctl 	    # Brightness management
 net-tools           # Network based CLI tools
+ImageMagick	    # Manipulating images
 
 # CLI/TUI tools
 neovim              # Text editor
 tmux                # Terminal Multiplexer
+yazi		    # Terminal File selector
 mise                # Package level tooling/dependencies
+wl-clipboard        # Wayland clipboard utilities: wl-copy, wl-paste
 
 # Desktop
 mangowc             # Mango Window Manager
@@ -41,6 +47,7 @@ lxqt-policykit      # Application for polkit
 tlp                 # For laptop power management
 ghostty             # Terminal Emulator
 wofi                # Application selector GUI
+dconf		    # Low level system conf command (used for toggling between light/dark)
 
 # Fonts
 noto-fonts-ttf

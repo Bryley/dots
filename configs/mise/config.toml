@@ -1,6 +1,7 @@
 [tools]
-node = "24.1.0"
+node = "lts"
 ruby = "4.0.2"
 "gem:kamal" = "2.11.0"
 "npm:@mariozechner/pi-coding-agent" = "0.73.1"
 "npm:playwright" = "1.59.1"
+"npm:@earendil-works/pi-coding-agent" = "latest"

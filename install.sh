@@ -94,8 +94,12 @@ chroot_setup() {
     echo "$MACHINE_HOSTNAME" > /etc/hostname
     ln -sf /usr/share/zoneinfo/Australia/Brisbane /etc/localtime
 
-    echo 'en_AU.UTF-8 UTF-8' >> /etc/default/libc-locales
+    grep -qxF 'en_AU.UTF-8 UTF-8' /etc/default/libc-locales || echo 'en_AU.UTF-8 UTF-8' >> /etc/default/libc-locales
     echo 'LANG=en_AU.UTF-8' > /etc/locale.conf
+
+    # Keep /etc/locale.conf as the single source of truth for login sessions.
+    # This matters when the login shell is nushell, which does not source /etc/profile.d/locale.sh.
+    sed -i 's|^session[[:space:]]\+required[[:space:]]\+pam_env\.so$|session    required   pam_env.so envfile=/etc/locale.conf|' /etc/pam.d/system-login
 
     xbps-reconfigure -f glibc-locales
 
