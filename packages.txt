@@ -17,6 +17,7 @@ man-pages           # Manual pages
 ncurses             # Library used by some other tools
 
 # CLI dependencies
+gcc		    # C compiler for building treesitter deps
 curl                # HTTP client
 ripgrep             # Better grep
 fd                  # Better find
@@ -48,6 +49,8 @@ tlp                 # For laptop power management
 ghostty             # Terminal Emulator
 wofi                # Application selector GUI
 dconf		    # Low level system conf command (used for toggling between light/dark)
+swayidle	    # Idle manager
+swaylock            # Simple themeable Wayland lock screen
 
 # Fonts
 noto-fonts-ttf

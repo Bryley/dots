@@ -8,12 +8,33 @@ monitor_power="$script_dir/monitor-power"
 # Avoid duplicate swayidle instances if Mango reloads/re-runs autostart.
 lock_file="${XDG_RUNTIME_DIR:-/tmp}/mango-swayidle.lock"
 exec 9>"$lock_file"
-/run/current-system/sw/bin/flock -n 9 || exit 0
+flock -n 9 || exit 0
 
-exec /run/current-system/sw/bin/swayidle -w \
-  timeout 300 "$lock_cmd" \
-  timeout 600 "$monitor_power off" \
-    resume "$monitor_power on" \
-  timeout 1800 "/run/current-system/sw/bin/systemctl suspend" \
-  before-sleep "$lock_cmd" \
+# Void/runit does not provide systemctl. elogind's loginctl is the usual
+# suspend interface on Void desktops; fall back to zzz if the user has it.
+suspend_cmd="${IDLE_SUSPEND_CMD:-}"
+if [ -z "$suspend_cmd" ]; then
+  if command -v loginctl >/dev/null 2>&1; then
+    suspend_cmd="loginctl suspend"
+  elif command -v zzz >/dev/null 2>&1; then
+    suspend_cmd="zzz"
+  fi
+fi
+
+swayidle_args=(
+  -w
+  timeout 300 "$lock_cmd"
+  timeout 600 "$monitor_power off"
+    resume "$monitor_power on"
+)
+
+if [ -n "$suspend_cmd" ]; then
+  swayidle_args+=(timeout 1800 "$suspend_cmd")
+fi
+
+swayidle_args+=(
+  before-sleep "$lock_cmd"
   after-resume "$monitor_power on"
+)
+
+exec swayidle "${swayidle_args[@]}"

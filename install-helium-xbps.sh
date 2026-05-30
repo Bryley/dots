@@ -36,6 +36,15 @@ ensure_cmd() {
 }
 
 need xbps-install
+need xbps-query
+
+installed_pkgver="$(xbps-query -p pkgver "$pkgname" 2>/dev/null || true)"
+expected_pkgver="${pkgname}-${version}_${revision}"
+if [ "$installed_pkgver" = "$expected_pkgver" ]; then
+  echo "$expected_pkgver is already installed; skipping Helium download."
+  exit 0
+fi
+
 ensure_cmd curl curl
 ensure_cmd xz xz
 need tar
