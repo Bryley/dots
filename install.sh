@@ -76,7 +76,7 @@ UUID=$ROOT_UUID / ext4 defaults,noatime 0 1
 UUID=$EFI_UUID /boot/efi vfat defaults,noatime 0 2
 EOF
 
-# Resolve DNS
+# Resolve DNS temporarily
 cp /etc/resolv.conf /mnt/etc/resolv.conf
 
 # This function will run as if inside the installed system
@@ -129,6 +129,11 @@ chroot_setup() {
 
     # Link dotfiles
     su -s /bin/bash "$USERNAME" -c 'cd ~/dots && ./link.sh'
+
+    cat > /etc/resolv.conf <<EOF
+nameserver 1.1.1.1
+nameserver 8.8.8.8
+EOF
 
     xbps-reconfigure -fa
 }
