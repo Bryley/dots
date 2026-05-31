@@ -9,10 +9,12 @@ HEIGHT="50%"
 # Get current pane's directory to start popup in something sensible
 CUR_DIR="$(tmux display -p -F "#{pane_current_path}")"
 
-if [[ $CURRENT_SESSION == _popup* ]]; then
-    tmux detach-client
-    exit 0
-fi
+case "$CURRENT_SESSION" in
+    _popup*)
+        tmux detach-client
+        exit 0
+        ;;
+esac
 
 # If the session doesn't exist, create it (detached)
 if ! tmux has-session -t "$POPUP_SESSION" 2>/dev/null; then

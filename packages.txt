@@ -17,23 +17,24 @@ man-pages           # Manual pages
 ncurses             # Library used by some other tools
 
 # CLI dependencies
-gcc		    # C compiler for building treesitter deps
+gcc                 # C compiler for building treesitter deps
+make                # Needed for some mise tools
 curl                # HTTP client
 ripgrep             # Better grep
 fd                  # Better find
 jq                  # JSON parsing
 yq                  # YAML parsing
-carapace	    # Commandline autocomplete
+carapace            # Commandline autocomplete
 pciutils            # For lspci (checking GPU)
-upower		    # Battery utilities
-brightnessctl 	    # Brightness management
+upower              # Battery utilities
+brightnessctl       # Brightness management
 net-tools           # Network based CLI tools
-ImageMagick	    # Manipulating images
+ImageMagick         # Manipulating images
 
 # CLI/TUI tools
 neovim              # Text editor
 tmux                # Terminal Multiplexer
-yazi		    # Terminal File selector
+yazi                # Terminal File selector
 mise                # Package level tooling/dependencies
 wl-clipboard        # Wayland clipboard utilities: wl-copy, wl-paste
 
@@ -48,8 +49,8 @@ lxqt-policykit      # Application for polkit
 tlp                 # For laptop power management
 ghostty             # Terminal Emulator
 wofi                # Application selector GUI
-dconf		    # Low level system conf command (used for toggling between light/dark)
-swayidle	    # Idle manager
+dconf               # Low level system conf command (used for toggling between light/dark)
+swayidle            # Idle manager
 swaylock            # Simple themeable Wayland lock screen
 
 # Fonts
