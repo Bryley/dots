@@ -67,3 +67,14 @@ Here are plans and TODOs of upcomming things I want to explore/work on:
     - [ ] Create pipeline extension (move away from skill and make it more
        deterministic)
     - [ ] Add a pi plugin that displays the time it took for a response
+- [ ] Finish `bait` custom agent harness, should hopefully replace pi and the
+   plans for it above
+- [ ] Finish `termtrix` project
+- [ ] Explore Void Linux distro instead of Fedora, things I need to remember to
+  setup:
+    - [ ] runit services logging using `socklog-unix` (user services) and
+       `nanoklogd` (kernel logs) (Also make sure use has `socklog` group to read
+       logs without root access)
+    - [ ] Nvidia drivers
+    - [ ] Network manager
+    - [ ] KVM for virtual machines

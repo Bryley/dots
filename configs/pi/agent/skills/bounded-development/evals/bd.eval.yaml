@@ -1,0 +1,341 @@
+# Bounded Development (BD) Skill Evals
+#
+# Run from the evals/ directory:
+#   cd ~/.pi/agent/skills/bounded-development/evals
+#   evalt bd.eval.yaml
+#
+# Or use the helper script:
+#   ~/.pi/agent/skills/bounded-development/scripts/run-evals.sh
+#
+# Workspace fixture paths are relative to the working directory (this directory).
+
+version: 1
+config:
+  target:
+    adapter: pi
+    model: github-copilot/gemini-3-flash-preview
+  run:
+    timeout_ms: 300000
+    max_turns: 40
+
+tests:
+
+  # ---------------------------------------------------------------------------
+  # Architecture mode
+  # ---------------------------------------------------------------------------
+
+  - name: bd-arch-stubs-only
+    desc: |
+      Architecture mode must produce stubs and structure only.
+      No executable logic, no implemented function bodies.
+    input:
+      prompt: |
+        /skill:bounded-development
+
+        BD architecture: Design a skeleton for a simple string utilities module in JavaScript.
+        Include three functions: reverseString, countWordOccurrences, and truncate (to a max
+        length with ellipsis). Output file tree, types/signatures, and stubs with body comments.
+    assertions:
+      - left: status
+        op: "=="
+        right: passed
+      - review:
+          prompt: |
+            Does the response contain only function signatures, stubs, and structural elements
+            (module layout, JSDoc comments, body comments describing intent)?
+            It must NOT contain any implemented function bodies — no algorithms, conditionals,
+            loops, or return statements with actual logic. Stubs should use a throw marker or
+            empty body with a comment. Score high only if zero logic is present.
+          pass_threshold: 0.85
+
+  - name: bd-arch-presents-before-creating
+    desc: |
+      Architecture mode must propose the skeleton and wait for approval before creating files.
+    input:
+      prompt: |
+        /skill:bounded-development
+
+        BD architecture: Design a skeleton for a simple key-value cache module with get, set,
+        and delete functions. Use JavaScript.
+    assertions:
+      - left: status
+        op: "=="
+        right: passed
+      - left: files.changed_count
+        op: "=="
+        right: 0
+      - review:
+          prompt: |
+            Did the agent present the proposed skeleton structure (file tree, signatures, stubs)
+            as a proposal to review, without actually creating any files on disk?
+            Score high if the response is clearly a proposal/output only, and no files were written.
+          pass_threshold: 0.80
+
+  # ---------------------------------------------------------------------------
+  # Implementation mode
+  # ---------------------------------------------------------------------------
+
+  - name: bd-impl-basic
+    desc: |
+      Implementation mode should implement a single stub, run tests, and output the handoff summary.
+    workspace:
+      copy:
+        - from: fixtures/math_utils.js
+          to: math_utils.js
+        - from: fixtures/math_test.js
+          to: math_test.js
+    input:
+      prompt: |
+        /skill:bounded-development
+
+        BD implementation: Implement the `factorial` function in math_utils.js.
+        The test file is math_test.js — run it with `node math_test.js` after implementing.
+    assertions:
+      - left: status
+        op: "=="
+        right: passed
+      - left: file.changed
+        path: math_utils.js
+        op: "=="
+        right: true
+      - left: tool.called
+        tool_name: bash
+        op: "=="
+        right: true
+      - left: output.text
+        op: contains
+        right: "BD Implementation Summary"
+      - left: output.text
+        op: contains
+        right: "Function:"
+      - left: output.text
+        op: contains
+        right: "Tests:"
+      - review:
+          prompt: |
+            Did the agent correctly implement the factorial function?
+            The implementation should: return 1 for n=0 and n=1, return 120 for n=5,
+            and throw an Error for negative inputs. Did the tests pass?
+            Also check: is the implementation immediately readable — could a junior developer
+            understand what it does at a glance without tracing through logic? Does it avoid
+            spurious additions like logging, extra error handling, or unrequested abstractions?
+          pass_threshold: 0.80
+
+  - name: bd-impl-scope-guard
+    desc: |
+      Implementation mode must only touch the target function.
+      The other stub (sumArray) must remain unimplemented.
+    workspace:
+      copy:
+        - from: fixtures/math_utils.js
+          to: math_utils.js
+    input:
+      prompt: |
+        /skill:bounded-development
+
+        BD implementation: Implement only the `factorial` function in math_utils.js.
+        Leave sumArray as-is.
+    assertions:
+      - left: status
+        op: "=="
+        right: passed
+      - left: file.changed
+        path: math_utils.js
+        op: "=="
+        right: true
+      - left: file.content
+        path: math_utils.js
+        op: contains
+        right: "not implemented"
+      - review:
+          prompt: |
+            Did the agent implement only the factorial function and leave sumArray as a stub?
+            The sumArray function body should still contain a "not implemented" throw.
+            Score high only if sumArray was clearly left untouched.
+          pass_threshold: 0.85
+
+  - name: bd-impl-handoff-format
+    desc: |
+      Implementation mode must always end with the structured BD handoff summary block.
+    workspace:
+      copy:
+        - from: fixtures/calculator.js
+          to: calculator.js
+        - from: fixtures/calculator_test.js
+          to: calculator_test.js
+    input:
+      prompt: |
+        /skill:bounded-development
+
+        BD implementation: Implement the `add` function in calculator.js.
+        The test file is calculator_test.js — run it with `node calculator_test.js`.
+    assertions:
+      - left: status
+        op: "=="
+        right: passed
+      - left: file.changed
+        path: calculator.js
+        op: "=="
+        right: true
+      - left: output.text
+        op: contains
+        right: "BD Implementation Summary"
+      - left: output.text
+        op: contains
+        right: "Function:"
+      - left: output.text
+        op: contains
+        right: "Tests:"
+      - left: output.text
+        op: contains
+        right: "Imports added:"
+      - left: output.text
+        op: contains
+        right: "Concerns for review:"
+
+  - name: bd-impl-escalate-complexity
+    desc: |
+      Size and clarity check: the agent must stop and discuss before implementing something
+      too complex or unreadable as a single function. It must NOT immediately start writing code.
+    input:
+      prompt: |
+        /skill:bounded-development
+
+        BD implementation: Implement a full recursive descent expression parser with operator
+        precedence supporting +, -, *, / and parentheses in parser.js. Include tokenisation,
+        precedence climbing, and an AST node structure.
+    assertions:
+      - left: status
+        op: "=="
+        right: passed
+      - left: files.changed_count
+        op: "=="
+        right: 0
+      - review:
+          prompt: |
+            Did the agent STOP before writing any implementation code and instead discuss the
+            complexity concern? It should have: (1) flagged that this exceeds the ~50 line budget,
+            (2) proposed ways to break it into smaller functions, and (3) asked the user to decide
+            before proceeding. Score low if it just implemented the parser without this discussion.
+          pass_threshold: 0.75
+
+  - name: bd-impl-signature-check
+    desc: |
+      Pre-flight signature check: if the spec in the body comments implies the signature is
+      incomplete or wrong, the agent must flag it and ask before implementing.
+    workspace:
+      copy:
+        - from: fixtures/date_utils.js
+          to: date_utils.js
+    input:
+      prompt: |
+        /skill:bounded-development
+
+        BD implementation: Implement the `formatDate` function in date_utils.js.
+    assertions:
+      - left: status
+        op: "=="
+        right: passed
+      - left: files.changed_count
+        op: "=="
+        right: 0
+      - review:
+          prompt: |
+            The formatDate signature is `formatDate(date)` but its body comments say "format
+            the date using the provided format string" and describe format tokens like YYYY,
+            MM, DD — yet there is no format parameter in the signature.
+            Did the agent catch this mismatch and stop to raise the signature concern and ask
+            the user how to fix it, rather than guessing or silently adding the parameter?
+            Score high only if it clearly flagged the issue before writing any code.
+          pass_threshold: 0.85
+
+  - name: bd-impl-new-dependency
+    desc: |
+      If implementing requires a new external dependency, the agent must stop, present options
+      with tradeoffs, give a recommendation, and ask the user before proceeding.
+      It must not silently add dependencies.
+    workspace:
+      copy:
+        - from: fixtures/feed_parser.js
+          to: feed_parser.js
+    input:
+      prompt: |
+        /skill:bounded-development
+
+        BD implementation: Implement the `parseRssTitles` function in feed_parser.js.
+    assertions:
+      - left: status
+        op: "=="
+        right: passed
+      - left: files.changed_count
+        op: "=="
+        right: 0
+      - review:
+          prompt: |
+            Parsing XML in Node.js requires a third-party library — there is no built-in XML
+            parser. Did the agent stop before implementing and ask the user which library or
+            approach to use, presenting at least one option with a brief rationale?
+            Score low if it silently picked a library, tried to parse XML by hand without
+            discussion, or implemented the function without raising the dependency question.
+          pass_threshold: 0.80
+
+  # ---------------------------------------------------------------------------
+  # Test design mode
+  # ---------------------------------------------------------------------------
+
+  - name: bd-test-ideas-before-code
+    desc: |
+      Test design mode must present a test plan and wait for approval before writing test code.
+    workspace:
+      copy:
+        - from: fixtures/math_utils.js
+          to: math_utils.js
+    input:
+      prompt: |
+        /skill:bounded-development
+
+        BD test design: Generate tests for the `factorial` function in math_utils.js.
+    assertions:
+      - left: status
+        op: "=="
+        right: passed
+      - review:
+          prompt: |
+            Did the agent present a numbered or structured list of test ideas/cases BEFORE
+            writing any test code? The response should show a test plan (happy path, edge cases,
+            error cases) and either pause for approval or clearly separate idea generation from
+            code writing. Score low if the agent jumped straight into writing test code without
+            first presenting a plan.
+          pass_threshold: 0.80
+
+  # ---------------------------------------------------------------------------
+  # Negative: out-of-scope request
+  # ---------------------------------------------------------------------------
+
+  - name: bd-negative-open-refactor
+    desc: |
+      An open-ended whole-file refactor request is outside BD scope.
+      The agent should either decline, redirect, or ask which specific function to target —
+      it must NOT treat the whole file as a single BD implementation task.
+    workspace:
+      copy:
+        - from: fixtures/math_utils.js
+          to: math_utils.js
+    input:
+      prompt: |
+        /skill:bounded-development
+
+        Please clean up and rewrite the entire math_utils.js file however you see fit.
+        Improve style, add error handling, restructure as a class — whatever looks best.
+    assertions:
+      - left: status
+        op: "=="
+        right: passed
+      - review:
+          prompt: |
+            Did the agent correctly handle this out-of-scope request? It should have either:
+            (a) noted that BD implementation mode targets one specific function at a time and
+                asked which function to implement, OR
+            (b) used architecture mode to propose a skeleton redesign without implementing logic.
+            Score low if the agent just freely rewrote the whole file without any BD guardrails.
+          pass_threshold: 0.70

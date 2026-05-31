@@ -66,6 +66,12 @@ bind j if-shell -F "#{window_zoomed_flag}" "select-pane -D \; resize-pane -Z" "s
 bind k if-shell -F "#{window_zoomed_flag}" "select-pane -U \; resize-pane -Z" "select-pane -U"
 bind l if-shell -F "#{window_zoomed_flag}" "select-pane -R \; resize-pane -Z" "select-pane -R"
 
+# Move/swap panes around (prefix + HJKL)
+bind H swap-pane -t '{left-of}'
+bind J swap-pane -t '{down-of}'
+bind K swap-pane -t '{up-of}'
+bind L swap-pane -t '{right-of}'
+
 bind r source-file ~/.config/tmux/tmux.conf
 
 # Auto-detect macOS theme once per server

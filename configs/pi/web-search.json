@@ -1,0 +1,4 @@
+{
+  "workflow": "summary-review",
+  "curatorTimeoutSeconds": 3
+}

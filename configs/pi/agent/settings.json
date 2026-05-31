@@ -18,13 +18,11 @@
     "github-copilot/claude-haiku-4.5",
     "github-copilot/gemini-3-flash-preview",
     "openai-codex/gpt-5.3-codex",
-    "openai-codex/gpt-5.4",
     "openai-codex/gpt-5.5",
-    "ollama/gemma4:e4b",
-    "ollama/gemma4:31b",
-    "ollama/gpt-oss:20b",
-    "ollama/gemma4:26b"
+    "llama-cpp-qwen/Qwen3.6-35B-A3B-UD-IQ4_NL_XL",
+    "llama-cpp-qwen/Qwen3.6-35B-A3B-UD-IQ3_S"
   ],
   "defaultThinkingLevel": "medium",
-  "enableInstallTelemetry": false
+  "enableInstallTelemetry": false,
+  "hideThinkingBlock": false
 }
