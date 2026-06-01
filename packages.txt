@@ -15,6 +15,9 @@ ca-certificates     # Certificates for SSL/TLS
 # Libraries
 man-pages           # Manual pages
 ncurses             # Library used by some other tools
+pkg-config          # For linking dependencies
+wayland-devel       # Wayland Development tooling
+libxkbcommon-devel  # Wayland Keyboard mapping development tooling
 
 # CLI dependencies
 gcc                 # C compiler for building treesitter deps
@@ -30,6 +33,7 @@ upower              # Battery utilities
 brightnessctl       # Brightness management
 net-tools           # Network based CLI tools
 ImageMagick         # Manipulating images
+tree-sitter-cli     # CLI for installing nvim treesitter binaries
 
 # CLI/TUI tools
 neovim              # Text editor

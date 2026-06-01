@@ -74,12 +74,14 @@ end
 vim.api.nvim_create_autocmd("FileType", {
     callback = function()
         -- Syntax highlighting, provided by Neovim's built-in Treesitter support.
-        pcall(vim.treesitter.start)
+        local has_parser = pcall(vim.treesitter.start)
 
-        -- Experimental Treesitter indentation, provided by nvim-treesitter.
-        pcall(function()
-            vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
-        end)
+        if has_parser then
+            -- Experimental Treesitter indentation, provided by nvim-treesitter.
+            pcall(function()
+                vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+            end)
+        end
     end,
 })
 

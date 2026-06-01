@@ -1,6 +1,9 @@
 vim.pack.add({
     "https://github.com/neovim/nvim-lspconfig",
+    "https://github.com/j-hui/fidget.nvim",
 })
+
+require("fidget").setup({})
 
 vim.api.nvim_create_autocmd("LspAttach", {
     callback = function(ev)
@@ -52,3 +55,4 @@ vim.diagnostic.config({
 
 
 require("plugins.lsp.lua")
+require("plugins.lsp.rust")
