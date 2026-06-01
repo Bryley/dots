@@ -1,13 +1,8 @@
 
 [tasks.install]
-description = "Install this machine (auto-detect distro, prompts for VPS mode)"
+description = "Install this machine"
 alias = "i"
 run = "sudo ./install.sh"
-
-[tasks.vps]
-description = "Install this machine and force VPS setup (IS_VPS=yes)"
-alias = "iv"
-run = "sudo IS_VPS=yes ./install.sh"
 
 [tasks.setup]
 description = "Kamal bootstrap for accessories (server bootstrap + proxy + all accessories)"
@@ -26,14 +21,6 @@ set -euo pipefail
 : "${TARGET:?Set TARGET=user@host, e.g. TARGET=deployer@my-vps.local}"
 ./scripts/bootstrap-remote-ssh.sh "$TARGET"
 """
-
-[tasks.test-ubuntu]
-description = "Run Docker-based install test against Ubuntu"
-run = "printf 'ubuntu\nn\n' | ./test.sh"
-
-[tasks.test-fedora]
-description = "Run Docker-based install test against Fedora"
-run = "printf 'fedora\nn\n' | ./test.sh"
 
 [tasks.playwright-chromium]
 description = "Install/update Playwright Chromium browser for screenshot tooling"

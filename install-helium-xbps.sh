@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# This is an install script for the Helium browser on Void Linux
+# It is a little bit hacky and would be better as a template built using
+# `xbps-src`. But this is just for now
+
 pkgname="helium-browser-bin"
 version="0.12.5.1"
 revision="1"
