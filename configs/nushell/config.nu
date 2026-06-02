@@ -322,6 +322,36 @@ def --wrapped mango [...args] {
 #     }
 # }
 
+# Make interactive `git diff` open Neovim's built-in directory difftool.
+# Use `^git diff ...` to bypass this wrapper and print the normal patch.
+def --wrapped git [...args] {
+    let subcommand = ($args | get 0? | default "")
+    let passthrough_diff_flags = [
+        "--check"
+        "--exit-code"
+        "--name-only"
+        "--name-status"
+        "--numstat"
+        "--quiet"
+        "--raw"
+        "--shortstat"
+        "--stat"
+        "--summary"
+    ]
+
+    let should_open_difftool = (
+        $subcommand == "diff"
+        and not ($args | any {|arg| $arg in $passthrough_diff_flags })
+    )
+
+    if $should_open_difftool {
+        let diff_args = ($args | skip 1)
+        ^git difftool --dir-diff --no-prompt ...$diff_args
+    } else {
+        ^git ...$args
+    }
+}
+
 # Opens current git repo's webpage
 def gitopen [] {
     let url = (git remote get-url origin)

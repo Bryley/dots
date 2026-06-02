@@ -7,6 +7,9 @@ require("fidget").setup({})
 
 vim.api.nvim_create_autocmd("LspAttach", {
     callback = function(ev)
+        -- Disable color preview (nvim-highlight-colors plugin will handle it)
+        vim.lsp.document_color.enable(false, { bufnr = ev.buf })
+
         local client = vim.lsp.get_client_by_id(ev.data.client_id)
         if not client then
             return

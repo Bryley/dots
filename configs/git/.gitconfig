@@ -10,6 +10,18 @@
     tool = nvimdiff
     conflictstyle = diff3
 
+[diff]
+    tool = nvim_difftool
+
+[difftool]
+    prompt = false
+
+[difftool "nvim_difftool"]
+    cmd = nvim -R -c \"packadd nvim.difftool\" -d \"$LOCAL\" \"$REMOTE\"
+
+[alias]
+    dt = difftool --dir-diff
+
 [mergetool]
     keepBackup = false
 
@@ -17,33 +29,4 @@
     defaultBranch = main
 
 [core]
-    pager = delta
-
-[interactive]
-    diffFilter = delta --color-only
-
-[delta]
-    navigate = true
-    line-numbers = true
-    side-by-side = false
-    keep-plus-minus-markers = true
-    dark = true
-    syntax-theme = OneHalfDark
-    features = pretty
-
-[delta "pretty"]
-    file-style = "bold yellow"
-    hunk-header-style = "syntax bold"
-    plus-style = "syntax"
-    plus-emph-style = "syntax bold"
-    minus-style = "syntax dim"
-    minus-emph-style = "syntax bold dim"
-    plus-marker-style = "green bold"
-    minus-marker-style = "red bold"
-    line-numbers-left-format = "{nm:>4} "
-    line-numbers-right-format = "{np:>4}│"
-    line-numbers-left-style = "#6b7280"
-    line-numbers-right-style = "#6b7280"
-    line-numbers-minus-style = "#ef4444 bold"
-    line-numbers-zero-style = "#6b7280"
-    line-numbers-plus-style = "#22c55e bold"
+    pager = less -FRX

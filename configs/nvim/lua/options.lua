@@ -10,8 +10,12 @@ vim.o.swapfile = false -- Stops the creation of swap files
 vim.o.undofile = true -- Keeps undo history even on close
 vim.o.updatetime = 200
 
+vim.o.mouse = "i" -- Enable mouse only for insert mode
+
 vim.o.splitbelow = true
 vim.o.splitright = true
+
+vim.o.termguicolors = true
 
 vim.o.number = true
 vim.o.relativenumber = true

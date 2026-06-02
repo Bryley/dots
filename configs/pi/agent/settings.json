@@ -22,7 +22,7 @@
     "llama-cpp-qwen/Qwen3.6-35B-A3B-UD-IQ4_NL_XL",
     "llama-cpp-qwen/Qwen3.6-35B-A3B-UD-IQ3_S"
   ],
-  "defaultThinkingLevel": "medium",
+  "defaultThinkingLevel": "low",
   "enableInstallTelemetry": false,
   "hideThinkingBlock": false
 }
