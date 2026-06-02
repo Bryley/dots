@@ -27,6 +27,7 @@ ripgrep             # Better grep
 fd                  # Better find
 jq                  # JSON parsing
 yq                  # YAML parsing
+bat                 # Better curl
 carapace            # Commandline autocomplete
 pciutils            # For lspci (checking GPU)
 upower              # Battery utilities

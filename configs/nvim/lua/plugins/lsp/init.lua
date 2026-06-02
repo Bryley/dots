@@ -30,8 +30,16 @@ vim.api.nvim_create_autocmd("LspAttach", {
             map("gd", vim.lsp.buf.definition, "Go to definition")
         end
 
+        if client:supports_method("textDocument/references") then
+            map("gr", vim.lsp.buf.references, "Go to references")
+        end
+
         if client:supports_method("textDocument/codeAction") then
             map("<leader>la", vim.lsp.buf.code_action, "LSP code action")
+        end
+
+        if client:supports_method("textDocument/rename") then
+            map("<leader>lr", vim.lsp.buf.rename, "LSP rename")
         end
 
         if client:supports_method("textDocument/formatting") then
