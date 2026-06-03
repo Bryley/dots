@@ -49,6 +49,14 @@ set -g history-limit 100000
 setw -g mode-keys vi
 set  -g status-keys vi
 
+# Scroll a little faster in copy-mode with Vim-style line scroll keys.
+bind -T copy-mode-vi C-e send-keys -X -N 3 scroll-down
+bind -T copy-mode-vi C-y send-keys -X -N 3 scroll-up
+
+# Snappy half-page smooth scrolling in copy-mode.
+bind -T copy-mode-vi C-d run-shell -b -t = "TMUX_PANE=#{pane_id} ~/.config/tmux/scripts/smooth-scroll.sh down"
+bind -T copy-mode-vi C-u run-shell -b -t = "TMUX_PANE=#{pane_id} ~/.config/tmux/scripts/smooth-scroll.sh up"
+
 # Better support for applications like Nvim
 set -g focus-events on
 

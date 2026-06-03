@@ -153,6 +153,18 @@ require("snacks").setup({
     },
 })
 
+-- Refresh Snacks scroll state after writes. Without this, the first scroll after
+-- :write can be treated as a state reset and jump instead of animating.
+vim.api.nvim_create_autocmd("BufWritePost", {
+    group = vim.api.nvim_create_augroup("snacks_scroll_after_write", { clear = true }),
+    callback = vim.schedule_wrap(function()
+        if Snacks and Snacks.scroll then
+            Snacks.scroll.disable()
+            Snacks.scroll.enable()
+        end
+    end),
+})
+
 vim.keymap.set("n", "<leader>ff", function()
     Snacks.picker.files()
 end, { desc = "Find files" })
