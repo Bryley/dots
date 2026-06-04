@@ -4,7 +4,6 @@
   "defaultModel": "gpt-5.5",
   "theme": "dark",
   "packages": [
-    "npm:pi-web-access",
     "npm:pi-token-usage",
     "git:github.com/Bryley/pi-vim",
     "npm:pi-move-session"
@@ -22,7 +21,7 @@
     "llama-cpp-qwen/Qwen3.6-35B-A3B-UD-IQ4_NL_XL",
     "llama-cpp-qwen/Qwen3.6-35B-A3B-UD-IQ3_S"
   ],
-  "defaultThinkingLevel": "medium",
+  "defaultThinkingLevel": "low",
   "enableInstallTelemetry": false,
   "hideThinkingBlock": false
 }

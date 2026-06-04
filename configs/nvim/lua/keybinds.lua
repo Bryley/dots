@@ -18,10 +18,10 @@ end, {
 
 vim.keymap.set("n", "<leader>r", function()
     vim.cmd.restart({
-        args = { [[lua require("persistence").load({ last = true })]] },
+        args = { [[lua require("persistence").load()]] },
     })
 end, {
-    desc = "Restart Neovim and restore last session"
+    desc = "Restart Neovim and restore current directory session"
 })
 
 local quickfix_toggle_cmd =

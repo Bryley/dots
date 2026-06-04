@@ -1,3 +1,6 @@
+-- TODO temp, please delete
+vim.opt.runtimepath:prepend("/Users/bryley/dots/configs/nvim-old")
+
 require("options")
 require("binds")
 

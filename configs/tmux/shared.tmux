@@ -28,6 +28,12 @@ set -g repeat-time 150
 # Enable mouse scrolling and stuff
 setw -g mouse on
 
+# Enter copy-mode on mouse wheel without tmux's `-e` flag.
+# The default root WheelUpPane binding uses `copy-mode -e`, which exits copy-mode
+# automatically once you scroll back to the live bottom of the pane. Keep copy-mode
+# sticky instead; leave it explicitly with q/Escape/C-c.
+bind -T root WheelUpPane if-shell -F "#{||:#{alternate_on},#{pane_in_mode},#{mouse_any_flag}}" { send-keys -M } { copy-mode }
+
 # Let terminal emulator protocols work (example display images in terminal)
 set -g allow-passthrough on
 
@@ -48,6 +54,17 @@ set -g history-limit 100000
 # Set VI keybindings
 setw -g mode-keys vi
 set  -g status-keys vi
+
+# Copy-mode vi selection tweaks: make v start a character selection like Vim,
+# and keep rectangle/block selection available on Ctrl-v.
+bind -T copy-mode-vi v   send -X begin-selection
+bind -T copy-mode-vi C-v send -X rectangle-toggle
+
+# Vim-style viewport positioning in copy-mode.
+bind -T copy-mode-vi z switch-client -T copy-mode-vi-z
+bind -T copy-mode-vi-z t send -X scroll-top
+bind -T copy-mode-vi-z b send -X scroll-bottom
+bind -T copy-mode-vi-z z send -X scroll-middle
 
 # Scroll a little faster in copy-mode with Vim-style line scroll keys.
 bind -T copy-mode-vi C-e send-keys -X -N 3 scroll-down

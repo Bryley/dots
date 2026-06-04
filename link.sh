@@ -48,6 +48,7 @@ link() {
 
 link "carapace" "$HOME/.config/carapace"
 link "hypr" "$HOME/.config/hypr"
+link "ketch" "$HOME/.config/ketch"
 link "kitty" "$HOME/.config/kitty"
 link "mise" "$HOME/.config/mise"
 link "mango" "$HOME/.config/mango"

@@ -1,3 +1,32 @@
+-- Dependencies --
+
+vim.pack.add({
+    "https://github.com/MunifTanjim/nui.nvim",
+    "https://github.com/nvim-lua/plenary.nvim",
+})
+
+-- dbab Database --
+
+vim.pack.add({ "https://github.com/zerochae/dbab.nvim" })
+require("dbab").setup({
+    connections = {
+        {
+            name = "UAT",
+            url = "$MYSQL_UAT_URL"
+        },
+        -- {
+        --     name = "PROD",
+        --     url = "$MYSQL_PROD_URL"
+        -- },
+    },
+    result = {
+        style = "table",
+        max_width = 10,
+        max_height = 20,
+        header_align = "fit",
+    }
+})
+
 -- Blink Completions --
 
 vim.pack.add({
@@ -9,7 +38,13 @@ vim.pack.add({
 require("blink.cmp").setup({
     keymap = { preset = 'enter' },
     sources = {
-        default = { 'lsp', 'path', 'buffer' },
+        default = { 'lsp', 'path', 'buffer', 'dbab' },
+        providers = {
+            dbab = {
+                name = "dbab",
+                module = "blink_dbab",
+            },
+        },
     },
     completion = {
         documentation = {
@@ -44,26 +79,25 @@ require("plugins.lsp")
 
 vim.cmd.packadd("nvim.difftool")
 
-vim.keymap.set("n", "<leader>dt", function()
-    local left = vim.fn.input("Diff left: ", "", "file")
-    if left == "" then
-        return
-    end
-
-    local right = vim.fn.input("Diff right: ", "", "file")
-    if right == "" then
-        return
-    end
-
-    require("difftool").open(left, right, {
-        ignore = { ".git" },
-        rename = { detect = true },
-    })
-end, { desc = "DiffTool compare files/directories" })
+-- vim.keymap.set("n", "<leader>dt", function()
+--     local left = vim.fn.input("Diff left: ", "", "file")
+--     if left == "" then
+--         return
+--     end
+--
+--     local right = vim.fn.input("Diff right: ", "", "file")
+--     if right == "" then
+--         return
+--     end
+--
+--     require("difftool").open(left, right, {
+--         ignore = { ".git" },
+--         rename = { detect = true },
+--     })
+-- end, { desc = "DiffTool compare files/directories" })
 
 -- Yazi.nvim --
 
-vim.pack.add({ "https://github.com/nvim-lua/plenary.nvim" })
 vim.pack.add({ "https://github.com/mikavilpas/yazi.nvim" })
 
 vim.keymap.set("n", "<leader>=", function()
@@ -183,8 +217,8 @@ vim.pack.add({ "https://github.com/folke/persistence.nvim" })
 require("persistence").setup()
 
 vim.keymap.set("n", "<F1>", function()
-    require("persistence").load({ last = true })
-end, { desc = "Restore last session" })
+    require("persistence").load()
+end, { desc = "Restore current directory session" })
 
 
 -- Auto pairs --
@@ -216,7 +250,6 @@ require("nvim-highlight-colors").setup({
 vim.pack.add({
     "https://github.com/hasansujon786/nvim-navbuddy",
     "https://github.com/SmiteshP/nvim-navic",
-    "https://github.com/MunifTanjim/nui.nvim",
 })
 require("nvim-navbuddy").setup({
     lsp = {
@@ -227,3 +260,4 @@ require("nvim-navbuddy").setup({
 vim.keymap.set("n", "<leader>ln", function()
     require("nvim-navbuddy").open()
 end, { desc = "Open navbuddy" })
+
