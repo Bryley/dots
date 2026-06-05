@@ -1,12 +1,13 @@
 {
   "lastChangelogVersion": "0.78.0",
-  "defaultProvider": "openai-codex",
-  "defaultModel": "gpt-5.5",
+  "defaultProvider": "llama-cpp-qwen",
+  "defaultModel": "gemma-4-12b-it-UD-Q4_K_XL",
   "theme": "dark",
   "packages": [
     "npm:pi-token-usage",
     "git:github.com/Bryley/pi-vim",
-    "npm:pi-move-session"
+    "npm:pi-move-session",
+    "npm:pi-token-speed"
   ],
   "showHardwareCursor": true,
   "quietStartup": true,
@@ -21,7 +22,7 @@
     "llama-cpp-qwen/Qwen3.6-35B-A3B-UD-IQ4_NL_XL",
     "llama-cpp-qwen/Qwen3.6-35B-A3B-UD-IQ3_S"
   ],
-  "defaultThinkingLevel": "low",
+  "defaultThinkingLevel": "minimal",
   "enableInstallTelemetry": false,
   "hideThinkingBlock": false
 }

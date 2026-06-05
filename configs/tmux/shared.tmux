@@ -85,6 +85,9 @@ set -g default-command "nu -l"
 bind | split-window -h -c "#{pane_current_path}"
 bind _ split-window -v -c "#{pane_current_path}"
 
+# Share space
+bind = select-layout -E
+
 # Keep zoom when moving between panes (prefix + hjkl)
 bind h if-shell -F "#{window_zoomed_flag}" "select-pane -L \; resize-pane -Z" "select-pane -L"
 bind j if-shell -F "#{window_zoomed_flag}" "select-pane -D \; resize-pane -Z" "select-pane -D"
