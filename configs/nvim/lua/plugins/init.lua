@@ -142,6 +142,11 @@ vim.api.nvim_create_autocmd("FileType", {
     end,
 })
 
+-- Markdown Preview --
+
+vim.pack.add({ 'https://github.com/MeanderingProgrammer/render-markdown.nvim' })
+require('render-markdown').setup({})
+
 -- Snacks (Picker, Scroll) --
 
 vim.pack.add({ "https://github.com/folke/snacks.nvim" })

@@ -116,7 +116,7 @@ chroot_setup() {
     grep -qxF /bin/nu /etc/shells || echo /bin/nu >> /etc/shells
 
     # Add user
-    useradd -m -G wheel,audio,video,input,storage,network,socklog -s /bin/nu "$USERNAME"
+    useradd -m -G wheel,audio,video,input,storage,network,socklog,docker -s /bin/nu "$USERNAME"
 
     echo "Please input password for root:"
     passwd root

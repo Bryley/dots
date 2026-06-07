@@ -42,6 +42,8 @@ tmux                # Terminal Multiplexer
 yazi                # Terminal File selector
 mise                # Package level tooling/dependencies
 wl-clipboard        # Wayland clipboard utilities: wl-copy, wl-paste
+docker              # Containers
+docker-buildx       # Container building
 
 # Desktop
 mangowc             # Mango Window Manager

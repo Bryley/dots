@@ -1,7 +1,7 @@
 {
-  "lastChangelogVersion": "0.78.0",
-  "defaultProvider": "llama-cpp-qwen",
-  "defaultModel": "gemma-4-12b-it-UD-Q4_K_XL",
+  "lastChangelogVersion": "0.78.1",
+  "defaultProvider": "openai-codex",
+  "defaultModel": "gpt-5.5",
   "theme": "dark",
   "packages": [
     "npm:pi-token-usage",
@@ -22,7 +22,7 @@
     "llama-cpp-qwen/Qwen3.6-35B-A3B-UD-IQ4_NL_XL",
     "llama-cpp-qwen/Qwen3.6-35B-A3B-UD-IQ3_S"
   ],
-  "defaultThinkingLevel": "minimal",
+  "defaultThinkingLevel": "low",
   "enableInstallTelemetry": false,
   "hideThinkingBlock": false
 }
