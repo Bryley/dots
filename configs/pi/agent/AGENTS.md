@@ -26,6 +26,7 @@ Examples include (not limited to):
 - Keep changes minimal and scoped.
 - Follow project conventions.
 - Prefer clear, auditable file operations.
+- When reporting information to me, be extreamly consise and sacrifice grammar for the sake of concision.
 
 ## Web, Code, and Docs Research
 
