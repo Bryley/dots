@@ -154,8 +154,17 @@ require("snacks").setup({
     scroll = {
         enable = true,
     },
+    input = {
+        enabled = true,
+        win = {
+            relative = "cursor",
+            row = -3,
+            col = 0,
+        },
+    },
     picker = {
         enabled = true,
+        ui_select = true,
         layout = "ivy",
         sources = {
             files = {
@@ -266,3 +275,15 @@ vim.keymap.set("n", "<leader>ln", function()
     require("nvim-navbuddy").open()
 end, { desc = "Open navbuddy" })
 
+
+-- Git Stuff --
+
+vim.pack.add({ "https://github.com/lewis6991/gitsigns.nvim" })
+require("gitsigns").setup({})
+
+vim.keymap.set("n", "<leader>gb", "<cmd>Gitsigns blame_line<CR>", { desc = "Git blame" })
+
+-- Crates (Rust) --
+
+vim.pack.add({ "https://github.com/saecki/crates.nvim" })
+require("crates").setup({})
