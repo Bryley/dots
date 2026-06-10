@@ -67,3 +67,4 @@ vim.diagnostic.config({
 
 require("plugins.lsp.lua")
 require("plugins.lsp.rust")
+require("plugins.lsp.schema")

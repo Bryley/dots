@@ -1,3 +1,24 @@
+vim.keymap.set("i", "<C-H>", "<C-W>", { desc = "Delete full word" }) -- Control backspace deletes a word
+
+-- Stay in visual mode when in doing various tasks
+vim.keymap.set("v", "<", "<gv")
+vim.keymap.set("v", ">", ">gv")
+
+-- Yanking keeps selection
+vim.keymap.set("v", "y", "ygv")
+
+
+-- Resize Windows with arrowkeys
+vim.keymap.set("n", "<Left>", "<cmd>vertical resize +1<cr>")
+vim.keymap.set("n", "<Right>", "<cmd>vertical resize -1<cr>")
+vim.keymap.set("n", "<Up>", "<cmd>resize +1<cr>")
+vim.keymap.set("n", "<Down>", "<cmd>resize -1<cr>")
+
+vim.keymap.set("n", "<S-Left>", "<cmd>vertical resize +5<cr>")
+vim.keymap.set("n", "<S-Right>", "<cmd>vertical resize -5<cr>")
+vim.keymap.set("n", "<S-Up>", "<cmd>resize +5<cr>")
+vim.keymap.set("n", "<S-Down>", "<cmd>resize -5<cr>")
+
 vim.keymap.set("n", "<C-n>", function()
     vim.diagnostic.jump({
         count = 1,

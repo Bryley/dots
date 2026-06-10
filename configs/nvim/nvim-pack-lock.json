@@ -82,6 +82,10 @@
       "rev": "5adf0895310c1904e5abfaad40a2baad7fe44a07",
       "src": "https://github.com/MeanderingProgrammer/render-markdown.nvim"
     },
+    "schemastore.nvim": {
+      "rev": "0f3cd0e584b4ed221fc44eee5b0b6ce335f7e263",
+      "src": "https://github.com/b0o/schemastore.nvim"
+    },
     "snacks.nvim": {
       "rev": "882c996cf28183f4d63640de0b4c02ec886d01f2",
       "src": "https://github.com/folke/snacks.nvim"
