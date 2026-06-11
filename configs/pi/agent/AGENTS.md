@@ -28,6 +28,12 @@ Examples include (not limited to):
 - Prefer clear, auditable file operations.
 - When reporting information to me, be extreamly consise and sacrifice grammar for the sake of concision.
 
+## Accuracy / Anti-Hallucination
+
+- For specific protocol/API/version facts, verify with docs/search before answering unless already seen in current context.
+- If not verified, say uncertainty explicitly; do not invent exact escape codes, flags, config keys, command names, or file paths.
+- Prefer a quick `ketch search ... --scrape` / official docs check for obscure technical constants.
+
 ## Web, Code, and Docs Research
 
 Use `ketch` CLI for external research — web pages, OSS code, and library docs.

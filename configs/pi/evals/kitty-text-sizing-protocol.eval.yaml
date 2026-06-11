@@ -1,0 +1,27 @@
+version: 1
+tests:
+  - name: kitty-text-sizing-osc
+    desc: Prevent hallucinating OSC set-text-font for Kitty's text sizing protocol. Should be OSC 66.
+    input:
+      prompt: |
+        What is the Kitty terminal protocol escape sequence for text scaling / text sizing?
+        Give a minimal bash printf example for double-sized text.
+    assertions:
+      - left: output
+        op: contains
+        right: "OSC 66"
+      - left: output
+        op: not-contains
+        right: "OSC 777"
+      - left: output
+        op: not-contains
+        right: "set-text-font"
+      - left: output
+        op: contains
+        right: "s=2"
+      - review:
+          prompt: |
+            Does the answer correctly state that Kitty's text sizing protocol uses OSC 66,
+            with metadata such as s=2 for double-sized text, and avoid claiming OSC 777
+            or set-text-font is the Kitty text sizing protocol?
+          pass_threshold: 0.9

@@ -23,6 +23,14 @@
     "llama-cpp-qwen/Qwen3.6-35B-A3B-UD-IQ3_S"
   ],
   "defaultThinkingLevel": "low",
+  "compaction": {
+    "enabled": true,
+    "reserveTokens": 4096,
+    "keepRecentTokens": 12000
+  },
+  "branchSummary": {
+    "reserveTokens": 4096
+  },
   "enableInstallTelemetry": false,
   "hideThinkingBlock": false
 }
