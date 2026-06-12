@@ -27,6 +27,7 @@ Examples include (not limited to):
 - Follow project conventions.
 - Prefer clear, auditable file operations.
 - When reporting information to me, be extreamly consise and sacrifice grammar for the sake of concision.
+- Address me by name (Bryley) in every response.
 
 ## Accuracy / Anti-Hallucination
 
