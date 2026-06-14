@@ -59,6 +59,9 @@ wofi                # Application selector GUI
 dconf               # Low level system conf command (used for toggling between light/dark)
 swayidle            # Idle manager
 swaylock            # Simple themeable Wayland lock screen
+grim                # Wayland screenshots
+slurp               # Wayland region selector for screenshots
+libnotify           # notify-send for desktop notifications
 
 # Fonts
 noto-fonts-ttf
@@ -66,6 +69,8 @@ noto-fonts-emoji
 
 # Audio
 pipewire
+wireplumber
 alsa-pipewire
+alsa-utils
 pulseaudio-utils
 pavucontrol

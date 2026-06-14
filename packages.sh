@@ -40,6 +40,19 @@ for service in "${services[@]}"; do
     enable_service "$service"
 done
 
+# PipeWire audio setup
+mkdir -p /etc/pipewire/pipewire.conf.d
+ln -sfn /usr/share/examples/wireplumber/10-wireplumber.conf \
+    /etc/pipewire/pipewire.conf.d/10-wireplumber.conf
+ln -sfn /usr/share/examples/pipewire/20-pipewire-pulse.conf \
+    /etc/pipewire/pipewire.conf.d/20-pipewire-pulse.conf
+
+mkdir -p /etc/alsa/conf.d
+ln -sfn /usr/share/alsa/alsa.conf.d/50-pipewire.conf \
+    /etc/alsa/conf.d/50-pipewire.conf
+ln -sfn /usr/share/alsa/alsa.conf.d/99-pipewire-default.conf \
+    /etc/alsa/conf.d/99-pipewire-default.conf
+
 # Laptop stuff
 if [ -d /sys/class/power_supply/BAT0 ] || ls /sys/class/power_supply/BAT* >/dev/null 2>&1; then
    enable_service tlp

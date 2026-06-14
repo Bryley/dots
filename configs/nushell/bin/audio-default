@@ -1,0 +1,25 @@
+#!/usr/bin/env sh
+set -eu
+
+# Prefer built-in analog speakers/mic over HDMI when both are present.
+# PipeWire/WirePlumber starts asynchronously, so wait briefly for Pulse compat.
+for _ in 1 2 3 4 5 6 7 8 9 10; do
+    pactl info >/dev/null 2>&1 && break
+    sleep 0.5
+done
+
+analog_sink="alsa_output.pci-0000_c4_00.6.analog-stereo"
+analog_card="alsa_card.pci-0000_c4_00.6"
+
+if pactl list short sinks | awk '{print $2}' | grep -qx "$analog_sink"; then
+    pactl set-card-profile "$analog_card" output:analog-stereo+input:analog-stereo 2>/dev/null || \
+        pactl set-card-profile "$analog_card" output:analog-stereo 2>/dev/null || true
+    pactl set-sink-port "$analog_sink" analog-output-speaker 2>/dev/null || true
+    pactl set-default-sink "$analog_sink"
+    pactl set-sink-mute "$analog_sink" 0
+    pactl set-sink-volume "$analog_sink" 80%
+
+    pactl list sink-inputs short | awk '{print $1}' | while read -r input; do
+        [ -n "$input" ] && pactl move-sink-input "$input" "$analog_sink" 2>/dev/null || true
+    done
+fi

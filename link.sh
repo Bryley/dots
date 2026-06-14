@@ -56,6 +56,7 @@ link "nvim" "$HOME/.config/nvim"
 link "niri" "$HOME/.config/niri"
 link "nushell" "$HOME/.config/nushell"
 link "opencode" "$HOME/.config/opencode"
+link "pipewire" "$HOME/.config/pipewire"
 link "presenterm" "$HOME/.config/presenterm"
 link "quickshell" "$HOME/.config/quickshell"
 link "television" "$HOME/.config/television"
@@ -72,6 +73,7 @@ else
 fi
 
 link "git/.gitconfig" "$HOME/.gitconfig"
+link "alsa/asoundrc" "$HOME/.asoundrc"
 link "pi" "$HOME/.pi"
 link "wallpaper.png" "$HOME/wallpaper"
 

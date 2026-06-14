@@ -56,6 +56,8 @@ window-rule {
 }
 
 // TODO change wallpapers location
+spawn-at-startup "pipewire"
+spawn-at-startup "sh" "-c" "$HOME/.config/nushell/bin/audio-default"
 spawn-at-startup "quickshell"
 spawn-at-startup "lxqt-policykit-agent"
 spawn-at-startup "sh" "-c" "swww-daemon && swww img ~/wallpaper"
