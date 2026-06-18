@@ -159,7 +159,7 @@ $env.config = {
         file_format: "plaintext" # "sqlite" or "plaintext"
         isolation: false # only available with sqlite file_format. true enables history isolation, false disables it. true will allow the history to be isolated to the current session using up/down arrows. false will allow the history to be shared across all sessions.
         # TODO when nushell 0.112.0 comes out then re-enable this:
-        # path: ($env.XDG_STATE_HOME | path join "nushell" "history.txt")
+        path: ($env.XDG_STATE_HOME | path join "nushell" "history.txt")
     }
 
     completions: {
@@ -220,10 +220,12 @@ if (which tv | is-not-empty) {
     ^tv init nu | save --force $tv_script
 }
 
-# Handy aliases and small shell scripts
+#########################################
+# Handy aliases and small shell scripts #
+#########################################
 
 # Find and goto dir recursively (with early exit support)
-export def --env f-old [] {
+export def --env f [] {
     let fd_cmd = 'fd --type directory --exclude node_modules --exclude target --exclude vendor --exclude site-packages --exclude golang.org --exclude registry'
 
     let path = (
@@ -240,7 +242,7 @@ export def --env f-old [] {
 
 # Jump to a git repository selected via television.
 # Uses non-fullscreen mode (~45% terminal height) for a lighter picker UI.
-export def --env f [] {
+export def --env f-tv [] {
     let rows = ((term size).rows | into int)
     let height = (($rows * 45) / 100 | into int)
     let height = if $height < 10 { 10 } else { $height }
@@ -249,36 +251,6 @@ export def --env f [] {
     if ($repo | is-not-empty) {
         cd $repo
     }
-}
-
-# Navigation picker entrypoint.
-# Starts in git-repos mode (`nav-repos`) at up to 30 lines height.
-# Switch modes with channel shortcuts: F1 repos, F2 dirs, F3 files.
-# Selection behavior:
-# - dir/repo: cd into it
-# - file: cd to parent, then open in $EDITOR
-export def --env nav [] {
-    let rows = ((term size).rows | into int)
-    let height = if $rows < 30 { $rows } else { 30 }
-
-    let choice = (^tv --height $height nav-repos | str trim)
-
-    if ($choice | is-empty) or not ($choice | path exists) {
-        return
-    }
-
-    let kind = ($choice | path type)
-    if $kind == "dir" {
-        cd $choice
-        return
-    }
-
-    let parent = ($choice | path dirname)
-    let file_name = ($choice | path basename)
-    cd $parent
-
-    let editor = ($env.EDITOR? | default "nvim")
-    ^$editor $file_name
 }
 
 # Parses and loads a .env file into the environment
@@ -310,48 +282,6 @@ def --wrapped mango [...args] {
     }
 }
 
-# Sets up nix develop command to automatically alias to `nix develop --command nu`
-# TODO fix this so you can use options with it
-# def nix [ ...args ] {
-#     if ( ($args | first 1 | to text | str trim) == "develop" ) {
-#         # If the first argument is 'develop', modify the command
-#         ^nix develop --command nu ($args | skip 1)
-#     } else {
-#         # For all other commands, pass the arguments as-is
-#         ^nix $args
-#     }
-# }
-
-# Make interactive `git diff` open Neovim's built-in directory difftool.
-# Use `^git diff ...` to bypass this wrapper and print the normal patch.
-def --wrapped git [...args] {
-    let subcommand = ($args | get 0? | default "")
-    let passthrough_diff_flags = [
-        "--check"
-        "--exit-code"
-        "--name-only"
-        "--name-status"
-        "--numstat"
-        "--quiet"
-        "--raw"
-        "--shortstat"
-        "--stat"
-        "--summary"
-    ]
-
-    let should_open_difftool = (
-        $subcommand == "diff"
-        and not ($args | any {|arg| $arg in $passthrough_diff_flags })
-    )
-
-    if $should_open_difftool {
-        let diff_args = ($args | skip 1)
-        ^git difftool --dir-diff --no-prompt ...$diff_args
-    } else {
-        ^git ...$args
-    }
-}
-
 # Opens current git repo's webpage
 def gitopen [] {
     let url = (git remote get-url origin)
@@ -364,21 +294,6 @@ def gitopen [] {
 $env.FZF_DEFAULT_OPTS = "--layout=reverse --height=40% --border"
 # Removes direnv output
 $env.DIRENV_LOG_FORMAT = ""
-
-# let nixld = (if (echo "/etc/NIXOS" | path exists) {
-#     # If on NixOS then set up the nix_ld dynamic linker (note it needs to be installed)
-#     (^nix eval --impure --raw --expr 'let pkgs = import <nixpkgs> {}; NIX_LD = pkgs.lib.fileContents "${pkgs.stdenv.cc}/nix-support/dynamic-linker"; in NIX_LD')
-# } else {
-#     ""
-# })
-#
-# $env.NIX_LD = $nixld
-
-# $env.NIX_LD=$nixld
-
-# def nvim [...$args] {
-#     NIX_LD=$nixld _nvim $args
-# }
 
 const secret_file = if ('~/dots/configs/nushell/secret.nu' | path exists) {
     "~/dots/configs/nushell/secret.nu"

@@ -1,5 +1,5 @@
 {
-  "lastChangelogVersion": "0.79.3",
+  "lastChangelogVersion": "0.79.6",
   "defaultProvider": "openai-codex",
   "defaultModel": "gpt-5.5",
   "theme": "dark",
@@ -22,7 +22,7 @@
     "llama-cpp-qwen/Qwen3.6-35B-A3B-UD-IQ4_NL_XL",
     "llama-cpp-qwen/Qwen3.6-35B-A3B-UD-IQ3_S"
   ],
-  "defaultThinkingLevel": "low",
+  "defaultThinkingLevel": "medium",
   "compaction": {
     "enabled": true,
     "reserveTokens": 4096,
