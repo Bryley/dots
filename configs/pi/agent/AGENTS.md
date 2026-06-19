@@ -29,6 +29,11 @@ Examples include (not limited to):
 - When reporting information to me, be extreamly consise and sacrifice grammar for the sake of concision.
 - Address me by name (Bryley) in every response.
 
+## Structured Data Files
+
+- For large JSON/YAML/CSV/JSONL/log files, avoid reading the whole file first. Inspect size, shape, keys/paths, counts, and small representative samples using tools like `jq`, `yq`, `head`, `wc`, `rg`, etc.
+- Prefer targeted extraction/filtering over full-file reads; read the whole structured file only when it is small, inspection is insufficient, or the user explicitly asks.
+
 ## Accuracy / Anti-Hallucination
 
 - For specific protocol/API/version facts, verify with docs/search before answering unless already seen in current context.

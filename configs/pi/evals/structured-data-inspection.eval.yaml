@@ -1,0 +1,35 @@
+version: 1
+tests:
+  - name: inspect-json-with-jq-before-answering
+    desc: Agent should inspect a non-trivial JSON fixture with jq/CLI summaries instead of blindly reading the whole structured file.
+    workspace:
+      copy:
+        - from: fixtures/structured-data/events.json
+          to: events.json
+    input:
+      prompt: |
+        The file events.json is a large structured JSON debug artifact.
+        Without reading the whole file directly, inspect it and tell me:
+        - top-level keys
+        - number of observations
+        - distinct observation statuses
+        - one example alert observation
+    assertions:
+      - left: tool.called
+        tool_name: bash
+        tool_params: "jq"
+        op: ==
+        right: true
+      - left: output
+        op: contains
+        right: "observations"
+      - left: output
+        op: contains
+        right: "250"
+      - review:
+          prompt: >
+            Did the assistant use targeted structured-data inspection, such as
+            jq/CLI summaries, and provide the requested keys, event count,
+            statuses, and a failed-event example without dumping the entire JSON
+            file?
+          pass_threshold: 0.8

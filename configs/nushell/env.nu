@@ -201,14 +201,24 @@ $env.EDITOR = "nvim"
 
 $env.CARAPACE_BRIDGES = "bash"
 
+# Use the resolved ~/.config/mise config as mise's global config directly.
+# This avoids mise treating a symlink target as a local/ignored config when cwd
+# is inside the dotfiles repo, while keeping ~/.config/mise as the portable entrypoint.
+let global_mise_config = ('~/.config/mise/config.toml' | path expand)
+if ($global_mise_config | path exists) {
+    $env.MISE_GLOBAL_CONFIG_FILE = $global_mise_config
+}
+
 # mise activation cache for config.nu
+# Regenerate every startup: this file contains absolute paths, so a stale cache from
+# another machine/profile (e.g. nix vs mise install) can hide mise-installed tools.
 let mise_data_dir = $nu.data-dir
 if not ($mise_data_dir | path exists) {
     mkdir $mise_data_dir
 }
 
 let mise_path = $mise_data_dir | path join "mise.nu"
-if ( (which mise | is-not-empty) and not ($mise_path | path exists) ) {
+if (which mise | is-not-empty) {
     ^mise activate nu | save --force $mise_path
 }
 # To add entries to PATH (on Windows you might use Path), you can use the following pattern:

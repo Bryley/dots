@@ -1,5 +1,5 @@
 time_format='%-I:%M %p'
-date_format='%d/%m/%Y'
+date_format='%Y-%m-%d'
 
 TMUX_VAR_FG=#626262
 TMUX_VAR_BG=#262626
@@ -27,11 +27,9 @@ set-option -g window-status-format " #I#{?window_zoomed_flag,*,} #W "
 set-option -g window-status-current-format "#[fg=$TMUX_VAR_PRI,bold] #I#{?window_zoomed_flag,#[fg=yellow]*#[default],}#[fg=$TMUX_VAR_PRI,bold] #W "
 
 # Status Right
-set-option -g status-right-length 50
-# TODO show network status
-# TMUX_VAR_RS="#[fg=$TMUX_VAR_PRI,bold] #($scripts_dir/network.sh) "
-TMUX_VAR_RS="#[fg=$TMUX_VAR_PRI,bold] "
-TMUX_VAR_RS="$TMUX_VAR_RS#[bg=$TMUX_VAR_PRI,fg=$TMUX_VAR_BG,nobold] #(date +'$time_format') #(date +'$date_format') "
+set-option -g status-right-length 80
+TMUX_VAR_RS="#(~/.config/tmux/scripts/network-status.sh)  "
+TMUX_VAR_RS="$TMUX_VAR_RS#[fg=#c0c0c0,bold]  #(date +'$time_format') #(date +'$date_format') "
 set-option -g status-right $TMUX_VAR_RS
 
 

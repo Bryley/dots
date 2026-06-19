@@ -1,0 +1,2942 @@
+{
+  "source": "eval-fixture",
+  "generated_for": "structured-data-inspection",
+  "observations": [
+    {
+      "id": "obs_0000",
+      "category": "temperature",
+      "status": "normal",
+      "reading": 0.0,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0001",
+      "category": "humidity",
+      "status": "normal",
+      "reading": 1.7,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0002",
+      "category": "battery",
+      "status": "warning",
+      "reading": 3.4,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0003",
+      "category": "signal",
+      "status": "alert",
+      "reading": 5.1,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": {
+        "code": 103,
+        "message": "battery low"
+      }
+    },
+    {
+      "id": "obs_0004",
+      "category": "temperature",
+      "status": "normal",
+      "reading": 6.8,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0005",
+      "category": "humidity",
+      "status": "normal",
+      "reading": 8.5,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0006",
+      "category": "battery",
+      "status": "warning",
+      "reading": 10.2,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0007",
+      "category": "signal",
+      "status": "alert",
+      "reading": 11.9,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": {
+        "code": 102,
+        "message": "signal interrupted"
+      }
+    },
+    {
+      "id": "obs_0008",
+      "category": "temperature",
+      "status": "normal",
+      "reading": 13.6,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0009",
+      "category": "humidity",
+      "status": "normal",
+      "reading": 15.3,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0010",
+      "category": "battery",
+      "status": "warning",
+      "reading": 17.0,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0011",
+      "category": "signal",
+      "status": "alert",
+      "reading": 18.7,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": {
+        "code": 101,
+        "message": "battery low"
+      }
+    },
+    {
+      "id": "obs_0012",
+      "category": "temperature",
+      "status": "normal",
+      "reading": 20.4,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0013",
+      "category": "humidity",
+      "status": "normal",
+      "reading": 22.1,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0014",
+      "category": "battery",
+      "status": "warning",
+      "reading": 23.8,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0015",
+      "category": "signal",
+      "status": "alert",
+      "reading": 25.5,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": {
+        "code": 100,
+        "message": "signal interrupted"
+      }
+    },
+    {
+      "id": "obs_0016",
+      "category": "temperature",
+      "status": "normal",
+      "reading": 27.2,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0017",
+      "category": "humidity",
+      "status": "normal",
+      "reading": 28.9,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0018",
+      "category": "battery",
+      "status": "warning",
+      "reading": 30.6,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0019",
+      "category": "signal",
+      "status": "alert",
+      "reading": 32.3,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": {
+        "code": 104,
+        "message": "battery low"
+      }
+    },
+    {
+      "id": "obs_0020",
+      "category": "temperature",
+      "status": "normal",
+      "reading": 34.0,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0021",
+      "category": "humidity",
+      "status": "normal",
+      "reading": 35.7,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0022",
+      "category": "battery",
+      "status": "warning",
+      "reading": 37.4,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0023",
+      "category": "signal",
+      "status": "alert",
+      "reading": 39.1,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": {
+        "code": 103,
+        "message": "signal interrupted"
+      }
+    },
+    {
+      "id": "obs_0024",
+      "category": "temperature",
+      "status": "normal",
+      "reading": 40.8,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0025",
+      "category": "humidity",
+      "status": "normal",
+      "reading": 42.5,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0026",
+      "category": "battery",
+      "status": "warning",
+      "reading": 44.2,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0027",
+      "category": "signal",
+      "status": "alert",
+      "reading": 45.9,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": {
+        "code": 102,
+        "message": "battery low"
+      }
+    },
+    {
+      "id": "obs_0028",
+      "category": "temperature",
+      "status": "normal",
+      "reading": 47.6,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0029",
+      "category": "humidity",
+      "status": "normal",
+      "reading": 49.3,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0030",
+      "category": "battery",
+      "status": "warning",
+      "reading": 51.0,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0031",
+      "category": "signal",
+      "status": "alert",
+      "reading": 52.7,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": {
+        "code": 101,
+        "message": "signal interrupted"
+      }
+    },
+    {
+      "id": "obs_0032",
+      "category": "temperature",
+      "status": "normal",
+      "reading": 54.4,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0033",
+      "category": "humidity",
+      "status": "normal",
+      "reading": 56.1,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0034",
+      "category": "battery",
+      "status": "warning",
+      "reading": 57.8,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0035",
+      "category": "signal",
+      "status": "alert",
+      "reading": 59.5,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": {
+        "code": 100,
+        "message": "battery low"
+      }
+    },
+    {
+      "id": "obs_0036",
+      "category": "temperature",
+      "status": "normal",
+      "reading": 61.2,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0037",
+      "category": "humidity",
+      "status": "normal",
+      "reading": 62.9,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0038",
+      "category": "battery",
+      "status": "warning",
+      "reading": 64.6,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0039",
+      "category": "signal",
+      "status": "alert",
+      "reading": 66.3,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": {
+        "code": 104,
+        "message": "signal interrupted"
+      }
+    },
+    {
+      "id": "obs_0040",
+      "category": "temperature",
+      "status": "normal",
+      "reading": 68.0,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0041",
+      "category": "humidity",
+      "status": "normal",
+      "reading": 69.7,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0042",
+      "category": "battery",
+      "status": "warning",
+      "reading": 71.4,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0043",
+      "category": "signal",
+      "status": "alert",
+      "reading": 73.1,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": {
+        "code": 103,
+        "message": "battery low"
+      }
+    },
+    {
+      "id": "obs_0044",
+      "category": "temperature",
+      "status": "normal",
+      "reading": 74.8,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0045",
+      "category": "humidity",
+      "status": "normal",
+      "reading": 76.5,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0046",
+      "category": "battery",
+      "status": "warning",
+      "reading": 78.2,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0047",
+      "category": "signal",
+      "status": "alert",
+      "reading": 79.9,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": {
+        "code": 102,
+        "message": "signal interrupted"
+      }
+    },
+    {
+      "id": "obs_0048",
+      "category": "temperature",
+      "status": "normal",
+      "reading": 81.6,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0049",
+      "category": "humidity",
+      "status": "normal",
+      "reading": 83.3,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0050",
+      "category": "battery",
+      "status": "warning",
+      "reading": 85.0,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0051",
+      "category": "signal",
+      "status": "alert",
+      "reading": 86.7,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": {
+        "code": 101,
+        "message": "battery low"
+      }
+    },
+    {
+      "id": "obs_0052",
+      "category": "temperature",
+      "status": "normal",
+      "reading": 88.4,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0053",
+      "category": "humidity",
+      "status": "normal",
+      "reading": 90.1,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0054",
+      "category": "battery",
+      "status": "warning",
+      "reading": 91.8,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0055",
+      "category": "signal",
+      "status": "alert",
+      "reading": 93.5,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": {
+        "code": 100,
+        "message": "signal interrupted"
+      }
+    },
+    {
+      "id": "obs_0056",
+      "category": "temperature",
+      "status": "normal",
+      "reading": 95.2,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0057",
+      "category": "humidity",
+      "status": "normal",
+      "reading": 96.9,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0058",
+      "category": "battery",
+      "status": "warning",
+      "reading": 98.6,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0059",
+      "category": "signal",
+      "status": "alert",
+      "reading": 0.3,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": {
+        "code": 104,
+        "message": "battery low"
+      }
+    },
+    {
+      "id": "obs_0060",
+      "category": "temperature",
+      "status": "normal",
+      "reading": 2.0,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0061",
+      "category": "humidity",
+      "status": "normal",
+      "reading": 3.7,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0062",
+      "category": "battery",
+      "status": "warning",
+      "reading": 5.4,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0063",
+      "category": "signal",
+      "status": "alert",
+      "reading": 7.1,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": {
+        "code": 103,
+        "message": "signal interrupted"
+      }
+    },
+    {
+      "id": "obs_0064",
+      "category": "temperature",
+      "status": "normal",
+      "reading": 8.8,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0065",
+      "category": "humidity",
+      "status": "normal",
+      "reading": 10.5,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0066",
+      "category": "battery",
+      "status": "warning",
+      "reading": 12.2,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0067",
+      "category": "signal",
+      "status": "alert",
+      "reading": 13.9,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": {
+        "code": 102,
+        "message": "battery low"
+      }
+    },
+    {
+      "id": "obs_0068",
+      "category": "temperature",
+      "status": "normal",
+      "reading": 15.6,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0069",
+      "category": "humidity",
+      "status": "normal",
+      "reading": 17.3,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0070",
+      "category": "battery",
+      "status": "warning",
+      "reading": 19.0,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0071",
+      "category": "signal",
+      "status": "alert",
+      "reading": 20.7,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": {
+        "code": 101,
+        "message": "signal interrupted"
+      }
+    },
+    {
+      "id": "obs_0072",
+      "category": "temperature",
+      "status": "normal",
+      "reading": 22.4,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0073",
+      "category": "humidity",
+      "status": "normal",
+      "reading": 24.1,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0074",
+      "category": "battery",
+      "status": "warning",
+      "reading": 25.8,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0075",
+      "category": "signal",
+      "status": "alert",
+      "reading": 27.5,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": {
+        "code": 100,
+        "message": "battery low"
+      }
+    },
+    {
+      "id": "obs_0076",
+      "category": "temperature",
+      "status": "normal",
+      "reading": 29.2,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0077",
+      "category": "humidity",
+      "status": "normal",
+      "reading": 30.9,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0078",
+      "category": "battery",
+      "status": "warning",
+      "reading": 32.6,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0079",
+      "category": "signal",
+      "status": "alert",
+      "reading": 34.3,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": {
+        "code": 104,
+        "message": "signal interrupted"
+      }
+    },
+    {
+      "id": "obs_0080",
+      "category": "temperature",
+      "status": "normal",
+      "reading": 36.0,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0081",
+      "category": "humidity",
+      "status": "normal",
+      "reading": 37.7,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0082",
+      "category": "battery",
+      "status": "warning",
+      "reading": 39.4,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0083",
+      "category": "signal",
+      "status": "alert",
+      "reading": 41.1,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": {
+        "code": 103,
+        "message": "battery low"
+      }
+    },
+    {
+      "id": "obs_0084",
+      "category": "temperature",
+      "status": "normal",
+      "reading": 42.8,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0085",
+      "category": "humidity",
+      "status": "normal",
+      "reading": 44.5,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0086",
+      "category": "battery",
+      "status": "warning",
+      "reading": 46.2,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0087",
+      "category": "signal",
+      "status": "alert",
+      "reading": 47.9,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": {
+        "code": 102,
+        "message": "signal interrupted"
+      }
+    },
+    {
+      "id": "obs_0088",
+      "category": "temperature",
+      "status": "normal",
+      "reading": 49.6,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0089",
+      "category": "humidity",
+      "status": "normal",
+      "reading": 51.3,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0090",
+      "category": "battery",
+      "status": "warning",
+      "reading": 53.0,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0091",
+      "category": "signal",
+      "status": "alert",
+      "reading": 54.7,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": {
+        "code": 101,
+        "message": "battery low"
+      }
+    },
+    {
+      "id": "obs_0092",
+      "category": "temperature",
+      "status": "normal",
+      "reading": 56.4,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0093",
+      "category": "humidity",
+      "status": "normal",
+      "reading": 58.1,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0094",
+      "category": "battery",
+      "status": "warning",
+      "reading": 59.8,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0095",
+      "category": "signal",
+      "status": "alert",
+      "reading": 61.5,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": {
+        "code": 100,
+        "message": "signal interrupted"
+      }
+    },
+    {
+      "id": "obs_0096",
+      "category": "temperature",
+      "status": "normal",
+      "reading": 63.2,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0097",
+      "category": "humidity",
+      "status": "normal",
+      "reading": 64.9,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0098",
+      "category": "battery",
+      "status": "warning",
+      "reading": 66.6,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0099",
+      "category": "signal",
+      "status": "alert",
+      "reading": 68.3,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": {
+        "code": 104,
+        "message": "battery low"
+      }
+    },
+    {
+      "id": "obs_0100",
+      "category": "temperature",
+      "status": "normal",
+      "reading": 70.0,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0101",
+      "category": "humidity",
+      "status": "normal",
+      "reading": 71.7,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0102",
+      "category": "battery",
+      "status": "warning",
+      "reading": 73.4,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0103",
+      "category": "signal",
+      "status": "alert",
+      "reading": 75.1,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": {
+        "code": 103,
+        "message": "signal interrupted"
+      }
+    },
+    {
+      "id": "obs_0104",
+      "category": "temperature",
+      "status": "normal",
+      "reading": 76.8,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0105",
+      "category": "humidity",
+      "status": "normal",
+      "reading": 78.5,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0106",
+      "category": "battery",
+      "status": "warning",
+      "reading": 80.2,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0107",
+      "category": "signal",
+      "status": "alert",
+      "reading": 81.9,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": {
+        "code": 102,
+        "message": "battery low"
+      }
+    },
+    {
+      "id": "obs_0108",
+      "category": "temperature",
+      "status": "normal",
+      "reading": 83.6,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0109",
+      "category": "humidity",
+      "status": "normal",
+      "reading": 85.3,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0110",
+      "category": "battery",
+      "status": "warning",
+      "reading": 87.0,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0111",
+      "category": "signal",
+      "status": "alert",
+      "reading": 88.7,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": {
+        "code": 101,
+        "message": "signal interrupted"
+      }
+    },
+    {
+      "id": "obs_0112",
+      "category": "temperature",
+      "status": "normal",
+      "reading": 90.4,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0113",
+      "category": "humidity",
+      "status": "normal",
+      "reading": 92.1,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0114",
+      "category": "battery",
+      "status": "warning",
+      "reading": 93.8,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0115",
+      "category": "signal",
+      "status": "alert",
+      "reading": 95.5,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": {
+        "code": 100,
+        "message": "battery low"
+      }
+    },
+    {
+      "id": "obs_0116",
+      "category": "temperature",
+      "status": "normal",
+      "reading": 97.2,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0117",
+      "category": "humidity",
+      "status": "normal",
+      "reading": 98.9,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0118",
+      "category": "battery",
+      "status": "warning",
+      "reading": 0.6,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0119",
+      "category": "signal",
+      "status": "alert",
+      "reading": 2.3,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": {
+        "code": 104,
+        "message": "signal interrupted"
+      }
+    },
+    {
+      "id": "obs_0120",
+      "category": "temperature",
+      "status": "normal",
+      "reading": 4.0,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0121",
+      "category": "humidity",
+      "status": "normal",
+      "reading": 5.7,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0122",
+      "category": "battery",
+      "status": "warning",
+      "reading": 7.4,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0123",
+      "category": "signal",
+      "status": "alert",
+      "reading": 9.1,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": {
+        "code": 103,
+        "message": "battery low"
+      }
+    },
+    {
+      "id": "obs_0124",
+      "category": "temperature",
+      "status": "normal",
+      "reading": 10.8,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0125",
+      "category": "humidity",
+      "status": "normal",
+      "reading": 12.5,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0126",
+      "category": "battery",
+      "status": "warning",
+      "reading": 14.2,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0127",
+      "category": "signal",
+      "status": "alert",
+      "reading": 15.9,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": {
+        "code": 102,
+        "message": "signal interrupted"
+      }
+    },
+    {
+      "id": "obs_0128",
+      "category": "temperature",
+      "status": "normal",
+      "reading": 17.6,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0129",
+      "category": "humidity",
+      "status": "normal",
+      "reading": 19.3,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0130",
+      "category": "battery",
+      "status": "warning",
+      "reading": 21.0,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0131",
+      "category": "signal",
+      "status": "alert",
+      "reading": 22.7,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": {
+        "code": 101,
+        "message": "battery low"
+      }
+    },
+    {
+      "id": "obs_0132",
+      "category": "temperature",
+      "status": "normal",
+      "reading": 24.4,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0133",
+      "category": "humidity",
+      "status": "normal",
+      "reading": 26.1,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0134",
+      "category": "battery",
+      "status": "warning",
+      "reading": 27.8,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0135",
+      "category": "signal",
+      "status": "alert",
+      "reading": 29.5,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": {
+        "code": 100,
+        "message": "signal interrupted"
+      }
+    },
+    {
+      "id": "obs_0136",
+      "category": "temperature",
+      "status": "normal",
+      "reading": 31.2,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0137",
+      "category": "humidity",
+      "status": "normal",
+      "reading": 32.9,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0138",
+      "category": "battery",
+      "status": "warning",
+      "reading": 34.6,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0139",
+      "category": "signal",
+      "status": "alert",
+      "reading": 36.3,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": {
+        "code": 104,
+        "message": "battery low"
+      }
+    },
+    {
+      "id": "obs_0140",
+      "category": "temperature",
+      "status": "normal",
+      "reading": 38.0,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0141",
+      "category": "humidity",
+      "status": "normal",
+      "reading": 39.7,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0142",
+      "category": "battery",
+      "status": "warning",
+      "reading": 41.4,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0143",
+      "category": "signal",
+      "status": "alert",
+      "reading": 43.1,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": {
+        "code": 103,
+        "message": "signal interrupted"
+      }
+    },
+    {
+      "id": "obs_0144",
+      "category": "temperature",
+      "status": "normal",
+      "reading": 44.8,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0145",
+      "category": "humidity",
+      "status": "normal",
+      "reading": 46.5,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0146",
+      "category": "battery",
+      "status": "warning",
+      "reading": 48.2,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0147",
+      "category": "signal",
+      "status": "alert",
+      "reading": 49.9,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": {
+        "code": 102,
+        "message": "battery low"
+      }
+    },
+    {
+      "id": "obs_0148",
+      "category": "temperature",
+      "status": "normal",
+      "reading": 51.6,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0149",
+      "category": "humidity",
+      "status": "normal",
+      "reading": 53.3,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0150",
+      "category": "battery",
+      "status": "warning",
+      "reading": 55.0,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0151",
+      "category": "signal",
+      "status": "alert",
+      "reading": 56.7,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": {
+        "code": 101,
+        "message": "signal interrupted"
+      }
+    },
+    {
+      "id": "obs_0152",
+      "category": "temperature",
+      "status": "normal",
+      "reading": 58.4,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0153",
+      "category": "humidity",
+      "status": "normal",
+      "reading": 60.1,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0154",
+      "category": "battery",
+      "status": "warning",
+      "reading": 61.8,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0155",
+      "category": "signal",
+      "status": "alert",
+      "reading": 63.5,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": {
+        "code": 100,
+        "message": "battery low"
+      }
+    },
+    {
+      "id": "obs_0156",
+      "category": "temperature",
+      "status": "normal",
+      "reading": 65.2,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0157",
+      "category": "humidity",
+      "status": "normal",
+      "reading": 66.9,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0158",
+      "category": "battery",
+      "status": "warning",
+      "reading": 68.6,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0159",
+      "category": "signal",
+      "status": "alert",
+      "reading": 70.3,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": {
+        "code": 104,
+        "message": "signal interrupted"
+      }
+    },
+    {
+      "id": "obs_0160",
+      "category": "temperature",
+      "status": "normal",
+      "reading": 72.0,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0161",
+      "category": "humidity",
+      "status": "normal",
+      "reading": 73.7,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0162",
+      "category": "battery",
+      "status": "warning",
+      "reading": 75.4,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0163",
+      "category": "signal",
+      "status": "alert",
+      "reading": 77.1,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": {
+        "code": 103,
+        "message": "battery low"
+      }
+    },
+    {
+      "id": "obs_0164",
+      "category": "temperature",
+      "status": "normal",
+      "reading": 78.8,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0165",
+      "category": "humidity",
+      "status": "normal",
+      "reading": 80.5,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0166",
+      "category": "battery",
+      "status": "warning",
+      "reading": 82.2,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0167",
+      "category": "signal",
+      "status": "alert",
+      "reading": 83.9,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": {
+        "code": 102,
+        "message": "signal interrupted"
+      }
+    },
+    {
+      "id": "obs_0168",
+      "category": "temperature",
+      "status": "normal",
+      "reading": 85.6,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0169",
+      "category": "humidity",
+      "status": "normal",
+      "reading": 87.3,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0170",
+      "category": "battery",
+      "status": "warning",
+      "reading": 89.0,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0171",
+      "category": "signal",
+      "status": "alert",
+      "reading": 90.7,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": {
+        "code": 101,
+        "message": "battery low"
+      }
+    },
+    {
+      "id": "obs_0172",
+      "category": "temperature",
+      "status": "normal",
+      "reading": 92.4,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0173",
+      "category": "humidity",
+      "status": "normal",
+      "reading": 94.1,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0174",
+      "category": "battery",
+      "status": "warning",
+      "reading": 95.8,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0175",
+      "category": "signal",
+      "status": "alert",
+      "reading": 97.5,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": {
+        "code": 100,
+        "message": "signal interrupted"
+      }
+    },
+    {
+      "id": "obs_0176",
+      "category": "temperature",
+      "status": "normal",
+      "reading": 99.2,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0177",
+      "category": "humidity",
+      "status": "normal",
+      "reading": 0.9,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0178",
+      "category": "battery",
+      "status": "warning",
+      "reading": 2.6,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0179",
+      "category": "signal",
+      "status": "alert",
+      "reading": 4.3,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": {
+        "code": 104,
+        "message": "battery low"
+      }
+    },
+    {
+      "id": "obs_0180",
+      "category": "temperature",
+      "status": "normal",
+      "reading": 6.0,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0181",
+      "category": "humidity",
+      "status": "normal",
+      "reading": 7.7,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0182",
+      "category": "battery",
+      "status": "warning",
+      "reading": 9.4,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0183",
+      "category": "signal",
+      "status": "alert",
+      "reading": 11.1,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": {
+        "code": 103,
+        "message": "signal interrupted"
+      }
+    },
+    {
+      "id": "obs_0184",
+      "category": "temperature",
+      "status": "normal",
+      "reading": 12.8,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0185",
+      "category": "humidity",
+      "status": "normal",
+      "reading": 14.5,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0186",
+      "category": "battery",
+      "status": "warning",
+      "reading": 16.2,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0187",
+      "category": "signal",
+      "status": "alert",
+      "reading": 17.9,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": {
+        "code": 102,
+        "message": "battery low"
+      }
+    },
+    {
+      "id": "obs_0188",
+      "category": "temperature",
+      "status": "normal",
+      "reading": 19.6,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0189",
+      "category": "humidity",
+      "status": "normal",
+      "reading": 21.3,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0190",
+      "category": "battery",
+      "status": "warning",
+      "reading": 23.0,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0191",
+      "category": "signal",
+      "status": "alert",
+      "reading": 24.7,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": {
+        "code": 101,
+        "message": "signal interrupted"
+      }
+    },
+    {
+      "id": "obs_0192",
+      "category": "temperature",
+      "status": "normal",
+      "reading": 26.4,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0193",
+      "category": "humidity",
+      "status": "normal",
+      "reading": 28.1,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0194",
+      "category": "battery",
+      "status": "warning",
+      "reading": 29.8,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0195",
+      "category": "signal",
+      "status": "alert",
+      "reading": 31.5,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": {
+        "code": 100,
+        "message": "battery low"
+      }
+    },
+    {
+      "id": "obs_0196",
+      "category": "temperature",
+      "status": "normal",
+      "reading": 33.2,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0197",
+      "category": "humidity",
+      "status": "normal",
+      "reading": 34.9,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0198",
+      "category": "battery",
+      "status": "warning",
+      "reading": 36.6,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0199",
+      "category": "signal",
+      "status": "alert",
+      "reading": 38.3,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": {
+        "code": 104,
+        "message": "signal interrupted"
+      }
+    },
+    {
+      "id": "obs_0200",
+      "category": "temperature",
+      "status": "normal",
+      "reading": 40.0,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0201",
+      "category": "humidity",
+      "status": "normal",
+      "reading": 41.7,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0202",
+      "category": "battery",
+      "status": "warning",
+      "reading": 43.4,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0203",
+      "category": "signal",
+      "status": "alert",
+      "reading": 45.1,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": {
+        "code": 103,
+        "message": "battery low"
+      }
+    },
+    {
+      "id": "obs_0204",
+      "category": "temperature",
+      "status": "normal",
+      "reading": 46.8,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0205",
+      "category": "humidity",
+      "status": "normal",
+      "reading": 48.5,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0206",
+      "category": "battery",
+      "status": "warning",
+      "reading": 50.2,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0207",
+      "category": "signal",
+      "status": "alert",
+      "reading": 51.9,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": {
+        "code": 102,
+        "message": "signal interrupted"
+      }
+    },
+    {
+      "id": "obs_0208",
+      "category": "temperature",
+      "status": "normal",
+      "reading": 53.6,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0209",
+      "category": "humidity",
+      "status": "normal",
+      "reading": 55.3,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0210",
+      "category": "battery",
+      "status": "warning",
+      "reading": 57.0,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0211",
+      "category": "signal",
+      "status": "alert",
+      "reading": 58.7,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": {
+        "code": 101,
+        "message": "battery low"
+      }
+    },
+    {
+      "id": "obs_0212",
+      "category": "temperature",
+      "status": "normal",
+      "reading": 60.4,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0213",
+      "category": "humidity",
+      "status": "normal",
+      "reading": 62.1,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0214",
+      "category": "battery",
+      "status": "warning",
+      "reading": 63.8,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0215",
+      "category": "signal",
+      "status": "alert",
+      "reading": 65.5,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": {
+        "code": 100,
+        "message": "signal interrupted"
+      }
+    },
+    {
+      "id": "obs_0216",
+      "category": "temperature",
+      "status": "normal",
+      "reading": 67.2,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0217",
+      "category": "humidity",
+      "status": "normal",
+      "reading": 68.9,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0218",
+      "category": "battery",
+      "status": "warning",
+      "reading": 70.6,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0219",
+      "category": "signal",
+      "status": "alert",
+      "reading": 72.3,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": {
+        "code": 104,
+        "message": "battery low"
+      }
+    },
+    {
+      "id": "obs_0220",
+      "category": "temperature",
+      "status": "normal",
+      "reading": 74.0,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0221",
+      "category": "humidity",
+      "status": "normal",
+      "reading": 75.7,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0222",
+      "category": "battery",
+      "status": "warning",
+      "reading": 77.4,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0223",
+      "category": "signal",
+      "status": "alert",
+      "reading": 79.1,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": {
+        "code": 103,
+        "message": "signal interrupted"
+      }
+    },
+    {
+      "id": "obs_0224",
+      "category": "temperature",
+      "status": "normal",
+      "reading": 80.8,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0225",
+      "category": "humidity",
+      "status": "normal",
+      "reading": 82.5,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0226",
+      "category": "battery",
+      "status": "warning",
+      "reading": 84.2,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0227",
+      "category": "signal",
+      "status": "alert",
+      "reading": 85.9,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": {
+        "code": 102,
+        "message": "battery low"
+      }
+    },
+    {
+      "id": "obs_0228",
+      "category": "temperature",
+      "status": "normal",
+      "reading": 87.6,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0229",
+      "category": "humidity",
+      "status": "normal",
+      "reading": 89.3,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0230",
+      "category": "battery",
+      "status": "warning",
+      "reading": 91.0,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0231",
+      "category": "signal",
+      "status": "alert",
+      "reading": 92.7,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": {
+        "code": 101,
+        "message": "signal interrupted"
+      }
+    },
+    {
+      "id": "obs_0232",
+      "category": "temperature",
+      "status": "normal",
+      "reading": 94.4,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0233",
+      "category": "humidity",
+      "status": "normal",
+      "reading": 96.1,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0234",
+      "category": "battery",
+      "status": "warning",
+      "reading": 97.8,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0235",
+      "category": "signal",
+      "status": "alert",
+      "reading": 99.5,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": {
+        "code": 100,
+        "message": "battery low"
+      }
+    },
+    {
+      "id": "obs_0236",
+      "category": "temperature",
+      "status": "normal",
+      "reading": 1.2,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0237",
+      "category": "humidity",
+      "status": "normal",
+      "reading": 2.9,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0238",
+      "category": "battery",
+      "status": "warning",
+      "reading": 4.6,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0239",
+      "category": "signal",
+      "status": "alert",
+      "reading": 6.3,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": {
+        "code": 104,
+        "message": "signal interrupted"
+      }
+    },
+    {
+      "id": "obs_0240",
+      "category": "temperature",
+      "status": "normal",
+      "reading": 8.0,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0241",
+      "category": "humidity",
+      "status": "normal",
+      "reading": 9.7,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0242",
+      "category": "battery",
+      "status": "warning",
+      "reading": 11.4,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0243",
+      "category": "signal",
+      "status": "alert",
+      "reading": 13.1,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": {
+        "code": 103,
+        "message": "battery low"
+      }
+    },
+    {
+      "id": "obs_0244",
+      "category": "temperature",
+      "status": "normal",
+      "reading": 14.8,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0245",
+      "category": "humidity",
+      "status": "normal",
+      "reading": 16.5,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0246",
+      "category": "battery",
+      "status": "warning",
+      "reading": 18.2,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0247",
+      "category": "signal",
+      "status": "alert",
+      "reading": 19.9,
+      "device": {
+        "type": "sensor-b",
+        "location": "garage"
+      },
+      "issue": {
+        "code": 102,
+        "message": "signal interrupted"
+      }
+    },
+    {
+      "id": "obs_0248",
+      "category": "temperature",
+      "status": "normal",
+      "reading": 21.6,
+      "device": {
+        "type": "sensor-c",
+        "location": "attic"
+      },
+      "issue": null
+    },
+    {
+      "id": "obs_0249",
+      "category": "humidity",
+      "status": "normal",
+      "reading": 23.3,
+      "device": {
+        "type": "sensor-a",
+        "location": "greenhouse"
+      },
+      "issue": null
+    }
+  ]
+}
