@@ -70,6 +70,10 @@
       "src": "https://github.com/nvim-treesitter/nvim-treesitter",
       "version": "'main'"
     },
+    "oil.nvim": {
+      "rev": "b73018b75affd13fa38e2fc94ef753b465f770d7",
+      "src": "https://github.com/stevearc/oil.nvim"
+    },
     "onedarkpro.nvim": {
       "rev": "f5fddfd5122fe00421e199151ae4fe8571a02898",
       "src": "https://github.com/olimorris/onedarkpro.nvim"

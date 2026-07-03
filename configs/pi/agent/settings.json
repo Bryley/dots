@@ -1,5 +1,5 @@
 {
-  "lastChangelogVersion": "0.79.6",
+  "lastChangelogVersion": "0.80.2",
   "defaultProvider": "openai-codex",
   "defaultModel": "gpt-5.5",
   "theme": "dark",
@@ -20,7 +20,8 @@
     "openai-codex/gpt-5.3-codex",
     "openai-codex/gpt-5.5",
     "llama-cpp-qwen/Qwen3.6-35B-A3B-UD-IQ4_NL_XL",
-    "llama-cpp-qwen/Qwen3.6-35B-A3B-UD-IQ3_S"
+    "llama-cpp-qwen/Qwen3.6-35B-A3B-UD-IQ3_S",
+    "llama-cpp-qwen/Qwen3.6-26B-Q3_K_M"
   ],
   "defaultThinkingLevel": "low",
   "compaction": {
@@ -32,5 +33,5 @@
     "reserveTokens": 4096
   },
   "enableInstallTelemetry": false,
-  "hideThinkingBlock": false
+  "hideThinkingBlock": true
 }

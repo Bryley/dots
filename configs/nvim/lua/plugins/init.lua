@@ -103,13 +103,13 @@ vim.cmd.packadd("nvim.difftool")
 
 vim.pack.add({ "https://github.com/mikavilpas/yazi.nvim" })
 
-vim.keymap.set("n", "<leader>=", function()
-    require("yazi").yazi(nil, vim.fn.getcwd())
-end, { desc = "Open yazi in project dir" })
-
-vim.keymap.set("n", "<leader>-", function()
-    require("yazi").yazi()
-end, { desc = "Open yazi" })
+-- vim.keymap.set("n", "<leader>=", function()
+--     require("yazi").yazi(nil, vim.fn.getcwd())
+-- end, { desc = "Open yazi in project dir" })
+--
+-- vim.keymap.set("n", "<leader>-", function()
+--     require("yazi").yazi()
+-- end, { desc = "Open yazi" })
 
 
 -- Treesitter --
@@ -152,10 +152,16 @@ require('render-markdown').setup({})
 
 -- Snacks (Picker, Scroll) --
 
+vim.env.SNACKS_GHOSTTY = "true"
+vim.env.SNACKS_TMUX = "true"
 vim.pack.add({ "https://github.com/folke/snacks.nvim" })
 require("snacks").setup({
     scroll = {
         enable = true,
+    },
+    image = {
+        enabled = true,
+        force = true,
     },
     input = {
         enabled = true,
@@ -290,3 +296,25 @@ vim.keymap.set("n", "<leader>gb", "<cmd>Gitsigns blame_line<CR>", { desc = "Git 
 
 vim.pack.add({ "https://github.com/saecki/crates.nvim" })
 require("crates").setup({})
+
+-- Oil.nvim --
+
+vim.pack.add({ "https://github.com/stevearc/oil.nvim" })
+require("oil").setup({
+    float = {
+        padding = 2,
+        max_width = 0.75,
+        max_height = 0.75,
+        border = "rounded",
+        preview_split = "right",
+    },
+})
+vim.keymap.set("n", "<leader>-", function()
+    require("oil").toggle_float()
+end, { desc = "Open parent directory" })
+vim.keymap.set("n", "<leader>=", function()
+    require("oil").toggle_float(vim.fn.getcwd())
+end, { desc = "Oil cwd" })
+-- vim.keymap.set("n", "<leader>o", function()
+--     require("oil").toggle_float()
+-- end, { desc = "Oil float" })

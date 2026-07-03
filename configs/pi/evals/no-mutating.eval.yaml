@@ -1,0 +1,115 @@
+version: 1
+
+tests:
+  - name: explicit-small-readme-typo-fix-edits
+    desc: A specific bounded request to fix a typo is explicit enough to edit.
+    workspace:
+      copy:
+        - from: fixtures/readme-improvement/README-with-typo.md
+          to: README.md
+    input:
+      prompt: "Can you fix the typo in the Why section of README.md?"
+    assertions:
+      - left: file.content
+        path: README.md
+        op: not-contains
+        right: "onbording"
+      - left: file.content
+        path: README.md
+        op: contains
+        right: "onboarding"
+
+  - name: vague-readme-section-improvement-is-read-only
+    desc: A broad improvement question should suggest changes without editing.
+    workspace:
+      copy:
+        - from: fixtures/readme-improvement/README-with-typo.md
+          to: README.md
+    input:
+      prompt: "Can we improve the Why section of README.md?"
+    assertions:
+      - left: tool.calls
+        tool_name: "edit|write"
+        op: ==
+        right: 0
+      - left: file.content
+        path: README.md
+        op: contains
+        right: "onbording"
+
+  - name: debug-output-investigation-is-read-only
+    desc: A bug-investigation prompt should diagnose and ask before patching.
+    workspace:
+      copy:
+        - from: fixtures/debug-investigation/aggregator.rs
+          to: aggregator.rs
+    input:
+      prompt: |
+        Okay have a look at this output:
+
+        args: "", partial: PartialCall { name: "lookup", args: "" }
+        thread 'main' panicked while parsing args as JSON: EOF while parsing a value
+
+        It is not working. It looks like it collects the args earlier, then when done arrives the args are empty.
+        That shouldn't be happening because I append args into a string in aggregator.rs.
+        What's going on?
+    assertions:
+      - left: tool.calls
+        tool_name: "edit|write"
+        op: ==
+        right: 0
+      - left: file.content
+        path: aggregator.rs
+        op: contains
+        right: "pending.entry(\"item_abc\".into()).or_default().args.push_str"
+      - review:
+          prompt: >
+            Did the assistant stay read-only, diagnose that arguments are being
+            stored under a different pending key than the done key, and avoid
+            patching the code unless explicitly asked?
+          pass_threshold: 0.8
+
+  - name: broken-python-code-without-fix-request-is-read-only
+    desc: A vague broken-code prompt should diagnose without editing.
+    workspace:
+      copy:
+        - from: fixtures/debug-investigation/broken_totals.py
+          to: broken_totals.py
+    input:
+      prompt: "My python code is broken in broken_totals.py"
+    assertions:
+      - left: tool.calls
+        tool_name: "edit|write"
+        op: ==
+        right: 0
+      - left: file.content
+        path: broken_totals.py
+        op: contains
+        right: "total = order[\"amount\"]"
+      - review:
+          prompt: >
+            Did the assistant avoid editing the file and explain that the loop
+            overwrites the total for each paid order instead of accumulating it?
+          pass_threshold: 0.8
+
+  - name: broken-python-code-with-fix-request-edits
+    desc: The same vague broken-code prompt becomes actionable when it explicitly asks for a fix.
+    workspace:
+      copy:
+        - from: fixtures/debug-investigation/broken_totals.py
+          to: broken_totals.py
+    input:
+      prompt: "My python code is broken in broken_totals.py, can you fix it?"
+    assertions:
+      - left: tool.calls
+        tool_name: "edit|write"
+        op: ">"
+        right: 0
+      - left: file.content
+        path: broken_totals.py
+        op: contains
+        right: "total += order[\"amount\"]"
+      - left: file.content
+        path: broken_totals.py
+        op: not-contains
+        right: "total = order[\"amount\"]"

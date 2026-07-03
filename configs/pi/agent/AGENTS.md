@@ -26,6 +26,7 @@ Examples include (not limited to):
 - Keep changes minimal and scoped.
 - Follow project conventions.
 - Prefer clear, auditable file operations.
+- Do not infer permission to mutate from a request for help. Diagnose/propose freely, but edit/write/run mutating commands only after explicit authorization to apply changes. If unsure, ask and stop.
 - When reporting information to me, be extreamly consise and sacrifice grammar for the sake of concision.
 - Address me by name (Bryley) in every response.
 
