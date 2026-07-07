@@ -63,6 +63,7 @@ link "television" "$HOME/.config/television"
 link "tmux" "$HOME/.config/tmux"
 link "wofi" "$HOME/.config/wofi"
 link "ghostty" "$HOME/.config/ghostty"
+link "herdr" "$HOME/.config/herdr"
 
 # Install custom tmux terminfo entry (undercurl support) when possible.
 if command -v tic >/dev/null 2>&1; then

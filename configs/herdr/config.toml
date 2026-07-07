@@ -1,0 +1,20 @@
+[theme]
+light_name = "one-light"
+dark_name = "one-dark"
+auto_switch = true
+
+[ui.toast]
+delivery = "herdr"
+
+[ui]
+show_agent_labels_on_pane_borders = false
+pane_gaps = false
+prompt_new_tab_name = false
+
+[keys]
+prefix = "ctrl+a"
+split_vertical = "prefix+|"
+split_horizontal = "prefix+_"
+
+[experimental]
+kitty_graphics = true
