@@ -7,7 +7,7 @@ vim.keymap.set({ "n", "x" }, "<Space>", "<Nop>", { silent = true })
 require("vim._core.ui2").enable({})
 
 vim.o.swapfile = false -- Stops the creation of swap files
-vim.o.undofile = true -- Keeps undo history even on close
+vim.o.undofile = true  -- Keeps undo history even on close
 vim.o.updatetime = 200
 
 vim.o.mouse = "i" -- Enable mouse only for insert mode
@@ -20,7 +20,7 @@ vim.o.termguicolors = true
 vim.o.number = true
 vim.o.relativenumber = true
 vim.o.wrap = false
-vim.o.scrolloff = 3 -- Keep a margin of 3 lines when scrolling up and down
+vim.o.scrolloff = 3     -- Keep a margin of 3 lines when scrolling up and down
 vim.o.sidescrolloff = 3 -- Same as above but horizontal
 
 vim.o.cursorline = true
@@ -69,8 +69,17 @@ vim.api.nvim_create_autocmd("FileType", {
         "jsonc",
     },
     callback = function()
-        vim.opt_local.tabstop = 2 -- '\t' char = 2 spaces
-        vim.opt_local.shiftwidth = 2 -- 1 level of indentation is 2 spaces
+        vim.opt_local.tabstop = 2      -- '\t' char = 2 spaces
+        vim.opt_local.shiftwidth = 2   -- 1 level of indentation is 2 spaces
         vim.opt_local.softtabstop = -1 -- Tab is 2 spaces (same as `shiftwidth`) for inserting and deleting
     end,
+})
+
+-- Automatically resize splits when terminal is resized
+vim.api.nvim_create_autocmd("VimResized", {
+    callback = function()
+        if vim.fn.winnr("$") > 1 then
+            vim.cmd("wincmd =")
+        end
+    end
 })

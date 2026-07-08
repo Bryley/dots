@@ -1,3 +1,4 @@
+onboarding = false
 [theme]
 light_name = "one-light"
 dark_name = "one-dark"
@@ -11,10 +12,16 @@ show_agent_labels_on_pane_borders = false
 pane_gaps = false
 prompt_new_tab_name = false
 
+agent_panel_sort = "spaces"
 [keys]
 prefix = "ctrl+a"
 split_vertical = "prefix+|"
 split_horizontal = "prefix+_"
+previous_workspace = "prefix+K"
+next_workspace = "prefix+J"
+
+navigate_workspace_up = "k"
+navigate_workspace_down = "j"
 
 [experimental]
 kitty_graphics = true

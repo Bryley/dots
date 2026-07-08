@@ -182,6 +182,15 @@ require("snacks").setup({
             grep = {
                 exclude = { "vendor/**" },
             },
+            sort = {
+                fields = {
+                    "severity",
+                    "is_current",
+                    "is_cwd",
+                    "file",
+                    "lnum",
+                },
+            },
             diagnostics = {
                 filter = {
                     cwd = true,
@@ -233,6 +242,10 @@ end, { desc = "Grep files" })
 vim.keymap.set("n", "<leader>fd", function()
     Snacks.picker.diagnostics()
 end, { desc = "Find diagnostics" })
+
+vim.keymap.set("n", "<leader>fl", function()
+    Snacks.picker.lsp_workspace_symbols()
+end, { desc = "Find LSP symbols" })
 
 -- Sessions --
 
