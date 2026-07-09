@@ -2,7 +2,7 @@
 name: standard
 description: Balanced general-purpose subagent for typical coding and analysis tasks
 tools: read, bash, edit, write, web_search, code_search, fetch_content, get_search_content
-model: openai-codex/gpt-5.3-codex
+model: openai-codex/gpt-5.5
 thinking: medium
 systemPromptMode: append
 inheritSkills: true

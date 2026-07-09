@@ -80,3 +80,10 @@ Here are plans and TODOs of upcomming things I want to explore/work on:
    style, Calendar integration)
 - [ ] Play with custom statusbar and wayland layershell components instead of
    Quickshell
+- [ ] AI cleanup - I've explored AI a lot recently and it is probably worth looking back and removing old skills I no-longer use and explore a few new topics
+    - [ ] Look into moving skills to global ~/.agents/skills so that they can be read by Claude and Pi
+    - [ ] Clean up AGENTS.md file adding evals as I go
+    - [ ] Look into having both public and private skills in the same repo (maybe using encryption)
+    - [ ] Look into git worktrees and if I can get use out of those
+    - [ ] See if I can get a streamlined herdr subagent workflow (using herdr to spawn subagents in new panes)
+
