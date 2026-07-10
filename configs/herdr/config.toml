@@ -1,4 +1,9 @@
 onboarding = false
+
+[terminal]
+default_shell = "/opt/homebrew/bin/nu"
+shell_mode = "non_login"
+
 [theme]
 light_name = "one-light"
 dark_name = "one-dark"

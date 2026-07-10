@@ -1,8 +1,8 @@
 {
   "lastChangelogVersion": "0.80.3",
-  "defaultProvider": "llama-cpp-qwen",
-  "defaultModel": "ornith-1.0-9b-Q4_K_M",
-  "theme": "dark",
+  "defaultProvider": "openai-codex",
+  "defaultModel": "gpt-5.5",
+  "theme": "light",
   "packages": [
     "npm:pi-token-usage",
     "git:github.com/Bryley/pi-vim",
