@@ -6,9 +6,18 @@ MAX_SSID_LEN=20
 CACHE_TTL=30
 CACHE_FILE="${TMPDIR:-/tmp}/tmux-network-status-${UID:-$(id -u)}"
 
+mtime() {
+  case "$(uname -s)" in
+    Darwin) stat -f %m "$1" 2>/dev/null ;;
+    *) stat -c %Y "$1" 2>/dev/null ;;
+  esac
+}
+
 now=$(date +%s)
 if [ -r "$CACHE_FILE" ]; then
-  cache_age=$((now - $(stat -f %m "$CACHE_FILE" 2>/dev/null || stat -c %Y "$CACHE_FILE" 2>/dev/null || echo 0)))
+  cache_mtime=$(mtime "$CACHE_FILE")
+  cache_mtime=${cache_mtime:-0}
+  cache_age=$((now - cache_mtime))
   if [ "$cache_age" -lt "$CACHE_TTL" ]; then
     cat "$CACHE_FILE"
     exit 0
