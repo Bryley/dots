@@ -8,6 +8,20 @@ vim.pack.add({
 })
 require("mini.icons").setup()
 
+-- Local development plugin. Keep this conditional so copied dotfiles work
+-- without the herdr-agents.nvim checkout.
+local herdr_agents_path = "/Users/bryley/dots/configs/herdr-agents.nvim"
+if vim.uv.fs_stat(herdr_agents_path) then
+    vim.opt.runtimepath:prepend(herdr_agents_path)
+    require("herdr-agents").setup()
+end
+vim.keymap.set("n", "<leader>as", "<cmd>HerdrAgentSelect<CR>", {
+    desc = "Select Herdr AI Agent"
+})
+vim.keymap.set({"n", "v"}, "<leader>ap", "<cmd>HerdrAgentSend<CR>", {
+    desc = "Prompt Herdr AI Agent"
+})
+
 -- dbab Database --
 
 vim.pack.add({ "https://github.com/zerochae/dbab.nvim" })

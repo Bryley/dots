@@ -42,6 +42,10 @@ local function set_statusline_highlights()
     })
     vim.api.nvim_set_hl(0, "StatusLspSep", { fg = meta_bg, bg = status_bg })
 
+    vim.api.nvim_set_hl(0, "StatusHerdrAgent", { fg = "#2b2118", bg = "#f5c28b", bold = true })
+    vim.api.nvim_set_hl(0, "StatusHerdrAgentHarness", { fg = "#8a6a4c", bg = "#f5c28b" })
+    vim.api.nvim_set_hl(0, "StatusHerdrAgentSep", { fg = "#f5c28b", bg = status_bg })
+
     vim.api.nvim_set_hl(0, "StatusModeNormal", { fg = "#111111", bg = "#89b4fa", bold = true })
     vim.api.nvim_set_hl(0, "StatusModeInsert", { fg = "#111111", bg = "#a6e3a1", bold = true })
     vim.api.nvim_set_hl(0, "StatusModeVisual", { fg = "#111111", bg = "#cba6f7", bold = true })
@@ -102,6 +106,40 @@ local function file_type(win)
     })
 end
 
+local function herdr_agent()
+    local ok, agents = pcall(require, "herdr-agents")
+    if not ok then
+        return ""
+    end
+
+    local selected = agents.selected()
+    if not selected or selected == "" then
+        return ""
+    end
+
+    local agent = agents.selected_agent and agents.selected_agent() or nil
+    local name = agent and agent.label
+    if not name or name == "" then
+        name = agent and agent.cwd and vim.fs.basename(agent.cwd) or selected
+    end
+    local harness = agent and agent.agent
+
+    local parts = {
+        "%#StatusHerdrAgentSep#",
+        "",
+        "%#StatusHerdrAgent#",
+        "󰚩 ",
+        name,
+    }
+    if harness and harness ~= "" then
+        table.insert(parts, "%#StatusHerdrAgentHarness#")
+        table.insert(parts, " " .. harness)
+    end
+    table.insert(parts, "%#StatusHerdrAgentSep#")
+    table.insert(parts, "")
+    return table.concat(parts)
+end
+
 local function lsp_clients(win)
     local buf = vim.api.nvim_win_get_buf(win)
     local clients = vim.lsp.get_clients({ bufnr = buf })
@@ -154,6 +192,8 @@ _G.Statusline = function()
         file_type(win),
         " ",
         lsp_clients(win),
+        " ",
+        herdr_agent(),
         "%#StatusLine#",
         " %l:%c %P",
     })
