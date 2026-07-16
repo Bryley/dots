@@ -20,6 +20,8 @@ for _, cmd in ipairs({
   "HerdrAgentSend",
   "HerdrAgentSendRaw",
   "HerdrAgentDelegate",
+  "HerdrAgentInject",
+  "HerdrAgentHighlightClear",
 }) do
   assert(vim.fn.exists(":" .. cmd) == 2, cmd .. " not defined")
 end
@@ -104,5 +106,153 @@ assert(api.selected() == nil)
 local cli = require("herdr-agents.cli")
 local ok = cli.available()
 assert(ok == false, "fake binary must not be available")
+
+-- v2: default inject prompt template
+local inject_ctx = {
+  prompt = "Implement this function",
+  file = "path/to/my/code.rs",
+  line1 = 73,
+  line2 = 75,
+  target = "pub fn fibonacci(num: u32) -> u32 {\n    todo!()\n}",
+  before = "// above",
+  after = "// below",
+  filetype = "rust",
+}
+local ip = plugin.config.inject.prompt(inject_ctx)
+assert(ip:find("INJECT MODE", 1, true), "template header")
+assert(ip:find("File: path/to/my/code.rs", 1, true), ip)
+assert(ip:find("Target range when requested: lines 73-75", 1, true), ip)
+assert(ip:find("User request:\nImplement this function", 1, true), ip)
+assert(ip:find("```rust\n// above\n```", 1, true), "context before fenced")
+assert(ip:find("```rust\n// below\n```", 1, true), "context after fenced")
+assert(ip:find("Return replacement text only.", 1, true))
+
+-- fence grows past backtick runs inside the target
+local tricky = plugin.config.inject.prompt(vim.tbl_extend("force", inject_ctx, {
+  target = "a\n```\nb\n```",
+  before = "",
+  after = "",
+}))
+assert(tricky:find("````rust\na\n```\nb\n```\n````", 1, true), "escalated fence")
+assert(not tricky:find("Context before:", 1, true), "empty context omitted")
+
+-- unnamed buffers still produce a template
+local unnamed_ctx = vim.deepcopy(inject_ctx)
+unnamed_ctx.file = nil
+local unnamed = plugin.config.inject.prompt(unnamed_ctx)
+assert(unnamed:find("File: (unnamed buffer)", 1, true), unnamed)
+
+-- v2: response session-file resolution + final-response parsing
+local response = require("herdr-agents.response")
+local tmp = vim.fn.tempname()
+vim.fn.mkdir(tmp, "p")
+
+local nofile, rerr = response.session_file({ pane_id = "wX:p1" })
+assert(nofile == nil and rerr:find("has not reported"), tostring(rerr))
+
+local session = vim.fs.joinpath(tmp, "session.jsonl")
+local pi_agent = {
+  pane_id = "wX:p1",
+  session = { agent = "pi", kind = "path", value = session },
+}
+assert(response.session_file(pi_agent) == session, "path sessions resolve directly")
+
+-- config hook wins over built-in resolution
+config.options.response.session_file = function()
+  return "/hooked.jsonl"
+end
+assert(response.session_file(pi_agent) == "/hooked.jsonl")
+config.options.response.session_file = nil
+
+local function jsonl(entries)
+  local lines = {}
+  for _, e in ipairs(entries) do
+    lines[#lines + 1] = vim.json.encode(e)
+  end
+  vim.fn.writefile(lines, session)
+end
+
+-- pi format: {type = "message", message = {role, content}}
+jsonl({
+  { type = "message", message = { role = "user", content = { { type = "text", text = "q" } } } },
+  { type = "message", message = { role = "assistant", content = { { type = "text", text = "old answer" } } } },
+})
+local marker = response.marker(pi_agent)
+assert(marker.file == session and marker.offset > 0)
+
+local text = assert(response.final(pi_agent))
+assert(text == "old answer", text)
+
+-- nothing after the marker yet
+local none, nerr = response.final(pi_agent, marker)
+assert(none == nil and nerr:find("no assistant response"), tostring(nerr))
+
+-- claude format after the marker: sidechains and tool-only messages are
+-- skipped, the last text message wins, multiple text parts join
+local f = io.open(session, "ab")
+f:write(vim.json.encode({ type = "assistant", isSidechain = true,
+  message = { role = "assistant", content = { { type = "text", text = "subagent noise" } } } }) .. "\n")
+f:write(vim.json.encode({ type = "assistant",
+  message = { role = "assistant", content = { { type = "tool_use", id = "t1" } } } }) .. "\n")
+f:write(vim.json.encode({ type = "assistant",
+  message = { role = "assistant", content = { { type = "text", text = "mid" } } } }) .. "\n")
+f:write(vim.json.encode({ type = "assistant",
+  message = { role = "assistant", content = {
+    { type = "text", text = "final" }, { type = "text", text = "answer" } } } }) .. "\n")
+f:close()
+
+text = assert(response.final(pi_agent, marker))
+assert(text == "final\nanswer", text)
+assert(response.final(pi_agent) == "final\nanswer", "unmarked read sees whole file")
+
+-- v2: inject extmark tracking — region follows edits above it and the
+-- response replaces the tracked region, not the original line numbers
+local inject = require("herdr-agents.inject")
+vim.cmd("enew")
+local buf = vim.api.nvim_get_current_buf()
+vim.api.nvim_buf_set_lines(buf, 0, -1, false, { "keep1", "old1", "old2", "keep2" })
+
+local sent
+package.loaded["herdr-agents.api"].request = nil -- ensure real fn below is restored
+local real_api = require("herdr-agents.api")
+local real_request, real_selected = real_api.request, real_api.selected
+real_api.selected = function()
+  return "wX:p1"
+end
+real_api.request = function(_, build, _, cb)
+  sent = build({ pane_id = "wX:p1", cwd = "/nowhere" })
+  -- user keeps editing above the target while the "agent" works
+  vim.api.nvim_buf_set_lines(buf, 0, 0, false, { "inserted above" })
+  cb(nil, { status = "idle", text = "```\nnew1\nnew2\nnew3\n```" })
+end
+
+inject.start(buf, 2, 3, "replace these")
+assert(sent:find("INJECT MODE", 1, true), "inject built the template")
+assert(sent:find("old1\nold2", 1, true), "target captured")
+
+local got = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
+assert(vim.deep_equal(got, { "inserted above", "keep1", "new1", "new2", "new3", "keep2" }),
+  vim.inspect(got))
+
+-- injected highlight is present, then clearable under the cursor
+local ns = vim.api.nvim_create_namespace("herdr-agents-injected")
+local marks = vim.api.nvim_buf_get_extmarks(buf, ns, 0, -1, {})
+assert(#marks == 3, "one sign per injected line, got " .. #marks)
+vim.api.nvim_win_set_cursor(0, { 4, 0 })
+inject.clear_highlights(buf)
+marks = vim.api.nvim_buf_get_extmarks(buf, ns, 0, -1, {})
+assert(#marks == 0, "highlight cleared, got " .. #marks)
+
+-- deleting the target region drops the injection instead of misplacing it
+vim.api.nvim_buf_set_lines(buf, 0, -1, false, { "keep1", "old1", "old2", "keep2" })
+real_api.request = function(_, _, _, cb)
+  vim.api.nvim_buf_set_lines(buf, 1, 3, false, {})
+  cb(nil, { status = "idle", text = "should not land" })
+end
+inject.start(buf, 2, 3, "replace these")
+got = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
+assert(vim.deep_equal(got, { "keep1", "keep2" }), vim.inspect(got))
+
+real_api.request, real_api.selected = real_request, real_selected
 
 print("smoke OK")

@@ -5,6 +5,7 @@
 
 local cli = require("herdr-agents.cli")
 local config = require("herdr-agents.config")
+local response = require("herdr-agents.response")
 local selection = require("herdr-agents.selection")
 
 local M = {}
@@ -373,7 +374,7 @@ end
 ---the text to send.
 ---@param pane_id string
 ---@param text string|fun(agent: HerdrAgent): string
----@param opts? { force?: boolean } force skips the working-agent confirmation
+---@param opts? { force?: boolean, watch?: boolean } force skips the working-agent confirmation; watch=false skips the done/blocked notification watcher
 ---@param cb? fun(err: string|nil, agent: HerdrAgent|nil)
 function M.send(pane_id, text, opts, cb)
   opts = opts or {}
@@ -411,7 +412,9 @@ function M.send(pane_id, text, opts, cb)
       if serr then
         return cb(serr)
       end
-      M.watch(pane_id)
+      if opts.watch ~= false then
+        M.watch(pane_id)
+      end
       cb(nil, agent)
     end)
   end)
@@ -458,6 +461,122 @@ function M.fetch_response(pane_id, opts, cb)
       end)
     end
   )
+end
+
+---Snapshot the agent's session transcript position so a later
+---`final_response` only sees output produced after this point.
+---@param pane_id string
+---@param cb fun(err: string|nil, marker: HerdrResponseMarker|nil, agent: HerdrAgent|nil)
+function M.response_marker(pane_id, cb)
+  M.get_agent(pane_id, function(err, agent)
+    if err then
+      return cb(err)
+    end
+    cb(nil, response.marker(agent), agent)
+  end)
+end
+
+---Read the agent's final response text (last assistant message in its
+---session transcript) produced after `marker`.
+---
+---The transcript can lag the agent status by a moment, so a missing
+---response is retried a few times before giving up.
+---@param pane_id string
+---@param marker? HerdrResponseMarker nil reads the whole session
+---@param opts? { attempts?: integer, delay_ms?: integer }
+---@param cb fun(err: string|nil, text: string|nil)
+function M.final_response(pane_id, marker, opts, cb)
+  opts = opts or {}
+  local attempts = opts.attempts or 5
+  local delay = opts.delay_ms or 300
+  local function try(n)
+    M.get_agent(pane_id, function(err, agent)
+      if err then
+        return cb(err)
+      end
+      local text, ferr = response.final(agent, marker)
+      if text then
+        return cb(nil, text)
+      end
+      if n >= attempts then
+        return cb(ferr)
+      end
+      vim.defer_fn(function()
+        try(n + 1)
+      end, delay)
+    end)
+  end
+  try(1)
+end
+
+---Send a prompt and capture the agent's final response for it: marker the
+---session, send, wait for the agent to finish, then read the response
+---from the transcript.
+---
+---A blocked agent (waiting on input, e.g. a permission prompt) resolves
+---with status "blocked" and no text — unless `on_blocked` is given, in
+---which case it is called as a notification hook and the request keeps
+---waiting for the agent to be answered and finish.
+---@param pane_id string
+---@param text string|fun(agent: HerdrAgent): string
+---@param opts? { force?: boolean, timeout_ms?: integer, start_timeout_ms?: integer, on_blocked?: fun() }
+---@param cb fun(err: string|nil, result: { status: string, text: string|nil }|nil)
+function M.request(pane_id, text, opts, cb)
+  opts = opts or {}
+  local timeout = opts.timeout_ms or 300000
+
+  local function await(marker)
+    race_status(pane_id, { "done", "idle", "blocked" }, timeout, function(rerr, status)
+      if rerr then
+        return cb(rerr)
+      end
+      if status == "blocked" then
+        if not opts.on_blocked then
+          return cb(nil, { status = "blocked", text = nil })
+        end
+        opts.on_blocked()
+        -- The agent resumes (working) once the user answers it; then keep
+        -- waiting for a terminal status.
+        cli.call(
+          { "wait", "agent-status", pane_id, "--status", "working",
+            "--timeout", tostring(timeout) },
+          function(werr)
+            if werr then
+              return cb("agent stayed blocked: " .. werr)
+            end
+            await(marker)
+          end
+        )
+        return
+      end
+      M.final_response(pane_id, marker, {}, function(ferr, rtext)
+        if ferr then
+          return cb(ferr)
+        end
+        cb(nil, { status = status, text = rtext })
+      end)
+    end)
+  end
+
+  M.response_marker(pane_id, function(merr, marker)
+    if merr then
+      return cb("agent unavailable: " .. merr)
+    end
+    M.send(pane_id, text, { force = opts.force, watch = false }, function(serr)
+      if serr then
+        return cb(serr)
+      end
+      -- Let the agent pick the prompt up first, otherwise a still-idle
+      -- agent reads as already finished.
+      cli.call(
+        { "wait", "agent-status", pane_id, "--status", "working",
+          "--timeout", tostring(opts.start_timeout_ms or 10000) },
+        function()
+          await(marker)
+        end
+      )
+    end)
+  end)
 end
 
 ---Close a pane (intended for plugin-managed agents whose result has been

@@ -324,6 +324,32 @@ function M.register()
     range = true,
     desc = "Send a contextual prompt, spawning the default subagent if none is selected",
   })
+
+  cmd("HerdrAgentInject", function(opts)
+    if not ensure_available() then
+      return
+    end
+    local bufnr = vim.api.nvim_get_current_buf()
+    local line1, line2 = M._capture_range(opts)
+    with_prompt(opts.args, "Herdr inject prompt: ", function(text)
+      require("herdr-agents.inject").start(bufnr, line1, line2, text)
+    end)
+  end, {
+    nargs = "*",
+    range = true,
+    desc = "Replace the range/selection with the selected agent's response (tracked by extmarks)",
+  })
+
+  cmd("HerdrAgentHighlightClear", function(opts)
+    require("herdr-agents.inject").clear_highlights(
+      vim.api.nvim_get_current_buf(), opts.args == "--all")
+  end, {
+    nargs = "?",
+    complete = function(arglead)
+      return vim.startswith("--all", arglead) and { "--all" } or {}
+    end,
+    desc = "Clear the injected-code highlight under the cursor (--all: whole buffer)",
+  })
 end
 
 return M

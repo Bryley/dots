@@ -14,11 +14,14 @@ Requires Neovim 0.12+ and running Neovim inside a Herdr-managed pane
 | `:HerdrAgentSend [prompt]` | Send a contextual prompt (current file + cursor line, or the supplied Ex range) to the selected agent. With no prompt, opens an input prompt. |
 | `:HerdrAgentSendRaw [text]` | Send text to the selected agent without editor context. |
 | `:HerdrAgentDelegate [prompt]` | Like `Send`, but spawns and selects the default subagent first when no agent is selected. |
+| `:HerdrAgentInject [prompt]` | Replace the range/selection with the selected agent's response. The region is tracked with extmarks, so editing elsewhere while the agent works is safe; injected lines get an orange sign-column mark for review. |
+| `:HerdrAgentHighlightClear [--all]` | Clear the injected-code mark under the cursor, or all marks in the buffer with `--all`. |
 
-`Send` and `Delegate` accept ranges:
+`Send`, `Delegate`, and `Inject` accept ranges:
 
 ```vim
 :'<,'>HerdrAgentDelegate improve this prose
+:'<,'>HerdrAgentInject implement this function
 ```
 
 Without an Ex range, an active visual selection is used (so `<Cmd>`-style
@@ -72,8 +75,37 @@ require("herdr-agents").setup({
     on_blocked = true,         -- notify when it needs input
     watch_timeout_ms = 30 * 60 * 1000,
   },
+
+  response = {
+    session_file = nil,        -- fun(agent): path|nil — override how the
+                               -- harness session transcript is found; Pi
+                               -- session paths and Claude session ids are
+                               -- resolved out of the box
+  },
+
+  inject = {
+    context_lines = 20,        -- code context sent above/below the target
+    timeout_ms = 300000,       -- how long to wait for the agent's response
+    strip_fences = true,       -- unwrap a markdown fence in the response
+    indicator = {              -- shown while the agent works on the region
+      sign = "󱚝",
+      virt_text = "󱚝 herdr agent working…",
+    },
+    highlight = {              -- injected-code mark in the sign column
+      sign = "▎",
+      timeout_ms = nil,        -- nil keeps it until :HerdrAgentHighlightClear
+    },
+    prompt = function(ctx)     -- builds the INJECT MODE prompt
+      -- ctx = { prompt, file (relative to the agent's cwd when inside it),
+      --         line1, line2, target, before, after, filetype }
+      -- default: strict replace-only template with fenced context blocks
+    end,
+  },
 })
 ```
+
+Highlight groups `HerdrAgentsWorking` and `HerdrAgentsInjected` (both
+default to orange) style the indicator and injected-code marks.
 
 ## Lua API
 
@@ -90,8 +122,15 @@ herdr.selected()                               -- -> pane_id|nil
 herdr.selected_agent()                         -- -> cached HerdrAgent|nil
 herdr.send(pane_id, text, { force = false }, function(err, agent) end)
 herdr.read(pane_id, { lines = 100 }, function(err, text) end)
-herdr.fetch_response(pane_id, { timeout_ms = 120000 }, function(err, res) end)  -- res = { status, text }
+herdr.fetch_response(pane_id, { timeout_ms = 120000 }, function(err, res) end)  -- res = { status, text (screen scrape) }
 herdr.close(pane_id, function(err) end)        -- for consumed managed workers
+
+-- v2: exact final-response capture from the harness's own session
+-- transcript (Pi session paths and Claude session ids supported).
+herdr.response_marker(pane_id, function(err, marker) end)
+herdr.final_response(pane_id, marker, {}, function(err, text) end)
+herdr.request(pane_id, text, { timeout_ms = 300000, on_blocked = function() end },
+  function(err, res) end)                      -- send → wait → res = { status, text }
 ```
 
 Safety guardrails:

@@ -21,6 +21,9 @@ vim.keymap.set("n", "<leader>as", "<cmd>HerdrAgentSelect<CR>", {
 vim.keymap.set({"n", "v"}, "<leader>ap", "<cmd>HerdrAgentSend<CR>", {
     desc = "Prompt Herdr AI Agent"
 })
+vim.keymap.set({"n", "v"}, "<leader>ai", "<cmd>HerdrAgentInject<CR>", {
+    desc = "Herdr AI Inject"
+})
 
 -- dbab Database --
 

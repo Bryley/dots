@@ -53,7 +53,7 @@ vim.keymap.set("n", "<leader>qj", "<cmd>cnext<CR>zz", { desc = "Next Quickfix" }
 vim.keymap.set("n", "<leader>qq", quickfix_toggle_cmd, { desc = "Toggle Quickfix" })
 
 
-vim.keymap.set("n", "<F3>", "<cmd>noh<CR>", { desc = "No highlight" })
+vim.keymap.set("n", "<F3>", "<cmd>noh<CR><cmd>silent! HerdrAgentHighlightClear<CR>", { desc = "No highlight" })
 
 vim.keymap.set("n", "<leader>yf", function()
     local filepath = vim.fn.expand("%:.")

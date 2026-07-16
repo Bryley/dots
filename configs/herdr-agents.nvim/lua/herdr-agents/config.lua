@@ -18,8 +18,73 @@
 ---@field agents table<string, HerdrAgentsSpawnOpts> named spawn profiles
 ---@field send table
 ---@field notify table
+---@field response table
+---@field inject table
+
+---@class HerdrAgentsInjectCtx
+---@field prompt string the user's request
+---@field file string|nil absolute path, made relative to the agent's cwd when inside it; nil for unnamed buffers
+---@field line1 integer target start line at send time
+---@field line2 integer target end line at send time
+---@field target string the text being replaced
+---@field before string up to `context_lines` lines above the target
+---@field after string up to `context_lines` lines below the target
+---@field filetype string buffer filetype ("" when unset)
 
 local M = {}
+
+---Fence code so that embedded backtick runs cannot break out.
+---@param text string
+---@param lang string
+---@return string
+local function fenced(text, lang)
+  local longest = 2
+  for run in text:gmatch("`+") do
+    longest = math.max(longest, #run)
+  end
+  local fence = ("`"):rep(longest + 1)
+  return ("%s%s\n%s\n%s"):format(fence, lang, text, fence)
+end
+
+---Default inject prompt template (see PLAN.md "Example Use").
+---@param ctx HerdrAgentsInjectCtx
+---@return string
+local function inject_prompt(ctx)
+  local lines = {
+    "INJECT MODE",
+    "",
+    "You are generating replacement text for a Neovim plugin command.",
+    "",
+    "Do not edit files.",
+    "Do not run formatters.",
+    "Do not describe the change.",
+    "Do not use markdown fences.",
+    "Return ONLY the exact text that should replace the target region.",
+    "",
+    ("File: %s"):format(ctx.file or "(unnamed buffer)"),
+    ("Target range when requested: lines %d-%d"):format(ctx.line1, ctx.line2),
+    "The editor tracks the real target location separately, so line numbers are only context.",
+    "",
+    "User request:",
+    ctx.prompt,
+    "",
+  }
+  if ctx.before ~= "" then
+    lines[#lines + 1] = "Context before:"
+    lines[#lines + 1] = fenced(ctx.before, ctx.filetype)
+    lines[#lines + 1] = ""
+  end
+  lines[#lines + 1] = "Target text to replace:"
+  lines[#lines + 1] = fenced(ctx.target, ctx.filetype)
+  lines[#lines + 1] = ""
+  if ctx.after ~= "" then
+    lines[#lines + 1] = "Context after:"
+    lines[#lines + 1] = fenced(ctx.after, ctx.filetype)
+    lines[#lines + 1] = ""
+  end
+  lines[#lines + 1] = "Return replacement text only."
+  return table.concat(lines, "\n")
+end
 
 ---@type HerdrAgentsConfig
 M.defaults = {
@@ -85,6 +150,39 @@ M.defaults = {
     on_blocked = true,
     -- How long a background status watcher lives after a send.
     watch_timeout_ms = 30 * 60 * 1000,
+  },
+
+  response = {
+    -- Override how an agent's session transcript file is found. Receives
+    -- the HerdrAgent and returns a path or nil to fall back to the
+    -- built-in resolution (Pi session paths and Claude session ids are
+    -- handled out of the box).
+    ---@type nil|fun(agent: HerdrAgent): string|nil
+    session_file = nil,
+  },
+
+  inject = {
+    -- Lines of surrounding code sent as context above and below the target.
+    context_lines = 20,
+    -- How long to wait for the agent to finish an inject request.
+    timeout_ms = 300000,
+    -- Strip a wrapping markdown fence if the agent returns one anyway.
+    strip_fences = true,
+    -- Marker shown while the agent works on a region.
+    indicator = {
+      sign = "󱚝",
+      virt_text = "󱚝 herdr agent working…",
+    },
+    -- Sign-column marker for injected code, cleared with
+    -- :HerdrAgentHighlightClear (or automatically after timeout_ms when
+    -- set; nil keeps it until cleared).
+    highlight = {
+      sign = "▎",
+      timeout_ms = nil,
+    },
+    -- Builds the prompt sent to the agent; see HerdrAgentsInjectCtx.
+    ---@type fun(ctx: HerdrAgentsInjectCtx): string
+    prompt = inject_prompt,
   },
 }
 
