@@ -203,6 +203,7 @@ $env.config = {
 const mise_path = ($nu.data-dir | path join "mise.nu")
 const mise_source = if ($mise_path | path exists) { $mise_path } else { null }
 source $mise_source
+$env.PATH = ($env.PATH | append '/usr/local/bin' | uniq)
 
 # Television shell integration
 # Reference: https://alexpasmantier.github.io/television/user-guide/shell-integration#nushell

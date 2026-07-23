@@ -1,8 +1,8 @@
 ---Thin async wrapper around the `herdr` CLI.
 ---
----All herdr workspace/tab/pane/wait commands talk to the running herdr
----instance over its local unix socket, so calls are fast; `wait ...`
----commands block until their condition and are only ever run async.
+---All herdr workspace/tab/pane/agent commands talk to the running herdr
+---instance over its local unix socket, so calls are fast; blocking agent
+---wait commands are only ever run async.
 
 local config = require("herdr-agents.config")
 

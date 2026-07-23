@@ -154,7 +154,7 @@ local function race_status(pane_id, statuses, timeout_ms, cb)
   for _, status in ipairs(statuses) do
     local h
     h = cli.call(
-      { "wait", "agent-status", pane_id, "--status", status, "--timeout", tostring(timeout_ms) },
+      { "agent", "wait", pane_id, "--until", status, "--timeout", tostring(timeout_ms) },
       function(err)
         if settled then
           return
@@ -241,7 +241,7 @@ function M.spawn(name, cb)
       end
       local timeout = profile.ready_timeout_ms or 30000
       cli.call(
-        { "wait", "agent-status", pane_id, "--status", "idle", "--timeout", tostring(timeout) },
+        { "agent", "wait", pane_id, "--until", "idle", "--timeout", tostring(timeout) },
         function(werr)
           M.get_agent(pane_id, function(_, agent)
             agent = agent or { pane_id = pane_id, label = label, managed = true }
@@ -328,7 +328,7 @@ function M.watch(pane_id)
   -- Wait for the agent to pick the prompt up before watching for a
   -- terminal status, otherwise a still-idle agent looks finished.
   local start = cli.call(
-    { "wait", "agent-status", pane_id, "--status", "working", "--timeout", "15000" },
+    { "agent", "wait", pane_id, "--until", "working", "--timeout", "15000" },
     function(err)
       if state.watch_gen[pane_id] ~= gen then
         return -- superseded by a newer watch
@@ -445,7 +445,7 @@ function M.fetch_response(pane_id, opts, cb)
   -- Give the agent a moment to start working so an idle agent that has
   -- not yet picked up the prompt does not read as already finished.
   cli.call(
-    { "wait", "agent-status", pane_id, "--status", "working",
+    { "agent", "wait", pane_id, "--until", "working",
       "--timeout", tostring(opts.start_timeout_ms or 5000) },
     function()
       race_status(pane_id, { "done", "idle", "blocked" }, timeout, function(rerr, status)
@@ -538,7 +538,7 @@ function M.request(pane_id, text, opts, cb)
         -- The agent resumes (working) once the user answers it; then keep
         -- waiting for a terminal status.
         cli.call(
-          { "wait", "agent-status", pane_id, "--status", "working",
+          { "agent", "wait", pane_id, "--until", "working",
             "--timeout", tostring(timeout) },
           function(werr)
             if werr then
@@ -569,7 +569,7 @@ function M.request(pane_id, text, opts, cb)
       -- Let the agent pick the prompt up first, otherwise a still-idle
       -- agent reads as already finished.
       cli.call(
-        { "wait", "agent-status", pane_id, "--status", "working",
+        { "agent", "wait", pane_id, "--until", "working",
           "--timeout", tostring(opts.start_timeout_ms or 10000) },
         function()
           await(marker)

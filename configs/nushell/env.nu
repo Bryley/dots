@@ -228,6 +228,7 @@ $env.PATH = ($env.PATH | append '~/.cargo/bin')
 $env.PATH = ($env.PATH | append '~/go/bin')
 $env.PATH = ($env.PATH | append "/opt/homebrew/bin")
 $env.PATH = ($env.PATH | append '/opt/homebrew/opt/mysql/bin')
+$env.PATH = ($env.PATH | append '/usr/local/bin')
 
 
 # Direnv integration
