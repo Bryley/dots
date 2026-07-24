@@ -22,11 +22,33 @@ agent_panel_sort = "spaces"
 prefix = "ctrl+a"
 split_vertical = "prefix+|"
 split_horizontal = "prefix+_"
-previous_workspace = "prefix+K"
-next_workspace = "prefix+J"
+previous_tab = "prefix+ctrl+h"
+next_tab = "prefix+ctrl+l"
+previous_workspace = "prefix+ctrl+k"
+next_workspace = "prefix+ctrl+j"
 
 navigate_workspace_up = "k"
 navigate_workspace_down = "j"
+
+[[keys.command]]
+key = "prefix+ctrl+L"
+type = "shell"
+command = '''bash -lc 'cur=$(herdr pane current); pane=$(jq -r .result.pane.pane_id <<<"$cur"); ws=$(jq -r .result.pane.workspace_id <<<"$cur"); tab=$(jq -r .result.pane.tab_id <<<"$cur"); target_tab=$(herdr tab list --workspace "$ws" | jq -r --arg cur "$tab" ".result.tabs as \$t | (\$t | map(.tab_id) | index(\$cur)) as \$i | \$t[((\$i + 1) % length)].tab_id"); target_pane=$(herdr pane list | jq -r --arg tab "$target_tab" ".result.panes[] | select(.tab_id == \$tab) | .pane_id" | head -n1); test "$target_tab" != "$tab" && test -n "$target_pane" && herdr pane move "$pane" --tab "$target_tab" --split right --target-pane "$target_pane" --focus' '''
+
+[[keys.command]]
+key = "prefix+ctrl+H"
+type = "shell"
+command = '''bash -lc 'cur=$(herdr pane current); pane=$(jq -r .result.pane.pane_id <<<"$cur"); ws=$(jq -r .result.pane.workspace_id <<<"$cur"); tab=$(jq -r .result.pane.tab_id <<<"$cur"); target_tab=$(herdr tab list --workspace "$ws" | jq -r --arg cur "$tab" ".result.tabs as \$t | (\$t | map(.tab_id) | index(\$cur)) as \$i | \$t[((\$i + length - 1) % length)].tab_id"); target_pane=$(herdr pane list | jq -r --arg tab "$target_tab" ".result.panes[] | select(.tab_id == \$tab) | .pane_id" | head -n1); test "$target_tab" != "$tab" && test -n "$target_pane" && herdr pane move "$pane" --tab "$target_tab" --split right --target-pane "$target_pane" --focus' '''
+
+[[keys.command]]
+key = "prefix+ctrl+J"
+type = "shell"
+command = '''bash -lc 'cur=$(herdr pane current); pane=$(jq -r .result.pane.pane_id <<<"$cur"); ws=$(jq -r .result.pane.workspace_id <<<"$cur"); workspaces=$(herdr workspace list); target_ws=$(jq -r --arg cur "$ws" ".result.workspaces as \$w | (\$w | map(.workspace_id) | index(\$cur)) as \$i | \$w[((\$i + 1) % length)].workspace_id" <<<"$workspaces"); target_tab=$(jq -r --arg ws "$target_ws" ".result.workspaces[] | select(.workspace_id == \$ws) | .active_tab_id" <<<"$workspaces"); target_pane=$(herdr pane list | jq -r --arg tab "$target_tab" ".result.panes[] | select(.tab_id == \$tab) | .pane_id" | head -n1); test "$target_ws" != "$ws" && test -n "$target_pane" && herdr pane move "$pane" --tab "$target_tab" --split right --target-pane "$target_pane" --focus' '''
+
+[[keys.command]]
+key = "prefix+ctrl+K"
+type = "shell"
+command = '''bash -lc 'cur=$(herdr pane current); pane=$(jq -r .result.pane.pane_id <<<"$cur"); ws=$(jq -r .result.pane.workspace_id <<<"$cur"); workspaces=$(herdr workspace list); target_ws=$(jq -r --arg cur "$ws" ".result.workspaces as \$w | (\$w | map(.workspace_id) | index(\$cur)) as \$i | \$w[((\$i + length - 1) % length)].workspace_id" <<<"$workspaces"); target_tab=$(jq -r --arg ws "$target_ws" ".result.workspaces[] | select(.workspace_id == \$ws) | .active_tab_id" <<<"$workspaces"); target_pane=$(herdr pane list | jq -r --arg tab "$target_tab" ".result.panes[] | select(.tab_id == \$tab) | .pane_id" | head -n1); test "$target_ws" != "$ws" && test -n "$target_pane" && herdr pane move "$pane" --tab "$target_tab" --split right --target-pane "$target_pane" --focus' '''
 
 [experimental]
 kitty_graphics = true
