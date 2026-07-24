@@ -1,0 +1,21 @@
+#!/usr/bin/env sh
+set -eu
+
+# Start PipeWire first. WirePlumber is delayed slightly so ALSA devices are
+# visible reliably; starting it via PipeWire context.exec has raced on login.
+if ! pgrep -xu "$(id -u)" pipewire >/dev/null 2>&1; then
+    pipewire &
+fi
+
+for _ in 1 2 3 4 5 6 7 8 9 10; do
+    if pw-cli info 0 >/dev/null 2>&1; then
+        break
+    fi
+    sleep 0.2
+done
+
+sleep 1
+
+if ! pgrep -xu "$(id -u)" wireplumber >/dev/null 2>&1; then
+    exec wireplumber
+fi
