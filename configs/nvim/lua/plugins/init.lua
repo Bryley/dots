@@ -10,7 +10,7 @@ require("mini.icons").setup()
 
 -- Local development plugin. Keep this conditional so copied dotfiles work
 -- without the herdr-agents.nvim checkout.
-local herdr_agents_path = "/Users/bryley/dots/configs/herdr-agents.nvim"
+local herdr_agents_path = vim.fn.expand("~/dots/configs/herdr-agents.nvim")
 if vim.uv.fs_stat(herdr_agents_path) then
     vim.opt.runtimepath:prepend(herdr_agents_path)
     require("herdr-agents").setup()
