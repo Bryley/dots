@@ -8,6 +8,11 @@ local config = require("herdr-agents.config")
 
 local M = {}
 
+-- Herdr 0.7.5+ uses `agent wait --until`; an earlier CLI release used
+-- `--status`. Cache the first accepted spelling and retry once when the
+-- connected Herdr server reports the other one.
+local agent_wait_flag
+
 ---True when nvim is running inside a herdr-managed pane and the binary
 ---is available.
 ---@return boolean ok
@@ -78,6 +83,34 @@ function M.call(args, cb)
         cb(nil, decode(out.stdout))
       end
     end)
+  end)
+end
+
+---Wait for an agent state across the compatible Herdr CLI spellings.
+---@param pane_id string
+---@param status string
+---@param timeout_ms integer|string
+---@param cb fun(err: string|nil, result: table|string|nil)
+---@return vim.SystemObj|nil
+function M.agent_wait(pane_id, status, timeout_ms, cb)
+  local function args(flag)
+    return { "agent", "wait", pane_id, flag, status, "--timeout", tostring(timeout_ms) }
+  end
+  local flag = agent_wait_flag or "--until"
+  return M.call(args(flag), function(err, res)
+    if err and err:find("unknown option", 1, true) then
+      local fallback = flag == "--until" and "--status" or "--until"
+      return M.call(args(fallback), function(retry_err, retry_res)
+        if not retry_err then
+          agent_wait_flag = fallback
+        end
+        cb(retry_err, retry_res)
+      end)
+    end
+    if not err then
+      agent_wait_flag = flag
+    end
+    cb(err, res)
   end)
 end
 
