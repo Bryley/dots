@@ -2,7 +2,7 @@
   "lastChangelogVersion": "0.83.0",
   "defaultProvider": "openai-codex",
   "defaultModel": "gpt-5.6-terra",
-  "theme": "dark",
+  "theme": "light",
   "packages": [
     "npm:pi-token-usage",
     "git:github.com/Bryley/pi-vim",

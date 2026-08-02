@@ -77,18 +77,51 @@ require("blink.cmp").setup({
 -- Colorscheme --
 
 vim.pack.add({ "https://github.com/olimorris/onedarkpro.nvim" })
-vim.cmd("colorscheme onedark_dark") -- Default
 
--- Auto change on light/dark
+local function command_output(command)
+    local output = vim.fn.system(command)
+    if vim.v.shell_error ~= 0 then
+        return nil
+    end
+    return vim.trim(output)
+end
+
+local function detect_system_background()
+    if vim.uv.os_uname().sysname == "Darwin" then
+        local dark_mode = command_output([[osascript -e 'tell application "System Events" to get dark mode']])
+        if dark_mode == "true" then
+            return "dark"
+        elseif dark_mode == "false" then
+            return "light"
+        end
+    else
+        local color_scheme = command_output([[dconf read /org/gnome/desktop/interface/color-scheme]])
+            or command_output([[gsettings get org.gnome.desktop.interface color-scheme]])
+        if color_scheme then
+            if color_scheme:find("prefer%-light") then
+                return "light"
+            elseif color_scheme:find("prefer%-dark") then
+                return "dark"
+            end
+        end
+    end
+end
+
+local function apply_background_theme()
+    if vim.o.background == "dark" then
+        vim.cmd.colorscheme("onedark_dark")
+    else
+        vim.cmd.colorscheme("onelight")
+    end
+end
+
+vim.o.background = detect_system_background() or vim.o.background
+apply_background_theme()
+
+-- Auto change when terminals/Neovim update background while running.
 vim.api.nvim_create_autocmd("OptionSet", {
     pattern = "background",
-    callback = function()
-        if vim.o.background == "dark" then
-            vim.cmd.colorscheme("onedark_dark")
-        else
-            vim.cmd.colorscheme("onelight")
-        end
-    end,
+    callback = apply_background_theme,
 })
 
 -- LSP --
