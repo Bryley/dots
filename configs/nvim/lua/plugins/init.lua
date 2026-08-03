@@ -18,34 +18,87 @@ end
 vim.keymap.set("n", "<leader>as", "<cmd>HerdrAgentSelect<CR>", {
     desc = "Select Herdr AI Agent"
 })
-vim.keymap.set({"n", "v"}, "<leader>ap", "<cmd>HerdrAgentSend<CR>", {
+vim.keymap.set({ "n", "v" }, "<leader>ap", "<cmd>HerdrAgentSend<CR>", {
     desc = "Prompt Herdr AI Agent"
 })
-vim.keymap.set({"n", "v"}, "<leader>ai", "<cmd>HerdrAgentInject<CR>", {
+vim.keymap.set({ "n", "v" }, "<leader>ai", "<cmd>HerdrAgentInject<CR>", {
     desc = "Herdr AI Inject"
 })
 
--- dbab Database --
 
-vim.pack.add({ "https://github.com/zerochae/dbab.nvim" })
-require("dbab").setup({
-    connections = {
-        {
-            name = "UAT",
-            url = "$MYSQL_UAT_URL"
-        },
-        -- {
-        --     name = "PROD",
-        --     url = "$MYSQL_PROD_URL"
-        -- },
-    },
-    result = {
-        style = "table",
-        max_width = 10,
-        max_height = 20,
-        header_align = "fit",
-    }
+-- Dadbod SQL --
+
+vim.pack.add({ "https://github.com/kristijanhusak/vim-dadbod-ui" })
+vim.pack.add({
+    "https://github.com/tpope/vim-dadbod",
+    "https://github.com/kristijanhusak/vim-dadbod-completion",
 })
+
+vim.g.db_ui_use_nerd_fonts = 1
+vim.g.db_ui_show_database_icon = 1
+vim.g.db_ui_force_echo_notifications = 1
+vim.g.db_ui_win_position = "left"
+vim.g.db_ui_winwidth = 50
+vim.g.db_ui_save_location = vim.fn.stdpath("data") .. "/dadbod_ui"
+vim.g.db_ui_auto_execute_table_helpers = 1
+vim.g.db_ui_table_helpers = {
+    mysql = {
+        List = "SELECT * FROM `{dbname}`.`{table}` LIMIT 200;",
+        Count = "SELECT COUNT(*) FROM `{dbname}`.`{table}`;",
+        Explain = "EXPLAIN SELECT * FROM `{dbname}`.`{table}`;",
+        Describe = "DESCRIBE `{dbname}`.`{table}`;",
+    },
+}
+vim.g.db_ui_disable_mappings = 0
+
+-- Disable folding of results
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = "dbui",
+    callback = function()
+        vim.opt_local.foldenable = false
+        vim.opt_local.foldmethod = "manual"
+    end,
+})
+
+vim.g.dbs = {
+    UAT = vim.env.MYSQL_UAT_URL,
+    -- PROD = vim.env.MYSQL_PROD_URL,
+}
+
+vim.keymap.set("n", "<leader>du", "<cmd>DBUIToggle<CR>", {
+    desc = "Toggle Dadbod UI"
+})
+vim.keymap.set("n", "<leader>df", "<cmd>DBUIFindBuffer<CR>", {
+    desc = "Find Dadbod Buffer"
+})
+vim.keymap.set("n", "<leader>dr", "<cmd>DBUIRenameBuffer<CR>", {
+    desc = "Rename Dadbod Buffer"
+})
+vim.keymap.set("n", "<leader>dl", "<cmd>DBUILastQueryInfo<CR>", {
+    desc = "Dadbod Last Query Info"
+})
+
+-- -- dbab Database --
+--
+-- vim.pack.add({ "https://github.com/zerochae/dbab.nvim" })
+-- require("dbab").setup({
+--     connections = {
+--         {
+--             name = "UAT",
+--             url = "$MYSQL_UAT_URL"
+--         },
+--         -- {
+--         --     name = "PROD",
+--         --     url = "$MYSQL_PROD_URL"
+--         -- },
+--     },
+--     result = {
+--         style = "table",
+--         max_width = 10,
+--         max_height = 20,
+--         header_align = "fit",
+--     }
+-- })
 
 -- Blink Completions --
 
@@ -58,11 +111,16 @@ vim.pack.add({
 require("blink.cmp").setup({
     keymap = { preset = 'enter' },
     sources = {
-        default = { 'lsp', 'path', 'buffer', 'dbab' },
+        default = { 'lsp', 'path', 'buffer' },
+        per_filetype = {
+            sql = { 'dadbod', 'buffer' },
+            mysql = { 'dadbod', 'buffer' },
+            plsql = { 'dadbod', 'buffer' },
+        },
         providers = {
-            dbab = {
-                name = "dbab",
-                module = "blink_dbab",
+            dadbod = {
+                name = "Dadbod",
+                module = "vim_dadbod_completion.blink",
             },
         },
     },
