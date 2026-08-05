@@ -1,0 +1,44 @@
+version: 1
+
+config:
+  profile: gpt-5.5-low
+  run:
+    timeout_ms: 300000
+    max_turns: 8
+
+tests:
+  - name: explicitly-delegates-requirements-synthesis-to-cheap-profile
+    desc: An explicitly delegated requirements-synthesis task uses the cheap profile before recommending scope.
+    workspace:
+      copy:
+        - from: fixtures/subagent-delegation/research-notes.md
+          to: research-notes.md
+    input:
+      prompt: |
+        Use `subagent --profile cheap` to read research-notes.md, then use its result to recommend a focused Tidepool v1:
+        - the primary user problem
+        - the three most important v1 capabilities
+        - two things to explicitly defer
+
+        Do not modify files.
+    assertions:
+      - left: tool.called
+        tool_name: bash
+        tool_params: "subagent.*--profile.*cheap"
+        op: ==
+        right: true
+      - left: output
+        op: contains
+        right: "offline"
+      - left: output
+        op: contains
+        right: "location"
+      - left: output
+        op: contains
+        right: "sync"
+      - left: output
+        op: contains
+        right: "team chat"
+      - left: output
+        op: contains
+        right: "predictive analytics"

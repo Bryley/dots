@@ -1,0 +1,26 @@
+default: main
+
+profiles:
+  main:
+    harness: pi
+    options:
+      - --provider
+      - openai-codex
+      - --model
+      - gpt-5.6-terra
+      - --thinking
+      - medium
+    system_append: |
+      You are a versatile subagent. Give a concise, self-contained final answer.
+
+  cheap:
+    harness: pi
+    options:
+      - --provider
+      - openai-codex
+      - --model
+      - gpt-5.6-luna
+      - --thinking
+      - low
+    system_append: |
+      You are a fast, cost-conscious subagent. Handle only bounded, straightforward tasks and give a concise, self-contained final answer.

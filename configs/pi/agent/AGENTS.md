@@ -30,6 +30,14 @@ Examples include (not limited to):
 - When reporting information to me, be extreamly consise and sacrifice grammar for the sake of concision.
 - Address me by name (Bryley) in every response.
 
+## Subagents
+
+- Delegate only through the local `subagent` CLI; do not simulate subagents in prose.
+- For non-trivial work, consider delegating a bounded task to a fresh context. Keep planning, integration, and final responsibility in the primary context.
+- Always specify `--profile <name>` and choose the cheapest suitable profile. Give the subagent a clear goal, relevant files, constraints, and expected result.
+- Verify subagent results before relying on them. Avoid recursive delegation unless clearly needed.
+- Use `subagent --profiles` to choose profiles and `subagent --history` to inspect recent runs.
+
 ## Structured Data Files
 
 - For large JSON/YAML/CSV/JSONL/log files, avoid reading the whole file first. Inspect size, shape, keys/paths, counts, and small representative samples using tools like `jq`, `yq`, `head`, `wc`, `rg`, etc.

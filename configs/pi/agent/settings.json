@@ -13,15 +13,14 @@
   "quietStartup": true,
   "editorPaddingX": 1,
   "enabledModels": [
-    "github-copilot/gpt-5.3-codex",
-    "github-copilot/claude-sonnet-4.6",
-    "github-copilot/claude-haiku-4.5",
-    "github-copilot/gemini-3-flash-preview",
     "openai-codex/gpt-5.5",
     "llama-cpp-qwen/Qwen3.6-35B-A3B-UD-IQ4_NL_XL",
-    "llama-cpp-qwen/Qwen3.6-35B-A3B-UD-IQ3_S"
+    "llama-cpp-qwen/Qwen3.6-35B-A3B-UD-IQ3_S",
+    "openai-codex/gpt-5.6-sol",
+    "openai-codex/gpt-5.6-terra",
+    "openai-codex/gpt-5.6-luna"
   ],
-  "defaultThinkingLevel": "medium",
+  "defaultThinkingLevel": "low",
   "compaction": {
     "enabled": true,
     "reserveTokens": 4096,

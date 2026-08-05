@@ -1,0 +1,230 @@
+#!/usr/bin/env nu
+
+const SESSION = "subagents"
+const TAB_PREFIX = "sa:"
+const MAX_TAB_AGE_SECONDS = 300
+const STARTUP_RETRIES = 30
+const STARTUP_RETRY_DELAY = 100ms
+const AGENT_TIMEOUT_MS = 1_200_000
+
+def config-path []: nothing -> path {
+    ($env.HOME | path join ".config" "subagent" "profiles.yaml")
+}
+
+def usage []: nothing -> string {
+    'Usage: subagent [options] <prompt>
+
+Run a prompt through a herdr-managed subagent.
+
+Options:
+  -p, --profile <name>  Profile from profiles.yaml (default: configured default)
+  -c, --cwd <path>      Working directory (default: current directory)
+      --profiles         List configured profiles
+      --history          List retained subagent runs
+  -h, --help             Show this help
+
+Profiles: ~/.config/subagent/profiles.yaml'
+}
+
+def ensure-session [] {
+    let session_exists = (^herdr session list | lines | any {|line|
+        $line | str starts-with $'($SESSION) '
+    })
+
+    if not $session_exists {
+        # Herdr rejects nested launchers, but an independent named session is safe.
+        # Its client exits without a TTY while its persistent server continues running.
+        do { ^env -u HERDR_ENV herdr --session $SESSION o+e>| ignore } &
+    }
+
+    for _ in 1..$STARTUP_RETRIES {
+        let running = (^herdr session list | lines | any {|line|
+            $line | str starts-with $'($SESSION) '
+        })
+        if $running {
+            return
+        }
+        sleep $STARTUP_RETRY_DELAY
+    }
+
+    error make {msg: $'Could not start herdr session "($SESSION)"'}
+}
+
+def session-json [...args: string] {
+    ^herdr --session $SESSION ...$args | from json
+}
+
+def pi-output [pane_id: string] {
+    let session_path = (session-json agent get $pane_id | get result.agent.agent_session.value)
+    let message = (open $session_path
+        | lines
+        | each {|line| $line | from json }
+        | where {|entry| $entry.type == "message" and $entry.message.role == "assistant" }
+        | last)
+
+    $message.message.content
+    | where type == "text"
+    | get text
+    | str join (char newline)
+}
+
+def clip [text: string, length: int = 60] {
+    let compact = ($text | str replace -a (char newline) " " | str replace -a "\r" " " | str trim)
+    if ($compact | str length) > $length {
+        $'($compact | str substring 0..($length - 1))…'
+    } else {
+        $compact
+    }
+}
+
+def show-history [] {
+    let workspace = (session-json workspace list | get result.workspaces.0)
+    let tabs = (session-json tab list "--workspace" $workspace.workspace_id | get result.tabs)
+    let subagent_tab_ids = ($tabs
+        | where {|tab| $tab.label | str starts-with $TAB_PREFIX }
+        | get tab_id)
+    let panes = (session-json pane list | get result.panes | where {|pane| $pane.tab_id in $subagent_tab_ids })
+
+    print ($panes | each {|pane|
+        let session_path = ($pane.agent_session?.value? | default "")
+        if ($pane.agent? | default "") == "pi" and ($session_path | path exists) {
+            let entries = (open $session_path | lines | each {|line| $line | from json })
+            let session_id = ($entries | first | get id)
+            let prompt = ($entries
+                | where {|entry| $entry.type == "message" and $entry.message.role == "user" }
+                | last
+                | get message.content
+                | where type == "text"
+                | get text
+                | str join (char newline))
+            let output = ($entries
+                | where {|entry| $entry.type == "message" and $entry.message.role == "assistant" }
+                | last
+                | get message.content
+                | where type == "text"
+                | get text
+                | str join (char newline))
+            {
+                cwd: $pane.cwd
+                prompt: (clip $prompt)
+                output: (clip $output)
+                session: $session_id
+            }
+        } else {
+            {
+                cwd: $pane.cwd
+                prompt: ""
+                output: ""
+                session: ""
+            }
+        }
+    } | table -e)
+}
+
+def cleanup-old-tabs [workspace_id: string] {
+    let now = (date now | format date '%s' | into int)
+    let tabs = (session-json tab list "--workspace" $workspace_id | get result.tabs)
+
+    $tabs
+    | where {|tab| ($tab.label | str starts-with $TAB_PREFIX) }
+    | each {|tab|
+        let created_at = ($tab.label | str replace $TAB_PREFIX "" | into int)
+        if ($now - $created_at) > $MAX_TAB_AGE_SECONDS {
+            session-json tab close $tab.tab_id | ignore
+        }
+    }
+}
+
+def main [
+    --profile (-p): string
+    --cwd (-c): path
+    --profiles
+    --history
+    --help (-h)
+    ...prompt: string
+] {
+    if $help {
+        print (usage)
+        return
+    }
+
+    if ($prompt | is-empty) and not $profiles and not $history {
+        print (usage)
+        return
+    }
+
+    let profile_path = (config-path)
+    if not ($profile_path | path exists) {
+        error make {msg: $'Profile config not found: ($profile_path)'}
+    }
+
+    let config = (open $profile_path)
+    if $profiles {
+        print ($config.profiles
+            | transpose name profile
+            | each {|row| {
+                name: $row.name
+                harness: $row.profile.harness
+                options: ($row.profile.options? | default [] | str join " ")
+            }}
+            | table -e)
+        return
+    }
+    if $history {
+        ensure-session
+        show-history
+        return
+    }
+
+    let selected_profile = ($profile | default $config.default)
+    let selected = ($config.profiles | get -o $selected_profile)
+    if $selected == null {
+        error make {msg: $'Unknown profile "($selected_profile)". Use --profiles to list profiles.'}
+    }
+    let harness = $selected.harness
+    let options = ($selected.options? | default [])
+    let system_append = ($selected.system_append? | default "")
+    let run_cwd = (($cwd | default $env.PWD) | path expand)
+    let task = ($prompt | str join " ")
+
+    ensure-session
+
+    let workspace = (session-json workspace list | get result.workspaces.0)
+    cleanup-old-tabs $workspace.workspace_id
+
+    let created_at = (date now | format date '%s')
+    let tab = (session-json tab create
+        "--workspace" $workspace.workspace_id
+        "--cwd" $run_cwd
+        "--label" $'($TAB_PREFIX)($created_at)'
+        "--no-focus")
+    let pane_id = $tab.result.root_pane.pane_id
+    let tab_id = $tab.result.tab.tab_id
+
+    let sanitized_system_append = ($system_append | str replace -a (char newline) " " | str trim)
+    let harness_args = if $harness == "pi" and not ($sanitized_system_append | is-empty) {
+        $options | append "--append-system-prompt" | append $sanitized_system_append
+    } else {
+        $options
+    }
+    let full_task = if $harness == "pi" or ($system_append | is-empty) {
+        $task
+    } else {
+        [$system_append, "Task:", $task] | str join (char newline)
+    }
+
+    try {
+        session-json agent start $'sa-($created_at)' "--kind" $harness "--pane" $pane_id "--timeout" "30000" "--" ...$harness_args | ignore
+        session-json agent prompt $pane_id $full_task "--wait" "--until" "done" "--until" "idle" "--until" "blocked" "--timeout" ($AGENT_TIMEOUT_MS | into string) | ignore
+        if $harness == "pi" {
+            pi-output $pane_id
+        } else {
+            ^herdr --session $SESSION agent read $pane_id --source recent-unwrapped --lines 200
+        }
+    } catch {|err|
+        print -e $'subagent failed; inspect tab ($tab_id) in herdr session "($SESSION)".'
+        $err.raw
+        exit 1
+    }
+
+}
