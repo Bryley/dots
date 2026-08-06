@@ -27,8 +27,6 @@
 ---@field line1 integer target start line at send time
 ---@field line2 integer target end line at send time
 ---@field target string the text being replaced
----@field before string up to `context_lines` lines above the target
----@field after string up to `context_lines` lines below the target
 ---@field filetype string buffer filetype ("" when unset)
 
 local M = {}
@@ -55,11 +53,9 @@ local function inject_prompt(ctx)
     "",
     "You are generating replacement text for a Neovim plugin command.",
     "",
-    "Do not edit files.",
-    "Do not run formatters.",
-    "Do not describe the change.",
-    "Do not use markdown fences.",
-    "Return ONLY the exact text that should replace the target region.",
+    "Follow the herdr-inject skill. You may read the saved file for context; do not edit files.",
+    "Return ONLY the exact text that should replace the target region, with no markdown fences or explanation.",
+    "If this needs a broader decision, out-of-range edit, dependency, or more context, return HERDR_INJECT_CANCELLED followed by a concise reason.",
     "",
     ("File: %s"):format(ctx.file or "(unnamed buffer)"),
     ("Target range when requested: lines %d-%d"):format(ctx.line1, ctx.line2),
@@ -69,19 +65,9 @@ local function inject_prompt(ctx)
     ctx.prompt,
     "",
   }
-  if ctx.before ~= "" then
-    lines[#lines + 1] = "Context before:"
-    lines[#lines + 1] = fenced(ctx.before, ctx.filetype)
-    lines[#lines + 1] = ""
-  end
-  lines[#lines + 1] = "Target text to replace:"
+  lines[#lines + 1] = "Target text to replace (authoritative):"
   lines[#lines + 1] = fenced(ctx.target, ctx.filetype)
   lines[#lines + 1] = ""
-  if ctx.after ~= "" then
-    lines[#lines + 1] = "Context after:"
-    lines[#lines + 1] = fenced(ctx.after, ctx.filetype)
-    lines[#lines + 1] = ""
-  end
   lines[#lines + 1] = "Return replacement text only."
   return table.concat(lines, "\n")
 end
@@ -162,8 +148,6 @@ M.defaults = {
   },
 
   inject = {
-    -- Lines of surrounding code sent as context above and below the target.
-    context_lines = 20,
     -- How long to wait for the agent to finish an inject request.
     timeout_ms = 300000,
     -- Strip a wrapping markdown fence if the agent returns one anyway.
@@ -179,6 +163,11 @@ M.defaults = {
     highlight = {
       sign = "▎",
       timeout_ms = nil,
+    },
+    -- Persistent marker for a response that asks to discuss rather than inject.
+    interrupted = {
+      sign = "!",
+      virt_text = "! herdr inject interrupted — check agent response",
     },
     -- Builds the prompt sent to the agent; see HerdrAgentsInjectCtx.
     ---@type fun(ctx: HerdrAgentsInjectCtx): string

@@ -27,20 +27,24 @@ Profiles: ~/.config/subagent/profiles.yaml'
 }
 
 def ensure-session [] {
-    let session_exists = (^herdr session list | lines | any {|line|
-        $line | str starts-with $'($SESSION) '
-    })
+    let running = (^herdr session list
+        | lines
+        | skip 1
+        | parse -r '^\s*(?<name>\S+)\s+(?<status>\S+)'
+        | any {|session| $session.name == $SESSION and $session.status == "running" })
 
-    if not $session_exists {
+    if not $running {
         # Herdr rejects nested launchers, but an independent named session is safe.
-        # Its client exits without a TTY while its persistent server continues running.
-        do { ^env -u HERDR_ENV herdr --session $SESSION o+e>| ignore } &
+        # Attach starts a stopped named session or creates it when absent.
+        do { ^env -u HERDR_ENV herdr session attach $SESSION o+e>| ignore } &
     }
 
     for _ in 1..$STARTUP_RETRIES {
-        let running = (^herdr session list | lines | any {|line|
-            $line | str starts-with $'($SESSION) '
-        })
+        let running = (^herdr session list
+            | lines
+            | skip 1
+            | parse -r '^\s*(?<name>\S+)\s+(?<status>\S+)'
+            | any {|session| $session.name == $SESSION and $session.status == "running" })
         if $running {
             return
         }

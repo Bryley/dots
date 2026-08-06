@@ -114,8 +114,6 @@ local inject_ctx = {
   line1 = 73,
   line2 = 75,
   target = "pub fn fibonacci(num: u32) -> u32 {\n    todo!()\n}",
-  before = "// above",
-  after = "// below",
   filetype = "rust",
 }
 local ip = plugin.config.inject.prompt(inject_ctx)
@@ -123,24 +121,17 @@ assert(ip:find("INJECT MODE", 1, true), "template header")
 assert(ip:find("File: path/to/my/code.rs", 1, true), ip)
 assert(ip:find("Target range when requested: lines 73-75", 1, true), ip)
 assert(ip:find("User request:\nImplement this function", 1, true), ip)
-assert(ip:find("```rust\n// above\n```", 1, true), "context before fenced")
-assert(ip:find("```rust\n// below\n```", 1, true), "context after fenced")
+assert(ip:find("Follow the herdr-inject skill", 1, true), "skill reference")
+assert(ip:find("HERDR_INJECT_CANCELLED", 1, true), "cancellation contract")
+assert(not ip:find("Context before:", 1, true), "no surrounding context")
+assert(not ip:find("Context after:", 1, true), "no surrounding context")
 assert(ip:find("Return replacement text only.", 1, true))
 
 -- fence grows past backtick runs inside the target
 local tricky = plugin.config.inject.prompt(vim.tbl_extend("force", inject_ctx, {
   target = "a\n```\nb\n```",
-  before = "",
-  after = "",
 }))
 assert(tricky:find("````rust\na\n```\nb\n```\n````", 1, true), "escalated fence")
-assert(not tricky:find("Context before:", 1, true), "empty context omitted")
-
--- unnamed buffers still produce a template
-local unnamed_ctx = vim.deepcopy(inject_ctx)
-unnamed_ctx.file = nil
-local unnamed = plugin.config.inject.prompt(unnamed_ctx)
-assert(unnamed:find("File: (unnamed buffer)", 1, true), unnamed)
 
 -- v2: response session-file resolution + final-response parsing
 local response = require("herdr-agents.response")
@@ -208,9 +199,11 @@ assert(response.final(pi_agent) == "final\nanswer", "unmarked read sees whole fi
 -- v2: inject extmark tracking — region follows edits above it and the
 -- response replaces the tracked region, not the original line numbers
 local inject = require("herdr-agents.inject")
-vim.cmd("enew")
+local inject_file = vim.fs.joinpath(tmp, "inject.rs")
+local initial_lines = { "keep1", "old1", "old2", "keep2" }
+vim.fn.writefile(initial_lines, inject_file)
+vim.cmd("edit " .. vim.fn.fnameescape(inject_file))
 local buf = vim.api.nvim_get_current_buf()
-vim.api.nvim_buf_set_lines(buf, 0, -1, false, { "keep1", "old1", "old2", "keep2" })
 
 local sent
 package.loaded["herdr-agents.api"].request = nil -- ensure real fn below is restored
@@ -243,8 +236,25 @@ inject.clear_highlights(buf)
 marks = vim.api.nvim_buf_get_extmarks(buf, ns, 0, -1, {})
 assert(#marks == 0, "highlight cleared, got " .. #marks)
 
+-- cancellation leaves the target unchanged and gets a clearable red marker
+vim.fn.writefile(initial_lines, inject_file)
+vim.cmd("edit! " .. vim.fn.fnameescape(inject_file))
+real_api.request = function(_, _, _, cb)
+  cb(nil, { status = "idle", text = "HERDR_INJECT_CANCELLED\nThis needs an API decision first." })
+end
+inject.start(buf, 2, 3, "replace these")
+got = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
+assert(vim.deep_equal(got, initial_lines), vim.inspect(got))
+marks = vim.api.nvim_buf_get_extmarks(buf, ns, 0, -1, { details = true })
+assert(#marks == 1 and marks[1][4].sign_hl_group == "HerdrAgentsInterrupted", vim.inspect(marks))
+assert(vim.startswith(marks[1][4].sign_text, "!") and marks[1][4].virt_text ~= nil, vim.inspect(marks))
+vim.api.nvim_win_set_cursor(0, { 2, 0 })
+inject.clear_highlights(buf)
+assert(#vim.api.nvim_buf_get_extmarks(buf, ns, 0, -1, {}) == 0, "interruption marker cleared")
+
 -- deleting the target region drops the injection instead of misplacing it
-vim.api.nvim_buf_set_lines(buf, 0, -1, false, { "keep1", "old1", "old2", "keep2" })
+vim.fn.writefile(initial_lines, inject_file)
+vim.cmd("edit! " .. vim.fn.fnameescape(inject_file))
 real_api.request = function(_, _, _, cb)
   vim.api.nvim_buf_set_lines(buf, 1, 3, false, {})
   cb(nil, { status = "idle", text = "should not land" })
@@ -252,6 +262,27 @@ end
 inject.start(buf, 2, 3, "replace these")
 got = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
 assert(vim.deep_equal(got, { "keep1", "keep2" }), vim.inspect(got))
+
+-- Unnamed and unwritable buffers are rejected before a request.
+real_api.request = function()
+  error("request must not run when saving fails")
+end
+vim.cmd("enew")
+inject.start(vim.api.nvim_get_current_buf(), 1, 1, "replace these")
+vim.cmd("file " .. vim.fn.fnameescape(tmp)) -- `tmp` is a directory, so :write fails.
+vim.bo.modified = false
+inject.start(vim.api.nvim_get_current_buf(), 1, 1, "replace these")
+
+-- A modified named buffer is saved automatically before sending.
+vim.cmd("edit " .. vim.fn.fnameescape(inject_file))
+vim.api.nvim_buf_set_lines(0, 0, -1, false, { "dirty" })
+local saved_then_requested = false
+real_api.request = function(_, _, _, cb)
+  saved_then_requested = true
+  cb(nil, { status = "idle", text = "HERDR_INJECT_CANCELLED\nsaved" })
+end
+inject.start(vim.api.nvim_get_current_buf(), 1, 1, "replace these")
+assert(saved_then_requested and not vim.bo.modified, "modified buffer saved before request")
 
 real_api.request, real_api.selected = real_request, real_selected
 

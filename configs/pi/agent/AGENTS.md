@@ -54,6 +54,8 @@ Examples include (not limited to):
 Use `ketch` CLI for external research — web pages, OSS code, and library docs.
 - Web search: `ketch search "query"` — titles, URLs, snippets.
 - Web search + full content: `ketch search "query" --scrape`.
+- Use two-pass retrieval: discover with `ketch search "query" --minimal --limit 5`, then scrape only selected URLs; avoid `--scrape` across search results unless necessary.
+- Bound fetched content with `ketch scrape <url> --max-chars 8000 --trim`; use `--select <css>` for a relevant page region and `ketch docs ... --tokens <n>` for library documentation.
 - Scrape: `ketch scrape <url>` — fetches a URL and returns clean markdown.
 - Batch scrape: `ketch scrape <url1> <url2> ...` — concurrent fetch.
 - Crawl: `ketch crawl <url> --sitemap --background` — crawl a site, poll with `ketch crawl status`.

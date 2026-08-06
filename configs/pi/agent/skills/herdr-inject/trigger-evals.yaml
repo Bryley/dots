@@ -1,0 +1,14 @@
+skill: herdr-inject
+cases:
+  - name: bounded replacement
+    kind: positive
+    prompt: "HerdrAgentInject: in the saved file /tmp/app.js, replace the selected TODO comment with `return value;`. Return only the replacement."
+    expected: activates
+  - name: context-read replacement
+    kind: positive
+    prompt: "Use HerdrAgentInject for this saved file. Read nearby context if needed, but replace only the authoritative target text with the supplied two-line block and emit the exact replacement only."
+    expected: activates
+  - name: broader implementation request
+    kind: negative
+    prompt: "Use HerdrAgentInject to redesign this feature, update all affected files, install dependencies, and decide the API changes."
+    expected: does_not_activate

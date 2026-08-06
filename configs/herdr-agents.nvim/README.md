@@ -14,8 +14,8 @@ Requires Neovim 0.12+ and running Neovim inside a Herdr-managed pane
 | `:HerdrAgentSend [prompt]` | Send a contextual prompt (current file + cursor line, or the supplied Ex range) to the selected agent. With no prompt, opens an input prompt. |
 | `:HerdrAgentSendRaw [text]` | Send text to the selected agent without editor context. |
 | `:HerdrAgentDelegate [prompt]` | Like `Send`, but spawns and selects the default subagent first when no agent is selected. |
-| `:HerdrAgentInject [prompt]` | Replace the range/selection with the selected agent's response. The region is tracked with extmarks, so editing elsewhere while the agent works is safe; injected lines get an orange sign-column mark for review. |
-| `:HerdrAgentHighlightClear [--all]` | Clear the injected-code mark under the cursor, or all marks in the buffer with `--all`. |
+| `:HerdrAgentInject [prompt]` | Replace a saved range/selection with the selected agent's response. The region is tracked with extmarks, so editing elsewhere while the agent works is safe; injected lines get an orange sign-column mark for review. The agent can interrupt for discussion, leaving a red marker. |
+| `:HerdrAgentHighlightClear [--all]` | Clear an injected or interrupted mark under the cursor, or all marks in the buffer with `--all`. |
 
 `Send`, `Delegate`, and `Inject` accept ranges:
 
@@ -84,7 +84,6 @@ require("herdr-agents").setup({
   },
 
   inject = {
-    context_lines = 20,        -- code context sent above/below the target
     timeout_ms = 300000,       -- how long to wait for the agent's response
     strip_fences = true,       -- unwrap a markdown fence in the response
     indicator = {              -- shown while the agent works on the region
@@ -95,17 +94,29 @@ require("herdr-agents").setup({
       sign = "▎",
       timeout_ms = nil,        -- nil keeps it until :HerdrAgentHighlightClear
     },
+    interrupted = {            -- discussion-required marker
+      sign = "!",
+      virt_text = "! herdr inject interrupted — check agent response",
+    },
     prompt = function(ctx)     -- builds the INJECT MODE prompt
       -- ctx = { prompt, file (relative to the agent's cwd when inside it),
-      --         line1, line2, target, before, after, filetype }
-      -- default: strict replace-only template with fenced context blocks
+      --         line1, line2, target, filetype }
+      -- default: replacement-only contract; agent reads saved-file context
+      -- on demand and may return HERDR_INJECT_CANCELLED with a reason
     end,
   },
 })
 ```
 
-Highlight groups `HerdrAgentsWorking` and `HerdrAgentsInjected` (both
-default to orange) style the indicator and injected-code marks.
+Inject requires a named buffer and saves it before sending; it reports an error
+if saving fails. It sends the file, range, and selected text only; the agent
+reads saved-file context when necessary under the
+`herdr-inject` skill. A response beginning `HERDR_INJECT_CANCELLED` leaves the
+text unchanged and adds a red interruption marker; inspect the agent response
+for its reason. `:HerdrAgentHighlightClear` removes either marker type.
+
+Highlight groups `HerdrAgentsWorking` and `HerdrAgentsInjected` default to
+orange; `HerdrAgentsInterrupted` defaults to light red.
 
 ## Lua API
 

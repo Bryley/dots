@@ -21,6 +21,7 @@ local blocks = {}
 local function ensure_hl()
   vim.api.nvim_set_hl(0, "HerdrAgentsWorking", { default = true, fg = "#e5924a" })
   vim.api.nvim_set_hl(0, "HerdrAgentsInjected", { default = true, fg = "#e5924a" })
+  vim.api.nvim_set_hl(0, "HerdrAgentsInterrupted", { default = true, fg = "#e06c75" })
 end
 
 ensure_hl()
@@ -56,6 +57,22 @@ local function strip_fences(text)
   return text
 end
 
+---Return a cancellation reason when `text` uses the inject cancellation protocol.
+---@param text string
+---@return string|nil
+local function cancellation_reason(text)
+  local token = "HERDR_INJECT_CANCELLED"
+  if not vim.startswith(text, token) then
+    return nil
+  end
+  local rest = text:sub(#token + 1)
+  if rest ~= "" and not rest:match("^[%s:%-]") then
+    return nil
+  end
+  rest = rest:gsub("^[%s:%-]+", ""):gsub("%s+$", "")
+  return rest ~= "" and rest or "Agent requested discussion; check its response."
+end
+
 ---Mark the freshly injected lines in the sign column for review.
 ---@param bufnr integer
 ---@param srow integer 0-based first injected row
@@ -81,11 +98,35 @@ local function highlight_block(bufnr, srow, count)
   end
 end
 
+---Mark an unchanged target where the agent requested discussion.
+---@param bufnr integer
+---@param mark integer
+---@param reason string
+local function highlight_interruption(bufnr, mark, reason)
+  local pos = vim.api.nvim_buf_get_extmark_by_id(bufnr, ns_run, mark, { details = true })
+  if #pos == 0 or (pos[3] and pos[3].invalid) then
+    return false
+  end
+  local cfg = config.options.inject.interrupted
+  local id = vim.api.nvim_buf_set_extmark(bufnr, ns_hl, pos[1], 0, {
+    sign_text = cfg.sign,
+    sign_hl_group = "HerdrAgentsInterrupted",
+    virt_text = { { cfg.virt_text, "HerdrAgentsInterrupted" } },
+    virt_text_pos = "eol",
+    priority = 100,
+  })
+  blocks[bufnr] = blocks[bufnr] or {}
+  table.insert(blocks[bufnr], { id })
+  return true
+end
+
 ---@param bufnr integer
 ---@param ids integer[]
 function M.clear_block(bufnr, ids)
   for _, id in ipairs(ids) do
-    vim.api.nvim_buf_del_extmark(bufnr, ns_hl, id)
+    if #vim.api.nvim_buf_get_extmark_by_id(bufnr, ns_hl, id, {}) > 0 then
+      vim.api.nvim_buf_del_extmark(bufnr, ns_hl, id)
+    end
   end
   local bl = blocks[bufnr] or {}
   for i, block in ipairs(bl) do
@@ -96,7 +137,7 @@ function M.clear_block(bufnr, ids)
   end
 end
 
----Clear the injected-code highlight under the cursor, or all in `bufnr`.
+---Clear an injected or interrupted marker under the cursor, or all in `bufnr`.
 ---@param bufnr integer
 ---@param all? boolean
 function M.clear_highlights(bufnr, all)
@@ -158,21 +199,32 @@ function M.start(bufnr, line1, line2, prompt)
     return err_notify("no agent selected — use :HerdrAgentSelect or :HerdrAgentSpawn first")
   end
 
+  local buffer_file = vim.api.nvim_buf_get_name(bufnr)
+  if buffer_file == "" then
+    return err_notify("inject requires a named buffer so it can be saved")
+  end
+  if vim.bo[bufnr].modified or vim.fn.filereadable(buffer_file) ~= 1 then
+    local ok, save_err = pcall(vim.api.nvim_buf_call, bufnr, function()
+      vim.cmd("write")
+    end)
+    if not ok or vim.bo[bufnr].modified or vim.fn.filereadable(buffer_file) ~= 1 then
+      local detail = type(save_err) == "string" and save_err:match("Vim%(write%):([^\n]+)")
+      return err_notify(("inject could not save buffer: %s"):format(detail or "write failed"))
+    end
+  end
+
   local icfg = config.options.inject
   local total = vim.api.nvim_buf_line_count(bufnr)
   line1 = math.max(1, math.min(line1, total))
   line2 = math.max(line1, math.min(line2, total))
 
-  local file = vim.api.nvim_buf_get_name(bufnr)
-  local ctx_first = math.max(1, line1 - icfg.context_lines)
+  local file = buffer_file
   local ctx = {
     prompt = prompt,
-    file = file ~= "" and file or nil,
+    file = file,
     line1 = line1,
     line2 = line2,
     target = get_text(bufnr, line1, line2 - line1 + 1),
-    before = get_text(bufnr, ctx_first, line1 - ctx_first),
-    after = get_text(bufnr, line2 + 1, math.min(total, line2 + icfg.context_lines) - line2),
     filetype = vim.bo[bufnr].filetype or "",
   }
 
@@ -224,6 +276,15 @@ function M.start(bufnr, line1, line2, prompt)
     if not result.text or result.text == "" then
       finish()
       return err_notify("inject failed: agent returned no response text")
+    end
+    local reason = cancellation_reason(result.text)
+    if reason then
+      local marked = highlight_interruption(bufnr, mark, reason)
+      finish()
+      if not marked then
+        return err_notify("inject cancelled but target was deleted while the agent worked: " .. reason)
+      end
+      return vim.notify("herdr-agents: inject interrupted: " .. reason, vim.log.levels.WARN)
     end
     local aerr = apply(bufnr, mark, result.text)
     finish()

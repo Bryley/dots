@@ -2,12 +2,13 @@
   "lastChangelogVersion": "0.83.0",
   "defaultProvider": "openai-codex",
   "defaultModel": "gpt-5.6-terra",
-  "theme": "light",
+  "theme": "dark",
   "packages": [
     "npm:pi-token-usage",
-    "git:github.com/Bryley/pi-vim",
     "npm:pi-move-session",
-    "npm:pi-token-speed"
+    "npm:pi-token-speed",
+    "git:github.com/burneikis/pi-vim",
+    "npm:@llblab/pi-codex-usage"
   ],
   "showHardwareCursor": true,
   "quietStartup": true,
@@ -20,7 +21,7 @@
     "openai-codex/gpt-5.6-terra",
     "openai-codex/gpt-5.6-luna"
   ],
-  "defaultThinkingLevel": "low",
+  "defaultThinkingLevel": "medium",
   "compaction": {
     "enabled": true,
     "reserveTokens": 4096,

@@ -337,7 +337,7 @@ function M.register()
   end, {
     nargs = "*",
     range = true,
-    desc = "Replace the range/selection with the selected agent's response (tracked by extmarks)",
+    desc = "Replace a saved range/selection with the selected agent's response (tracked by extmarks)",
   })
 
   cmd("HerdrAgentHighlightClear", function(opts)
@@ -348,7 +348,7 @@ function M.register()
     complete = function(arglead)
       return vim.startswith("--all", arglead) and { "--all" } or {}
     end,
-    desc = "Clear the injected-code highlight under the cursor (--all: whole buffer)",
+    desc = "Clear an injected or interrupted mark under the cursor (--all: whole buffer)",
   })
 end
 
