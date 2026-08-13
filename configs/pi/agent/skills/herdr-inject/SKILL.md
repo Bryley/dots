@@ -23,7 +23,7 @@ You may read the saved file for context and verification. Do not modify the file
 2. Read only the file context needed to validate the local injection.
 3. Check that the request is a single, bounded replacement and does not require architectural, product, dependency, or other broader decisions.
 4. If valid, return the replacement text exactly—no Markdown fences, labels, explanation, or surrounding text.
-5. If invalid or underspecified, return `HERDR_INJECT_CANCELLED` followed by one concise reason. Do not provide a proposed replacement.
+5. If invalid or underspecified, return `HERDR_INJECT_CANCELLED` followed by an actionable discussion note: why injection cannot proceed and concrete next steps or commands when known. Do not provide a proposed replacement or execute the steps.
 
 ## Cancellation conditions
 
@@ -47,10 +47,11 @@ Before responding with a replacement, verify:
 Before cancelling, verify:
 
 - [ ] A specific cancellation condition applies.
-- [ ] The reason is concise and does not include a replacement.
+- [ ] The note explains why injection cannot proceed and gives concrete next steps when known.
+- [ ] The note does not include a replacement or claim to have executed its recommendations.
 
 ## Final response format
 
 Success: exact replacement text only.
 
-Cancellation: `HERDR_INJECT_CANCELLED` followed by a concise reason.
+Cancellation: `HERDR_INJECT_CANCELLED` followed by an actionable discussion note. Include `Why:` and, when known, `Next steps:` with concrete commands or decisions. Do not run the commands.

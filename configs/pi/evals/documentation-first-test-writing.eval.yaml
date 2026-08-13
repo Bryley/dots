@@ -1,0 +1,60 @@
+version: 1
+
+config:
+  profile: gpt-mini
+  run:
+    timeout_ms: 300000
+    max_turns: 12
+
+tests:
+  - name: unit-tests-follow-contract-not-undocumented-ordering-assumption
+    desc: |
+      When asked for exhaustive unit tests, the agent should derive cases from
+      the public signature and docstring. In particular, it must treat a list
+      of jobs as order-independent unless the documented contract makes order
+      meaningful or requires sorted input.
+    workspace:
+      copy:
+        - from: fixtures/documentation-first-tests/required_processors.py
+          to: required_processors.py
+    input:
+      prompt: |
+        Read only `required_processors.py`, then write exhaustive pytest unit
+        tests for `required_processors`. Do not read any other files, run tests,
+        or modify files. Output only the complete contents you would insert into
+        `test_required_processors.py`, with no markdown fence or explanation.
+        Base expected behavior on the public API contract and its documentation;
+        do not encode undocumented implementation details.
+    assertions:
+      - left: tool.called
+        tool_name: read
+        tool_params: "required_processors\\.py"
+        op: ==
+        right: true
+      - left: tool.calls
+        tool_name: read
+        op: ==
+        right: 1
+      - left: output
+        op: contains
+        right: "def test_"
+      - review:
+          prompt: |
+            Review the assistant's output as the complete proposed contents of
+            `test_required_processors.py`, a documentation-first test suite for
+            the public function in `required_processors.py`.
+
+            It must include a case with the same valid jobs in a non-chronological
+            order that would require sorting or order-independent processing to
+            produce the documented minimum processor count. For example, an
+            equivalent critical case is `[(10, 15), (0, 30), (5, 10)]` with
+            cooldown 0 and expected result 2. The public docstring does not
+            specify that callers must sort jobs, so a correct suite must not
+            silently adopt that precondition from the source implementation.
+
+            Also assess whether the suite substantially covers the documented
+            contract: non-overlapping and overlapping jobs, half-open endpoint
+            behavior, cooldown behavior, zero-duration jobs, and both documented
+            ValueError conditions. Do not award credit for tests that merely
+            reproduce or validate the current implementation's behavior.
+          pass_threshold: 0.85

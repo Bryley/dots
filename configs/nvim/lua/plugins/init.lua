@@ -258,6 +258,10 @@ vim.api.nvim_create_autocmd("FileType", {
 vim.pack.add({ 'https://github.com/MeanderingProgrammer/render-markdown.nvim' })
 require('render-markdown').setup({})
 
+-- Better Quickfix --
+
+vim.pack.add({ "https://github.com/kevinhwang91/nvim-bqf" })
+
 -- Snacks (Picker, Scroll) --
 
 vim.env.SNACKS_GHOSTTY = "true"
