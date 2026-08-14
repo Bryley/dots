@@ -82,6 +82,10 @@
       "rev": "f5fddfd5122fe00421e199151ae4fe8571a02898",
       "src": "https://github.com/olimorris/onedarkpro.nvim"
     },
+    "otter.nvim": {
+      "rev": "f4a033d4e2bd86d4f09386a73d3861538601253d",
+      "src": "https://github.com/jmbuhr/otter.nvim"
+    },
     "persistence.nvim": {
       "rev": "b20b2a7887bd39c1a356980b45e03250f3dce49c",
       "src": "https://github.com/folke/persistence.nvim"

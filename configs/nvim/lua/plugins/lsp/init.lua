@@ -15,6 +15,15 @@ vim.api.nvim_create_autocmd("LspAttach", {
             return
         end
 
+        -- Tombi marks entire multiline TOML strings as semantic string tokens,
+        -- which hides Treesitter highlighting for injected Mise task scripts.
+        if client.name == "tombi" then
+            vim.lsp.semantic_tokens.enable(false, {
+                bufnr = ev.buf,
+                client_id = client.id,
+            })
+        end
+
         local map = function(lhs, rhs, desc)
             vim.keymap.set("n", lhs, rhs, {
                 buffer = ev.buf,
@@ -69,5 +78,6 @@ vim.diagnostic.config({
 require("plugins.lsp.lua")
 require("plugins.lsp.rust")
 require("plugins.lsp.schema")
+require("plugins.lsp.bash")
 require("plugins.lsp.go")
 require("plugins.lsp.proto")

@@ -230,6 +230,7 @@ vim.pack.add({
 })
 
 require("nvim-treesitter").setup()
+require("plugins.mise")
 
 -- Treesitter parsers are installed separately. Run `:TSInstall all` once,
 -- or install a smaller set like `:TSInstall lua vim vimdoc query`.
