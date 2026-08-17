@@ -263,6 +263,11 @@ require('render-markdown').setup({})
 
 vim.pack.add({ "https://github.com/kevinhwang91/nvim-bqf" })
 
+-- Case conversion --
+
+vim.pack.add({ "https://github.com/johmsalas/text-case.nvim" })
+require("textcase").setup({})
+
 -- Snacks (Picker, Scroll) --
 
 vim.env.SNACKS_GHOSTTY = "true"
