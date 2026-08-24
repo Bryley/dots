@@ -1,0 +1,12 @@
+# Atuin shell history UI
+enter_accept = false
+search_mode = "daemon-fuzzy"
+style = "compact"
+inline_height = 20
+
+[daemon]
+enabled = true
+autostart = true
+
+[ai]
+enabled = true

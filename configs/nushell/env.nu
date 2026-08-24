@@ -221,6 +221,16 @@ let mise_path = $mise_data_dir | path join "mise.nu"
 if (which mise | is-not-empty) {
     ^mise activate nu | save --force $mise_path
 }
+
+# Auto-load Atuin after Television, so its Ctrl-R binding takes precedence.
+# Nushell loads files in this directory lexicographically.
+let atuin_autoload_dir = ($nu.default-config-dir | path join "vendor" "autoload")
+let atuin_init = ($atuin_autoload_dir | path join "zz-atuin.nu")
+if (which atuin | is-not-empty) {
+    mkdir $atuin_autoload_dir
+    ^atuin init nu --disable-up-arrow | save --force $atuin_init
+}
+
 # To add entries to PATH (on Windows you might use Path), you can use the following pattern:
 $env.PATH = ($env.PATH | append '~/.config/nushell/bin')
 $env.PATH = ($env.PATH | append '~/.config/hypr/wallpapers/')
