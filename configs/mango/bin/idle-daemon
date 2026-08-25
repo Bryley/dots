@@ -21,6 +21,15 @@ if [ -z "$suspend_cmd" ]; then
   fi
 fi
 
+if [ "${1:-}" = "--suspend-if-on-battery" ]; then
+  for supply in /sys/class/power_supply/*; do
+    [ "$(cat "$supply/type" 2>/dev/null)" = "Mains" ] || continue
+    [ "$(cat "$supply/online" 2>/dev/null)" = "1" ] && exit 0
+  done
+
+  exec sh -c "$suspend_cmd"
+fi
+
 swayidle_args=(
   -w
   timeout 300 "$lock_cmd"
@@ -29,7 +38,7 @@ swayidle_args=(
 )
 
 if [ -n "$suspend_cmd" ]; then
-  swayidle_args+=(timeout 1800 "$suspend_cmd")
+  swayidle_args+=(timeout 1800 "$script_dir/idle-daemon --suspend-if-on-battery")
 fi
 
 swayidle_args+=(

@@ -197,6 +197,7 @@ def main [
     cleanup-old-tabs $workspace.workspace_id
 
     let created_at = (date now | format date '%s')
+    let run_id = (random uuid | str replace -a "-" "" | str substring 0..28)
     let tab = (session-json tab create
         "--workspace" $workspace.workspace_id
         "--cwd" $run_cwd
@@ -218,7 +219,7 @@ def main [
     }
 
     try {
-        session-json agent start $'sa-($created_at)' "--kind" $harness "--pane" $pane_id "--timeout" "30000" "--" ...$harness_args | ignore
+        session-json agent start $'sa-($run_id)' "--kind" $harness "--pane" $pane_id "--timeout" "30000" "--" ...$harness_args | ignore
         session-json agent prompt $pane_id $full_task "--wait" "--until" "done" "--until" "idle" "--until" "blocked" "--timeout" ($AGENT_TIMEOUT_MS | into string) | ignore
         if $harness == "pi" {
             pi-output $pane_id
