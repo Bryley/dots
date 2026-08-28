@@ -8,12 +8,21 @@ vim.pack.add({
 })
 require("mini.icons").setup()
 
--- Local development plugin. Keep this conditional so copied dotfiles work
--- without the herdr-agents.nvim checkout.
-local herdr_agents_path = vim.fn.expand("~/dots/configs/herdr-agents.nvim")
-if vim.uv.fs_stat(herdr_agents_path) then
-    vim.opt.runtimepath:prepend(herdr_agents_path)
+-- Local experiments. Keep these conditional so copied dotfiles work without
+-- their checkouts.
+local experiments_path = vim.fn.expand("~/dots/experiments")
+for _, plugin in ipairs({ "herdr-agents.nvim", "jump-ease.nvim" }) do
+    local plugin_path = experiments_path .. "/" .. plugin
+    if vim.uv.fs_stat(plugin_path) then
+        vim.opt.runtimepath:prepend(plugin_path)
+    end
+end
+
+if vim.uv.fs_stat(experiments_path .. "/herdr-agents.nvim") then
     require("herdr-agents").setup()
+end
+if vim.uv.fs_stat(experiments_path .. "/jump-ease.nvim") then
+    require("jump-ease").setup()
 end
 vim.keymap.set("n", "<leader>as", "<cmd>HerdrAgentSelect<CR>", {
     desc = "Select Herdr AI Agent"

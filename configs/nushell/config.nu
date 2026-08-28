@@ -205,6 +205,16 @@ const mise_source = if ($mise_path | path exists) { $mise_path } else { null }
 source $mise_source
 $env.PATH = ($env.PATH | append '/usr/local/bin' | uniq)
 
+# Every experiment may expose commands through its own bin/ directory.
+# Do this after mise activation, which may replace PATH.
+let experiments_dir = ($nu.home-dir | path join "dots" "experiments")
+let experiment_bins = if ($experiments_dir | path exists) {
+    glob ($experiments_dir | path join "*" "bin") | where {|path| ($path | path type) == "dir" }
+} else {
+    []
+}
+$env.PATH = ($experiment_bins | append $env.PATH)
+
 # Television shell integration
 # Reference: https://alexpasmantier.github.io/television/user-guide/shell-integration#nushell
 let tv_autoload_dir = ($nu.default-config-dir | path join "vendor" "autoload")

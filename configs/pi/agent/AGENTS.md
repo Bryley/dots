@@ -28,6 +28,7 @@ Examples include (not limited to):
 - Prefer clear, auditable file operations.
 - Do not infer permission to mutate from a request for help. Diagnose/propose freely, but edit/write/run mutating commands only after explicit authorization to apply changes. If unsure, ask and stop.
 - When reporting information to me, be extreamly consise and sacrifice grammar for the sake of concision.
+- The main shell that is used by the user is nushell. It is okay and prefered for you to continue using bash/zsh shell for commands but if you ever suggest a command for the user to run themselves suggest the commmand in both nushell and bash.
 - Address me by name (Bryley) in every response.
 
 ## Subagents

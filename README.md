@@ -3,6 +3,16 @@
 This is the repo containing my dotfiles and configurations for my computers,
 both local, and remote.
 
+## Experiments
+
+`experiments/` contains projects created with heavy AI use and used as
+experiments for scripts, plugins, and programs that assist my machine and
+workflow. Each experiment is self-contained there; its configuration and
+integration remain in `configs/`.
+
+Experiments might be upgraded to their own repo and go through human review and
+updates if they prove to be useful to me and potentially others.
+
 ## Installing
 
 Boot into a Void Linux Live base glibc ISO and run these commands (you may need
