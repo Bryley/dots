@@ -70,6 +70,7 @@ vim.api.nvim_create_autocmd("FileType", {
 })
 
 vim.g.dbs = {
+    DyadicLocal = "postgresql://dyadic:dyadic@127.0.0.1:5432/dyadic",
     UAT = vim.env.MYSQL_UAT_URL,
     -- PROD = vim.env.MYSQL_PROD_URL,
 }

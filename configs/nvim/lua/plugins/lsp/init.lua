@@ -77,6 +77,7 @@ vim.diagnostic.config({
 
 require("plugins.lsp.lua")
 require("plugins.lsp.rust")
+require("plugins.lsp.tailwind")
 require("plugins.lsp.schema")
 require("plugins.lsp.bash")
 require("plugins.lsp.go")
