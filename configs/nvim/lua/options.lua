@@ -75,6 +75,14 @@ vim.api.nvim_create_autocmd("FileType", {
     end,
 })
 
+-- Set SQL line comments for Dadbod query buffers
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = { "sql", "mysql", "plsql" },
+    callback = function()
+        vim.opt_local.commentstring = "-- %s"
+    end,
+})
+
 -- Automatically resize splits when terminal is resized
 vim.api.nvim_create_autocmd("VimResized", {
     callback = function()

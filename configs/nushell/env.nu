@@ -201,6 +201,11 @@ $env.EDITOR = "nvim"
 
 $env.CARAPACE_BRIDGES = "bash"
 
+# mise's installer uses ~/.local/bin on both Linux and macOS. Add it before
+# generating shell integration so startup does not depend on a package manager.
+let user_local_bin = ($nu.home-dir | path join ".local" "bin")
+$env.PATH = ($env.PATH | prepend $user_local_bin | uniq)
+
 # Use the resolved ~/.config/mise config as mise's global config directly.
 # This avoids mise treating a symlink target as a local/ignored config when cwd
 # is inside the dotfiles repo, while keeping ~/.config/mise as the portable entrypoint.
@@ -220,6 +225,9 @@ if not ($mise_data_dir | path exists) {
 let mise_path = $mise_data_dir | path join "mise.nu"
 if (which mise | is-not-empty) {
     ^mise activate nu | save --force $mise_path
+} else if ($mise_path | path exists) {
+    # Never source integration containing an absolute path from an old install.
+    rm $mise_path
 }
 
 # Auto-load Atuin after Television, so its Ctrl-R binding takes precedence.
