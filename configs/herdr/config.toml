@@ -7,8 +7,9 @@ shell_mode = "non_login"
 [theme]
 light_name = "one-light"
 dark_name = "one-dark"
-auto_switch = true
+auto_switch = false
 
+name = "catppuccin"
 [ui.toast]
 delivery = "herdr"
 

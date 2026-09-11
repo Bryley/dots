@@ -214,6 +214,44 @@ if ($global_mise_config | path exists) {
     $env.MISE_GLOBAL_CONFIG_FILE = $global_mise_config
 }
 
+# Extra PATH entries. Keep these above the mise activation below, and see the
+# note there about __MISE_ORIG_PATH: mise keeps any entry that is not part of
+# that baseline in front of its own tool directories.
+$env.PATH = ($env.PATH | append '~/.config/nushell/bin')
+$env.PATH = ($env.PATH | append '~/.config/hypr/wallpapers/')
+$env.PATH = ($env.PATH | append '~/.cargo/bin')
+$env.PATH = ($env.PATH | append '~/go/bin')
+$env.PATH = ($env.PATH | append '/usr/local/bin')
+
+# Homebrew, where it exists. Prepended so its builds win over the older ones
+# the OS ships, and still behind mise, which goes in front of everything here.
+for dir in ['/opt/homebrew/opt/mysql/bin' '/opt/homebrew/bin'] {
+    if ($dir | path exists) {
+        $env.PATH = ($env.PATH | prepend $dir | uniq)
+    }
+}
+
+# Every experiment may expose commands through its own bin/ directory.
+let experiments_dir = ($nu.home-dir | path join "dots" "experiments")
+let experiment_bins = if ($experiments_dir | path exists) {
+    glob ($experiments_dir | path join "*" "bin") | where {|path| ($path | path type) == "dir" }
+} else {
+    []
+}
+$env.PATH = ($experiment_bins | append $env.PATH | uniq)
+
+# mise records a baseline PATH in __MISE_ORIG_PATH and, on every prompt, rebuilds
+# PATH as: entries not in that baseline, then its own tool directories, then the
+# baseline. It does NOT re-baseline when the variable is already set, and terminals,
+# multiplexers and nested shells all pass it down. Inherited, it makes everything
+# added above count as "not in the baseline", so those entries sit ahead of mise and
+# permanently shadow the tools it manages. Dropping the inherited state here makes
+# mise treat the PATH built above as the baseline, so mise-managed tools win and
+# everything above still keeps its relative order.
+hide-env -i __MISE_ORIG_PATH
+hide-env -i __MISE_DIFF
+hide-env -i __MISE_SESSION
+
 # mise activation cache for config.nu
 # Regenerate every startup: this file contains absolute paths, so a stale cache from
 # another machine/profile (e.g. nix vs mise install) can hide mise-installed tools.
@@ -239,14 +277,6 @@ if (which atuin | is-not-empty) {
     ^atuin init nu --disable-up-arrow | save --force $atuin_init
 }
 
-# To add entries to PATH (on Windows you might use Path), you can use the following pattern:
-$env.PATH = ($env.PATH | append '~/.config/nushell/bin')
-$env.PATH = ($env.PATH | append '~/.config/hypr/wallpapers/')
-$env.PATH = ($env.PATH | append '~/.cargo/bin')
-$env.PATH = ($env.PATH | append '~/go/bin')
-$env.PATH = ($env.PATH | append "/opt/homebrew/bin")
-$env.PATH = ($env.PATH | append '/opt/homebrew/opt/mysql/bin')
-$env.PATH = ($env.PATH | append '/usr/local/bin')
 
 
 # Direnv integration
