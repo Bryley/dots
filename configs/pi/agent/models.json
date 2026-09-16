@@ -47,6 +47,26 @@
         }
       ]
     },
+    "family-hub": {
+      "baseUrl": "http://family-hub:4000/v1",
+      "api": "openai-completions",
+      "apiKey": "!yoink secrets show --reveal -c /home/bryley/Documents/family-hub-services/yoink.yaml | awk -F= '$1==\"OPENWEBUI_LITELLM_API_KEY\" {sub(/^[^=]*=/,\"\"); print; exit}'",
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsReasoningEffort": true
+      },
+      "models": [
+        {
+          "id": "qwen3.8-27b",
+          "name": "Family Hub Qwen 3.8 27B",
+          "reasoning": true,
+          "input": ["text"],
+          "contextWindow": 131072,
+          "maxTokens": 8192,
+          "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 }
+        }
+      ]
+    },
     "llama-cpp-qwen": {
       "baseUrl": "http://127.0.0.1:11435/v1",
       "api": "openai-completions",
