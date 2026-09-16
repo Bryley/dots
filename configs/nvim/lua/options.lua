@@ -6,6 +6,7 @@ vim.keymap.set({ "n", "x" }, "<Space>", "<Nop>", { silent = true })
 -- Enabled experimental new UI for better error message editing
 require("vim._core.ui2").enable({})
 
+vim.o.exrc = true      -- Allow trusted project-local Neovim configuration
 vim.o.swapfile = false -- Stops the creation of swap files
 vim.o.undofile = true  -- Keeps undo history even on close
 vim.o.updatetime = 200

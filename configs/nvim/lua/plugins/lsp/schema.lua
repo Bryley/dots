@@ -13,9 +13,21 @@ vim.lsp.enable("jsonls")
 
 local yaml_schemas = schemastore.yaml.schemas()
 
-local path = vim.fn.expand("~/Documents/schemas/evalt.schema.json")
-if vim.uv.fs_stat(path) then
-    yaml_schemas["file://" .. path] = { "*.eval.yaml", "*.eval.yml" }
+local custom_schemas = {
+    {
+        path = vim.fn.stdpath("config") .. "/schemas/yoink-v0.20.10.schema.json",
+        files = { "yoink*.yaml", "yoink*.yml" },
+    },
+    {
+        path = vim.fn.expand("~/Documents/schemas/evalt.schema.json"),
+        files = { "*.eval.yaml", "*.eval.yml" },
+    },
+}
+
+for _, schema in ipairs(custom_schemas) do
+    if vim.uv.fs_stat(schema.path) then
+        yaml_schemas[vim.uri_from_fname(schema.path)] = schema.files
+    end
 end
 
 vim.lsp.config("yamlls", {

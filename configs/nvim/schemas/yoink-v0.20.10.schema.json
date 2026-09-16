@@ -1,0 +1,298 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://yoink.is/schemas/yoink-v0.20.10.schema.json",
+  "title": "yoink configuration (v0.20.10)",
+  "description": "Schema for yoink.yaml. Based on yoink/src/config.rs at v0.20.10.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "slug": { "type": "string", "description": "Short banner shown in the TUI." },
+    "deploy": { "$ref": "#/definitions/deploy" },
+    "hosts": { "type": "array", "items": { "$ref": "#/definitions/host" }, "minItems": 1 },
+    "secrets": { "$ref": "#/definitions/secrets" },
+    "services": { "type": "array", "items": { "$ref": "#/definitions/service" } },
+    "registry": { "$ref": "#/definitions/registry" },
+    "proxy": { "$ref": "#/definitions/proxy" },
+    "include": { "type": "array", "items": { "type": "string" }, "description": "Config-fragment globs relative to this file." },
+    "hooks": { "$ref": "#/definitions/hooks" },
+    "webhooks": { "type": "array", "items": { "$ref": "#/definitions/webhook" } }
+  },
+  "required": ["hosts"],
+  "definitions": {
+    "stringArray": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "stringMap": {
+      "type": "object",
+      "additionalProperties": { "type": "string" }
+    },
+    "duration": {
+      "type": "string",
+      "pattern": "^[0-9]+(?:\\.[0-9]+)?(?:ns|us|µs|ms|s|m|h)(?:[0-9]+(?:\\.[0-9]+)?(?:ns|us|µs|ms|s|m|h))*$",
+      "description": "Human-readable duration, for example 500ms, 30s, or 2m."
+    },
+    "deploy": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "networks": { "$ref": "#/definitions/stringArray" },
+        "strategy": { "type": "string", "enum": ["parallel", "rolling"], "default": "parallel" },
+        "on_failure": { "type": "string", "enum": ["halt", "continue"], "default": "halt" }
+      },
+      "required": ["networks"]
+    },
+    "host": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "address": { "type": "string", "description": "IP, hostname, or SSH config alias." },
+        "address_secret": { "type": "string", "description": "Secret containing the host address." },
+        "user": { "type": "string", "description": "Remote SSH user." },
+        "ssh_key_secret": { "type": "string", "description": "Secret containing a PEM SSH private key." }
+      },
+      "required": ["user"],
+      "oneOf": [
+        { "required": ["address"], "not": { "required": ["address_secret"] } },
+        { "required": ["address_secret"], "not": { "required": ["address"] } }
+      ]
+    },
+    "registry": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "server": { "type": "string" },
+        "username_secret": { "type": "string" },
+        "password_secret": { "type": "string" }
+      },
+      "required": ["server", "username_secret", "password_secret"]
+    },
+    "secretsProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "include": { "$ref": "#/definitions/stringArray" },
+        "rename": { "$ref": "#/definitions/stringMap" },
+        "unset": { "$ref": "#/definitions/stringArray" }
+      }
+    },
+    "secrets": {
+      "oneOf": [
+        {
+          "title": "age secrets provider",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "provider": { "const": "age" },
+            "file": { "type": "string", "default": "secrets.age" },
+            "recipients": { "$ref": "#/definitions/stringArray" },
+            "profiles": {
+              "type": "object",
+              "propertyNames": { "pattern": "^[a-z0-9-]+$" },
+              "additionalProperties": { "$ref": "#/definitions/secretsProfile" }
+            }
+          },
+          "required": ["provider", "recipients"]
+        },
+        {
+          "title": "command secrets provider",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "provider": { "const": "command" },
+            "command": { "$ref": "#/definitions/stringArray" },
+            "format": { "type": "string", "enum": ["auto", "dotenv", "json"], "default": "auto" }
+          },
+          "required": ["provider", "command"]
+        }
+      ]
+    },
+    "proxy": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "email": { "type": "string" },
+        "image": { "type": "string", "default": "caddy:2" },
+        "cert_volume": { "type": "string", "default": "yoink_caddy_data" },
+        "bind": { "type": "string" },
+        "tls": { "$ref": "#/definitions/proxyTls" },
+        "xcaddy": { "$ref": "#/definitions/xcaddy" },
+        "config_extra": { "type": "string", "description": "Caddy JSON object merged into the generated config." },
+        "global_handlers": { "$ref": "#/definitions/stringArray" },
+        "global_handlers_after": { "$ref": "#/definitions/stringArray" }
+      }
+    },
+    "xcaddy": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "plugins": { "$ref": "#/definitions/stringArray" },
+        "caddy_version": { "type": "string" },
+        "base_image": { "type": "string", "default": "caddy:2" },
+        "builder_image": { "type": "string", "default": "caddy:2-builder" },
+        "env": { "$ref": "#/definitions/stringMap" },
+        "replace": { "$ref": "#/definitions/stringArray" }
+      },
+      "required": ["plugins"]
+    },
+    "proxyTls": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "cert_secret": { "type": "string" },
+        "key_secret": { "type": "string" },
+        "client_auth": { "$ref": "#/definitions/clientAuth" }
+      },
+      "required": ["cert_secret", "key_secret"]
+    },
+    "clientAuth": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "mode": { "type": "string", "enum": ["request", "require", "verify_if_given", "require_and_verify"], "default": "require_and_verify" },
+        "trust_pool_secret": { "type": "string" }
+      },
+      "required": ["trust_pool_secret"]
+    },
+    "build": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "context": { "type": "string", "default": "." },
+        "dockerfile": { "type": "string", "default": "Dockerfile" },
+        "args": { "$ref": "#/definitions/stringMap" },
+        "target": { "type": "string" },
+        "extra_args": { "$ref": "#/definitions/stringArray" }
+      }
+    },
+    "service": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string" },
+        "image": { "type": "string" },
+        "description": { "type": "string" },
+        "kind": { "type": "string", "enum": ["proxy"], "description": "Internal marker; normally omitted." },
+        "build": { "$ref": "#/definitions/build" },
+        "tag": { "type": "string" },
+        "hosts": { "$ref": "#/definitions/stringArray" },
+        "env": { "$ref": "#/definitions/stringMap" },
+        "secrets": { "$ref": "#/definitions/stringArray" },
+        "env_from_secrets": { "$ref": "#/definitions/stringMap" },
+        "labels": { "$ref": "#/definitions/stringMap" },
+        "pre_deploy": { "type": "array", "items": { "$ref": "#/definitions/hook" } },
+        "depends_on": { "$ref": "#/definitions/stringArray" },
+        "networks": { "$ref": "#/definitions/stringArray" },
+        "domain": {
+          "oneOf": [
+            { "type": "string" },
+            { "$ref": "#/definitions/stringArray" }
+          ]
+        },
+        "tls": { "type": "string", "enum": ["auto", "off", "cert"], "default": "auto" },
+        "tls_cert_secret": { "type": "string" },
+        "tls_key_secret": { "type": "string" },
+        "caddy_extra_json": { "type": "string" },
+        "caddy_extra_caddyfile": { "type": "string" },
+        "upstream_h2c": { "type": "boolean", "default": false },
+        "canonical_domain": { "type": "string" },
+        "compression": { "type": "boolean", "default": false },
+        "hsts": { "type": "boolean", "default": true },
+        "path_prefix": { "type": "string" },
+        "run": { "$ref": "#/definitions/run" }
+      },
+      "required": ["name", "image", "run"]
+    },
+    "run": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "port": { "type": "integer", "minimum": 0, "maximum": 65535 },
+        "healthcheck_path": { "type": "string" },
+        "healthcheck_timeout": { "$ref": "#/definitions/duration", "default": "60s" },
+        "replicas": { "type": "integer", "minimum": 1, "maximum": 4294967295, "default": 1 },
+        "drain_timeout": { "$ref": "#/definitions/duration", "default": "30s" },
+        "entrypoint": { "$ref": "#/definitions/stringArray" },
+        "cmd": { "$ref": "#/definitions/stringArray" },
+        "options": { "$ref": "#/definitions/runOptions" },
+        "publish": { "$ref": "#/definitions/stringArray" },
+        "binds": { "$ref": "#/definitions/stringArray" },
+        "volumes": { "$ref": "#/definitions/stringArray" },
+        "files": { "$ref": "#/definitions/stringArray" }
+      }
+    },
+    "runOptions": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "network_aliases": { "$ref": "#/definitions/stringArray" },
+        "memory": { "type": "string", "examples": ["512Mi", "1Gi"] },
+        "cpus": { "type": "string", "examples": ["500m", "1.5"] },
+        "pids_limit": { "type": "integer", "default": 1024 },
+        "cap_drop": { "$ref": "#/definitions/stringArray", "default": ["ALL"] },
+        "cap_add": { "$ref": "#/definitions/stringArray" },
+        "security_opt": { "$ref": "#/definitions/stringArray", "default": ["no-new-privileges:true"] },
+        "read_only": { "type": "boolean", "default": true },
+        "tmpfs": { "$ref": "#/definitions/stringMap" },
+        "restart": { "type": "string", "enum": ["no", "always", "unless-stopped", "on-failure"] },
+        "user": { "type": "string", "default": "65534:65534" },
+        "init": { "type": "boolean", "default": true },
+        "devices": { "$ref": "#/definitions/stringArray" }
+      }
+    },
+    "hooks": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "pre_deploy": { "type": "array", "items": { "$ref": "#/definitions/hook" } }
+      }
+    },
+    "hook": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string" },
+        "image": { "type": "string" },
+        "tag": {
+          "oneOf": [
+            { "type": "string" },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": { "service": { "type": "string" } },
+              "required": ["service"]
+            }
+          ]
+        },
+        "entrypoint": { "$ref": "#/definitions/stringArray" },
+        "cmd": { "$ref": "#/definitions/stringArray" },
+        "working_dir": { "type": "string" },
+        "env": { "$ref": "#/definitions/stringMap" },
+        "secrets": { "$ref": "#/definitions/stringArray" },
+        "env_from_secrets": { "$ref": "#/definitions/stringMap" },
+        "secrets_profile": { "type": "string" }
+      },
+      "required": ["name"]
+    },
+    "webhook": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string" },
+        "url": { "type": "string" },
+        "on": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string", "enum": ["run_started", "run_succeeded", "run_failed"] }
+        },
+        "method": { "type": "string", "enum": ["GET", "POST", "PUT"], "default": "POST" },
+        "timeout": { "$ref": "#/definitions/duration", "default": "10s" },
+        "headers": { "$ref": "#/definitions/stringMap" },
+        "body": { "type": "string" }
+      },
+      "required": ["name", "url", "on"]
+    }
+  }
+}
