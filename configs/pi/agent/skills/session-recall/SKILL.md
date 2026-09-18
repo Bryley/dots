@@ -3,7 +3,7 @@ name: session-recall
 description: "Search prior pi sessions in two phases: session discovery and message drill-down. Use when the user asks about previous conversations or asks for a summary of recent work."
 ---
 
-# Session Recall (v3)
+# Session Recall (v4)
 
 This skill uses two scripts:
 
@@ -62,3 +62,16 @@ Returns JSON lines with:
 
 - If the user asks broad questions like "what did I work on today", run `session_search.sh` with only time range and no query.
 - Keep outputs concise; avoid dumping full logs.
+- Search is a single-process streaming scan. `--limit` bounds retained/ranked results, but all eligible sessions are checked so higher-ranked matches are not missed.
+
+## Verification
+
+- `scripts/session_search.sh --query "session recall" --limit 10` emits at most 10 valid JSON values.
+- Pass a returned `session_path` to `scripts/message_search.sh`; verify matching messages and context.
+- Confirm a bounded date search excludes messages outside the inclusive range.
+
+## Trigger evals
+
+- Positive: “What did we discuss about session recall last week?”
+- Positive: “Find the earlier conversation where we changed the Neovim schema.”
+- Negative: “Search the current repository for session recall references.”
