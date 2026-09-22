@@ -9,7 +9,7 @@ light_name = "one-light"
 dark_name = "one-dark"
 auto_switch = false
 
-name = "one-dark"
+name = "one-light"
 [ui.toast]
 delivery = "herdr"
 
@@ -19,6 +19,7 @@ pane_gaps = false
 prompt_new_tab_name = false
 
 agent_panel_sort = "spaces"
+status_indicators = "symbols"
 [keys]
 prefix = "ctrl+a"
 split_vertical = "prefix+|"
