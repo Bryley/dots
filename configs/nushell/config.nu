@@ -283,13 +283,14 @@ def --wrapped mango [...args] {
     }
 }
 
-# Opens current git repo's webpage
+# Opens the current branch on the git repo's webpage
 def gitopen [] {
     let url = (git remote get-url origin)
     let url = $url | str replace -a ':' '/'
     let url = $url | str replace -a 'git@' 'https://'
     let url = $url | str replace -a '.git' ''
-    start $url
+    let branch = (git branch --show-current)
+    start $"($url)/tree/($branch)"
 }
 
 $env.FZF_DEFAULT_OPTS = "--layout=reverse --height=40% --border"
