@@ -2,3 +2,9 @@
 # Pi also reads .gitignore for skill discovery, so any skill ignored here
 # won't be loaded. To re-include a skill for Pi only, negate it in .ignore.
 pk
+betmakers-core
+pk-service-standards
+proto-docs
+service-deps-diagram
+write-a-skill
+jira

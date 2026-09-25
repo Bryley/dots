@@ -2,3 +2,9 @@
 # .ignore is read after .gitignore, so negations here override gitignore rules.
 # This lets us keep pk/ hidden from git while still loading it as a skill in Pi.
 !pk
+!betmakers-core
+!pk-service-standards
+!proto-docs
+!service-deps-diagram
+!write-a-skill
+!jira
