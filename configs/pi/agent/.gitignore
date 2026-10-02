@@ -3,6 +3,7 @@ sessions/
 
 # Sensitive local credentials
 auth.json
+mcp-auth.json
 
 mcp-cache.json
 
@@ -12,3 +13,4 @@ mcp-cache.json
 
 # Logs
 *.log
+crashes.json

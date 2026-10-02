@@ -7,7 +7,8 @@
     "penpot": {
       "url": "http://localhost:4401/mcp",
       "lifecycle": "lazy",
-      "idleTimeout": 10
+      "idleTimeout": 10,
+      "enabled": false
     }
   }
 }

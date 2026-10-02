@@ -1,0 +1,14 @@
+
+default_profile = "light"
+
+[profiles]
+
+[profiles.light]
+provider_id = "openai-codex"
+model = "gpt-5.6-luna"
+name = "Light"
+
+[profiles.main]
+provider_id = "openai-codex"
+model = "gpt-6.1-sol"
+name = "Medium"

@@ -31,3 +31,26 @@ websocat = "latest"
 rust = "1.95"
 "cargo:https://github.com/oddur/yoink" = "tag:v0.20.10"
 "aqua:Gaurav-Gosain/tuios" = "latest"
+
+[tasks.bait-tui]
+alias = "tui"
+description = "Run bait TUI in the current directory"
+dir = "{{cwd}}"
+raw = true
+shell = "nu -c"
+run = '''
+# Add other bait checkout locations here. First match wins.
+let candidates = [
+    "~/Documents/personal/projects/bait"
+    "~/projects/bait"
+    "~/src/bait"
+]
+let matches = ($candidates | path expand | where {|root|
+    (($root | path join Cargo.toml | path type) == "file") and (($root | path join crates bait-tui Cargo.toml | path type) == "file")
+})
+if ($matches | is-empty) {
+    error make {msg: $"bait checkout not found. Checked: ($candidates | str join ', '). Add its location to tasks.bait-tui in ~/.config/mise/config.toml."}
+}
+let manifest = ($matches | first | path join Cargo.toml)
+cargo run --manifest-path $manifest -p bait
+'''
