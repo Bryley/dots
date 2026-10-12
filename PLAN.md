@@ -69,13 +69,13 @@ Here are plans and TODOs of upcomming things I want to explore/work on:
     - [X] Look into getting rounded corners working again on Ghostty terminal
     - [X] Keybind to switch monitors
     - [X] Make each monitor have their own set of workspaces (Not supported)
+- [ ] Move raw scripts in this project to using `pyinfra` instead for setting
+   everything up.
 - [ ] `bait` custom agent harness
 - [ ] `termtrix` Terminal centric Grafana alternative project
-- [ ] `evalt` AI eval CLI
+- [X] `evalt` AI eval CLI
 - [ ] `shapley`
-    - [X] Landing page
-    - [ ] Image uploading
-    - [ ] Start Frontend
+- [ ] `which-hunt?` game
 - [ ] Custom notes solution (Obsidian style notes, self hosted arch, Kanban
    style, Calendar integration)
 - [ ] Play with custom statusbar and wayland layershell components instead of
