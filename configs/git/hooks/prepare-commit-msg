@@ -1,0 +1,19 @@
+#!/bin/sh
+
+# Only add reference comments when Git will open an editor.
+[ "${GIT_EDITOR:-}" = ":" ] && exit 0
+
+# Nothing to show before the repository's first commit.
+git rev-parse --verify HEAD >/dev/null 2>&1 || exit 0
+
+comment=$(git config --get core.commentString) ||
+    comment=$(git config --get core.commentChar) || comment='#'
+# Git chooses 'auto' later; don't risk adding uncommented reference text.
+[ "$comment" = auto ] && exit 0
+
+{
+    printf '\n%s Recent commits:\n' "$comment"
+    git --no-pager log -3 --format=%s | while IFS= read -r subject; do
+        printf '%s %s\n' "$comment" "$subject"
+    done
+} >> "$1"

@@ -77,6 +77,7 @@ else
 fi
 
 link "git/.gitconfig" "$HOME/.gitconfig"
+link "git/hooks" "$HOME/.config/git/hooks"
 link "alsa/asoundrc" "$HOME/.asoundrc"
 link "pi" "$HOME/.pi"
 link "wallpaper.png" "$HOME/wallpaper"

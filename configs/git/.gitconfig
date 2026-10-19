@@ -30,3 +30,4 @@
 
 [core]
     pager = less -FRX
+    hooksPath = ~/.config/git/hooks
