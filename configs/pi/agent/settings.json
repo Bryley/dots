@@ -2,7 +2,7 @@
   "lastChangelogVersion": "1.1.0",
   "defaultProvider": "openai-codex",
   "defaultModel": "gpt-6.1-sol",
-  "theme": "light",
+  "theme": "dark",
   "packages": [
     "npm:pi-token-usage",
     "npm:pi-move-session",

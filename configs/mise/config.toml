@@ -42,8 +42,7 @@ run = '''
 # Add other bait checkout locations here. First match wins.
 let candidates = [
     "~/Documents/personal/projects/bait"
-    "~/projects/bait"
-    "~/src/bait"
+    "~/Documents/projects/bait"
 ]
 let matches = ($candidates | path expand | where {|root|
     (($root | path join Cargo.toml | path type) == "file") and (($root | path join crates bait-tui Cargo.toml | path type) == "file")

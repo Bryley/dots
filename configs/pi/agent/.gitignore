@@ -11,6 +11,9 @@ mcp-cache.json
 # - models.json
 # - settings.json
 
+# Temporary runtime state (including Codex usage JSON/SQLite files)
+/tmp/
+
 # Logs
 *.log
 crashes.json
