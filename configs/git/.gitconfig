@@ -22,12 +22,13 @@
 [alias]
     dt = difftool --dir-diff
 
+[core]
+    pager = less -FRX
+    hooksPath = ~/.config/git/hooks
+
 [mergetool]
     keepBackup = false
 
 [init]
     defaultBranch = main
 
-[core]
-    pager = less -FRX
-    hooksPath = ~/.config/git/hooks

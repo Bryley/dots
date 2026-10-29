@@ -29,14 +29,24 @@ link_path() {
     mkdir -p "$(dirname "$target")"
 
     if [[ -L "$target" ]]; then
+        if [[ "$(readlink "$target")" == "$source" ]]; then
+            log_info "Link '$target' is already correct"
+            return
+        fi
         log_warn "Link '$target' already exists, replacing it..."
         rm "$target"
     elif [[ -e "$target" ]]; then
         log_error "'$target' already exists, move it somewhere else and run the './link.sh' command again"
-        return
+        return 1
     fi
 
-    ln -s "$source" "$target"
+    # Unlike ln, symlink() fails if a running app recreates the target directory.
+    python3 - "$source" "$target" <<'PY'
+import os
+import sys
+
+os.symlink(sys.argv[1], sys.argv[2])
+PY
     log_info "Setup link '$source' -> '$target'"
 }
 

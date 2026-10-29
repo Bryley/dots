@@ -136,7 +136,8 @@ let light_theme = {
     shape_vardecl: purple
 }
 
-let carapace_completer = {|spans|
+let carapace_completer = {|place|
+    let spans = $place.command
     carapace $spans.0 nushell ...$spans | from json
 }
 

@@ -1,5 +1,5 @@
 
-default_profile = "light"
+default_profile = "main"
 
 [profiles]
 
@@ -12,3 +12,13 @@ name = "Light"
 provider_id = "openai-codex"
 model = "gpt-6.1-sol"
 name = "Medium"
+# Tokens used for ctx reporting. Sol's default Codex window; edit if your limit differs.
+context_window = 500000
+
+[profiles.sol-medium]
+provider_id = "openai-codex"
+model = "gpt-6.1-sol"
+name = "Sol Medium"
+reasoning_effort = "medium"
+# Tokens used for ctx reporting. Sol's default Codex window; edit if your limit differs.
+context_window = 500000

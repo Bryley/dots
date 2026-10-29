@@ -9,7 +9,7 @@ light_name = "one-light"
 dark_name = "one-dark"
 auto_switch = false
 
-name = "one-dark"
+name = "one-light"
 [ui.toast]
 delivery = "herdr"
 
