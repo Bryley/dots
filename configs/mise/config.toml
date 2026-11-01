@@ -31,7 +31,16 @@ rust = "1.99"
 "aqua:Gaurav-Gosain/tuios" = "latest"
 "go:github.com/1broseidon/ketch" = "0.19.0"
 pi = "1.1.0"
+btop = "latest"
 
+[tasks.bait-serve]
+description = "Serve the bait server using pi stored credentials"
+dir = "{{cwd}}"
+raw = true
+shell = "nu -c"
+run = "let auth = (open ~/.pi/agent/auth.json | get openai-codex); with-env { BAIT_TEST_CODEX_KEY: $auth.access, BAIT_TEST_CODEX_ACCOUNT_ID: $auth.accountId } { bait serve }"
+
+# Deprecated
 [tasks.bait-tui]
 alias = "tui"
 description = "Run bait TUI in the current directory"
