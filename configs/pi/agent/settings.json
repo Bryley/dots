@@ -2,7 +2,7 @@
   "lastChangelogVersion": "1.4.0",
   "defaultProvider": "openai-codex",
   "defaultModel": "gpt-6.1-sol",
-  "theme": "dark",
+  "theme": "light",
   "packages": [
     "npm:pi-token-usage",
     "npm:pi-move-session",
@@ -17,6 +17,8 @@
     "openai-codex/gpt-5.5",
     "llama-cpp-qwen/Qwen3.6-35B-A3B-UD-IQ4_NL_XL",
     "llama-cpp-qwen/Qwen3.6-35B-A3B-UD-IQ3_S",
+    "llama-cpp-qwen/Qwen3-8B-Q4_K_M",
+    "llama-cpp-qwen/ornith-1.0-9b-Q4_K_M",
     "openai-codex/gpt-6.1-sol",
     "openai-codex/gpt-5.6-terra",
     "openai-codex/gpt-5.6-luna",
