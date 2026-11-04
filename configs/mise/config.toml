@@ -34,11 +34,11 @@ pi = "1.1.0"
 btop = "latest"
 
 [tasks.bait-serve]
-description = "Serve the bait server using pi stored credentials"
+description = "Serve the bait server using pi stored credentials + family-hub yoink secrets"
 dir = "{{cwd}}"
 raw = true
 shell = "nu -c"
-run = "let auth = (open ~/.pi/agent/auth.json | get openai-codex); with-env { BAIT_TEST_CODEX_KEY: $auth.access, BAIT_TEST_CODEX_ACCOUNT_ID: $auth.accountId } { bait serve }"
+run = "let auth = (open ~/.pi/agent/auth.json | get openai-codex); let lines = (yoink secrets show --reveal -c /home/bryley/Documents/family-hub-services/yoink.yaml | lines); let litellm = ($lines | where {|row| $row =~ '^OPENWEBUI_LITELLM_API_KEY='} | get 0 | split row '=' | get 1); with-env { BAIT_TEST_CODEX_KEY: $auth.access, BAIT_TEST_CODEX_ACCOUNT_ID: $auth.accountId, OPENWEBUI_LITELLM_API_KEY: $litellm } { bait serve }"
 
 # Deprecated
 [tasks.bait-tui]

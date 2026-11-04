@@ -27,9 +27,33 @@ context_window = 500000
 base_url = "https://openrouter.ai/api/v1"
 api_key_env = "OPENROUTER_API_KEY"
 
+[providers.openai-compatible.family-hub]
+base_url = "http://family-hub:4000/v1"
+# Supplied by the global `mise bait-serve` task, which pulls it from the
+# family-hub yoink secrets file — never stored in this config file.
+api_key_env = "OPENWEBUI_LITELLM_API_KEY"
+
+[profiles.family-hub-qwen]
+provider_id = "family-hub"
+model = "qwen3.8-27b"
+name = "Family Hub Qwen 3.8 27B"
+# LiteLLM reports the upstream context length; this matches the Pi harness config.
+context_window = 131072
+
 [profiles.glm-flash]
 provider_id = "openrouter"
 model = "z-ai/glm-5.3-flash"
 name = "GLM 5.3 Flash"
 # OpenRouter list pricing, 2026-02: $0.0285/Mtok input, $0.0923/Mtok output.
 pricing = { input_per_mtoken = 0.0285, output_per_mtoken = 0.0923 }
+
+[profiles.live]
+mode = "live"
+name = "Live"
+provider_id = "openai-live"
+model = "gpt-live-1"
+labels = ["voice"]
+
+[profiles.live.live]
+backend_profile = "main"
+voice = "marin"
