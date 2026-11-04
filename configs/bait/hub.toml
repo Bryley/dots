@@ -22,3 +22,14 @@ name = "Sol Medium"
 reasoning_effort = "medium"
 # Tokens used for ctx reporting. Sol's default Codex window; edit if your limit differs.
 context_window = 500000
+
+[providers.openai-compatible.openrouter]
+base_url = "https://openrouter.ai/api/v1"
+api_key_env = "OPENROUTER_API_KEY"
+
+[profiles.glm-flash]
+provider_id = "openrouter"
+model = "z-ai/glm-5.3-flash"
+name = "GLM 5.3 Flash"
+# OpenRouter list pricing, 2026-02: $0.0285/Mtok input, $0.0923/Mtok output.
+pricing = { input_per_mtoken = 0.0285, output_per_mtoken = 0.0923 }
