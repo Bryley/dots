@@ -1,6 +1,10 @@
 # Session transcripts / conversation history
 sessions/
 
+# Private mission records and subagent runtime state (not extension source)
+/missions/
+/pi-subagents/
+
 # Sensitive local credentials
 auth.json
 mcp-auth.json

@@ -1,0 +1,25 @@
+#!/usr/bin/env sh
+set -eu
+
+# Mango-session service: no systemd, root permissions, or input-group access.
+: "${XDG_RUNTIME_DIR:?Voxtype must run inside the desktop session}"
+state_dir="${XDG_STATE_HOME:-$HOME/.local/state}/voxtype"
+mkdir -p "$state_dir"
+
+# Keep one instance even if this launcher is invoked again after a reload.
+exec 9>"$XDG_RUNTIME_DIR/voxtype-session.lock"
+flock -n 9 || exit 0
+
+# The audio daemon starts in parallel with this launcher at login.
+for _ in $(seq 1 50); do
+    if pw-cli info 0 >/dev/null 2>&1; then
+        break
+    fi
+    sleep 0.2
+done
+
+# Rotate one previous session log so the log does not grow indefinitely.
+if [ -f "$state_dir/daemon.log" ]; then
+    mv -f "$state_dir/daemon.log" "$state_dir/daemon.previous.log"
+fi
+exec "$HOME/.local/bin/voxtype" daemon >>"$state_dir/daemon.log" 2>&1

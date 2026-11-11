@@ -32,11 +32,8 @@ Examples include (not limited to):
 
 ## Subagents
 
-- Delegate only through the local `subagent` CLI; do not simulate subagents in prose.
-- For non-trivial work, consider delegating a bounded task to a fresh context. Keep planning, integration, and final responsibility in the primary context.
-- Always specify `--profile <name>` and choose the cheapest suitable profile. Give the subagent a clear goal, relevant files, constraints, and expected result.
-- Verify subagent results before relying on them. Avoid recursive delegation unless clearly needed.
-- Use `subagent --profiles` to choose profiles and `subagent --history` to inspect recent runs.
+- Subagents are provided by the `pi-subagents` extension; follow the skill it ships for delegation workflow.
+- Keep planning, integration, and final responsibility in the primary context, and verify subagent results before relying on them.
 
 ## Structured Data Files
 

@@ -1,5 +1,5 @@
 {
-  "lastChangelogVersion": "1.4.0",
+  "lastChangelogVersion": "1.5.0",
   "defaultProvider": "openai-codex",
   "defaultModel": "gpt-6.1-sol",
   "theme": "light",
@@ -8,7 +8,8 @@
     "npm:pi-move-session",
     "npm:pi-token-speed",
     "git:github.com/burneikis/pi-vim",
-    "npm:@llblab/pi-codex-usage"
+    "npm:@llblab/pi-codex-usage",
+    "npm:pi-subagents"
   ],
   "showHardwareCursor": true,
   "quietStartup": true,
@@ -35,5 +36,37 @@
     "reserveTokens": 4096
   },
   "enableInstallTelemetry": false,
-  "hideThinkingBlock": false
+  "hideThinkingBlock": false,
+  "subagents": {
+    "defaultModel": "family-hub/qwen3.8-27b",
+    "defaultThinking": "medium",
+    "agentOverrides": {
+      "scout": {
+        "thinking": "low"
+      },
+      "worker": {
+        "thinking": "medium"
+      },
+      "researcher": {
+        "thinking": "medium"
+      },
+      "reviewer": {
+        "thinking": "high"
+      },
+      "oracle": {
+        "thinking": "high"
+      }
+    },
+    "modelScope": {
+      "enforce": true,
+      "strict": true,
+      "allow": [
+        "family-hub/qwen3.8-27b"
+      ]
+    }
+  },
+  "extensionChangelogVersions": {
+    "{\"source\":\"npm:@llblab/pi-codex-usage\",\"scope\":\"user\"}": "0.13.2",
+    "{\"source\":\"npm:pi-subagents\",\"scope\":\"user\"}": "0.86.0"
+  }
 }

@@ -1,59 +1,29 @@
+# Bait hub configuration. The previous config is preserved in hub.toml.pre-bait-new.*.
+default_profile = "family-hub-qwen"
 
-default_profile = "main"
+[server]
+# No authentication or permission enforcement yet: trusted local clients only.
+listen = "127.0.0.1:7331"
 
-[profiles]
-
-[profiles.light]
-provider_id = "openai-codex"
-model = "gpt-5.6-luna"
-name = "Light"
-
-[profiles.main]
-provider_id = "openai-codex"
-model = "gpt-6.1-sol"
-name = "Medium"
-# Tokens used for ctx reporting. Sol's default Codex window; edit if your limit differs.
-context_window = 500000
-
-[profiles.sol-medium]
-provider_id = "openai-codex"
-model = "gpt-6.1-sol"
-name = "Sol Medium"
-reasoning_effort = "medium"
-# Tokens used for ctx reporting. Sol's default Codex window; edit if your limit differs.
-context_window = 500000
-
-[providers.openai-compatible.openrouter]
-base_url = "https://openrouter.ai/api/v1"
-api_key_env = "OPENROUTER_API_KEY"
-
-[providers.openai-compatible.family-hub]
-base_url = "http://family-hub:4000/v1"
-# Supplied by the global `mise bait-serve` task, which pulls it from the
-# family-hub yoink secrets file — never stored in this config file.
-api_key_env = "OPENWEBUI_LITELLM_API_KEY"
+[providers.family-hub]
+type = "openai-compatible"
+url = "http://family-hub:4000/v1"
+# Same trusted local secret reader used by Pi. The token itself is not stored here.
+api_token_command = "yoink secrets show --reveal -c /home/bryley/Documents/family-hub-services/yoink.yaml | awk -F= '$1==\"OPENWEBUI_LITELLM_API_KEY\" {sub(/^[^=]*=/,\"\"); print; exit}'"
 
 [profiles.family-hub-qwen]
-provider_id = "family-hub"
+provider = "family-hub"
 model = "qwen3.8-27b"
-name = "Family Hub Qwen 3.8 27B"
-# LiteLLM reports the upstream context length; this matches the Pi harness config.
-context_window = 131072
 
-[profiles.glm-flash]
-provider_id = "openrouter"
-model = "z-ai/glm-5.3-flash"
-name = "GLM 5.3 Flash"
-# OpenRouter list pricing, 2026-02: $0.0285/Mtok input, $0.0923/Mtok output.
-pricing = { input_per_mtoken = 0.0285, output_per_mtoken = 0.0923 }
+# Match Pi's family-hub Qwen model configuration.
+[models."family-hub/qwen3.8-27b"]
+context_window = 262144
+max_output_tokens = 8192
 
-[profiles.live]
-mode = "live"
-name = "Live"
-provider_id = "openai-live"
-model = "gpt-live-1"
-labels = ["voice"]
-
-[profiles.live.live]
-backend_profile = "main"
-voice = "marin"
+[context]
+auto_compact = true
+auto_compact_percent = 85
+# Summarise roughly the oldest 80% of the current conversation.
+summarize_percent = 80
+# Percentage of the context window, also capped by max_output_tokens above.
+summary_output_percent = 5

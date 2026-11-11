@@ -12,3 +12,19 @@ configs/pi/agent/models-store.json
 # Local backup and generated spell data
 /configs/niri/config_backup.kdl
 /configs/nvim-old/spell/en.utf-8.add.spl
+*.bak
+*.bak.*
+
+# Local environment secrets (keep shareable examples trackable)
+.env
+.env.*
+!.env.example
+!.env.sample
+!.env.template
+
+# Bait credentials, private accounts, and local config backups
+/configs/bait/credentials.txt
+/configs/bait/env
+/configs/bait/live-token
+/configs/bait/users/
+/configs/bait/*.pre-*

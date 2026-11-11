@@ -1,0 +1,5 @@
+revision = 2
+
+[providers.openai-compatible.litellm]
+base_url = "http://100.75.182.27:4000/v1"
+api_key_env = "LITELLM_MASTER_KEY"
