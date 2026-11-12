@@ -1,8 +1,8 @@
 {
-  "lastChangelogVersion": "1.5.0",
+  "lastChangelogVersion": "1.5.2",
   "defaultProvider": "openai-codex",
   "defaultModel": "gpt-6.1-sol",
-  "theme": "light",
+  "theme": "dark",
   "packages": [
     "npm:pi-token-usage",
     "npm:pi-move-session",
@@ -66,7 +66,7 @@
     }
   },
   "extensionChangelogVersions": {
-    "{\"source\":\"npm:@llblab/pi-codex-usage\",\"scope\":\"user\"}": "0.13.2",
-    "{\"source\":\"npm:pi-subagents\",\"scope\":\"user\"}": "0.86.0"
+    "{\"source\":\"npm:@llblab/pi-codex-usage\",\"scope\":\"user\"}": "0.13.4",
+    "{\"source\":\"npm:pi-subagents\",\"scope\":\"user\"}": "0.88.0"
   }
 }

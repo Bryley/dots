@@ -2,7 +2,7 @@
 default_profile = "family-hub-qwen"
 
 [server]
-# No authentication or permission enforcement yet: trusted local clients only.
+# No authentication: trusted local clients only. Session permissions are task guardrails.
 listen = "127.0.0.1:7331"
 
 [providers.family-hub]
@@ -10,6 +10,33 @@ type = "openai-compatible"
 url = "http://family-hub:4000/v1"
 # Same trusted local secret reader used by Pi. The token itself is not stored here.
 api_token_command = "yoink secrets show --reveal -c /home/bryley/Documents/family-hub-services/yoink.yaml | awk -F= '$1==\"OPENWEBUI_LITELLM_API_KEY\" {sub(/^[^=]*=/,\"\"); print; exit}'"
+
+# Local subscription bridge: run `mise run codex-setup`, then `mise run litellm`
+# in the Bait checkout. Credentials stay in the per-machine state directory.
+[providers.codex]
+type = "openai-compatible"
+url = "http://127.0.0.1:4000/v1"
+api_token_command = 'cat "${XDG_STATE_HOME:-$HOME/.local/state}/bait/litellm/proxy.key"'
+
+[profiles.codex]
+provider = "codex"
+model = "gpt-6.1-sol"
+reasoning = "medium"
+
+[profiles.codex-luna]
+provider = "codex"
+model = "gpt-6-luna"
+reasoning = "medium"
+
+# Conservative Codex context limit; the direct API supports a larger window.
+[models."codex/gpt-6-luna"]
+context_window = 272000
+max_output_tokens = 128000
+
+# Codex subscription default, not the direct API's 1.05M window.
+[models."codex/gpt-6.1-sol"]
+context_window = 500000
+max_output_tokens = 128000
 
 [profiles.family-hub-qwen]
 provider = "family-hub"
