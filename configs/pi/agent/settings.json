@@ -2,7 +2,7 @@
   "lastChangelogVersion": "1.5.2",
   "defaultProvider": "openai-codex",
   "defaultModel": "gpt-6.1-sol",
-  "theme": "dark",
+  "theme": "light",
   "packages": [
     "npm:pi-token-usage",
     "npm:pi-move-session",
@@ -61,7 +61,8 @@
       "enforce": true,
       "strict": true,
       "allow": [
-        "family-hub/qwen3.8-27b"
+        "family-hub/qwen3.8-27b",
+        "openai-codex/gpt-6.1-sol"
       ]
     }
   },
